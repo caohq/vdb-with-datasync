@@ -11,7 +11,7 @@
 				play="true"
 				loop="false"
 				quality="high"
-				allowScriptAccess="sameDomain"
+				allowScriptAccess=""
 				type="application/x-shockwave-flash"
 				pluginspage="http://www.adobe.com/go/getflashplayer">
 			</embed>

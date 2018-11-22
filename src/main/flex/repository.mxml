@@ -514,45 +514,45 @@
 			<mx:Button  label="添加"   enabled="true" x="274" y="308" width="65" height="28" click="popLocalWin();"/>
 		</mx:Canvas>
 
-		<mx:Canvas id="c1" label="Ftp文件" width="760" height="414" x="0" y = "0" visible="false">
-			<mx:DataGrid id="ftpDataGrid" dataProvider="{ftpRepository}" x="38" y="35" width="664" height="214" editable="true" itemEditEnd="updateFtpRepository(event);" sortableColumns="true" >
-				<mx:columns>
-					<mx:DataGridColumn headerText="名称" dataField="name" editable="false"/>
-					<mx:DataGridColumn headerText="主机名" dataField="hostname" editable="true"/>
-					<mx:DataGridColumn headerText="端口" dataField="port" editable="true"/>
-					<mx:DataGridColumn headerText="用户名" dataField="username" editable="true"/>
-					<mx:DataGridColumn headerText="密码" dataField="password" editable="true"/>
-					<mx:DataGridColumn headerText="路径" dataField="path" editable="true"/>
-				</mx:columns>
-			</mx:DataGrid>
-		<mx:Button   label="添加" x="274" y="308" width="65" height="28" click="popFtpWin();"/>
-		<mx:Button id="deleteftpbutton" x="406" y="308" label="删除" click="deleteFtpItem();" width="65" height="28"/>
-		</mx:Canvas>
-		
-		<mx:Canvas id="c3" label="apache文件" width="766" height="421" x = "0" y = "0" visible="false" >
-			<mx:DataGrid id="apacheDataGrid" dataProvider="{apacheRepository}" x="38" y="35" width="664" height="214"  editable="true"  itemEditEnd="updateApacheRepository(event);" sortableColumns="true">
-				<mx:columns>
-					<mx:DataGridColumn headerText="名称" dataField="name" editable="false"/>
-					<mx:DataGridColumn headerText="路径" dataField="path" editable="true"/>
-				</mx:columns>
-			</mx:DataGrid>
-		
-			<mx:Button id="deleteApachebutton" click="deleteApacheItem();"  label="删除" width="65" height="28"  x="406" y="308"/>
-			<mx:Button  label="添加"   enabled="true" x="274" y="308" width="65" height="28" click="popApacheWin();"/>
-		</mx:Canvas>
+		<!--<mx:Canvas id="c1" label="Ftp文件" width="760" height="414" x="0" y = "0" visible="false">-->
+			<!--<mx:DataGrid id="ftpDataGrid" dataProvider="{ftpRepository}" x="38" y="35" width="664" height="214" editable="true" itemEditEnd="updateFtpRepository(event);" sortableColumns="true" >-->
+				<!--<mx:columns>-->
+					<!--<mx:DataGridColumn headerText="名称" dataField="name" editable="false"/>-->
+					<!--<mx:DataGridColumn headerText="主机名" dataField="hostname" editable="true"/>-->
+					<!--<mx:DataGridColumn headerText="端口" dataField="port" editable="true"/>-->
+					<!--<mx:DataGridColumn headerText="用户名" dataField="username" editable="true"/>-->
+					<!--<mx:DataGridColumn headerText="密码" dataField="password" editable="true"/>-->
+					<!--<mx:DataGridColumn headerText="路径" dataField="path" editable="true"/>-->
+				<!--</mx:columns>-->
+			<!--</mx:DataGrid>-->
+		<!--<mx:Button   label="添加" x="274" y="308" width="65" height="28" click="popFtpWin();"/>-->
+		<!--<mx:Button id="deleteftpbutton" x="406" y="308" label="删除" click="deleteFtpItem();" width="65" height="28"/>-->
+		<!--</mx:Canvas>-->
+		<!---->
+		<!--<mx:Canvas id="c3" label="apache文件" width="766" height="421" x = "0" y = "0" visible="false" >-->
+			<!--<mx:DataGrid id="apacheDataGrid" dataProvider="{apacheRepository}" x="38" y="35" width="664" height="214"  editable="true"  itemEditEnd="updateApacheRepository(event);" sortableColumns="true">-->
+				<!--<mx:columns>-->
+					<!--<mx:DataGridColumn headerText="名称" dataField="name" editable="false"/>-->
+					<!--<mx:DataGridColumn headerText="路径" dataField="path" editable="true"/>-->
+				<!--</mx:columns>-->
+			<!--</mx:DataGrid>-->
+		<!---->
+			<!--<mx:Button id="deleteApachebutton" click="deleteApacheItem();"  label="删除" width="65" height="28"  x="406" y="308"/>-->
+			<!--<mx:Button  label="添加"   enabled="true" x="274" y="308" width="65" height="28" click="popApacheWin();"/>-->
+		<!--</mx:Canvas>-->
 
-		<mx:Canvas id="c4" label="webdav文件" width="744" height="414" x="0" y = "0" visible="false">
-			<mx:DataGrid id="webdavDataGrid" dataProvider="{webdavRepository}" x="38" y="35" width="664" height="214" editable="true" itemEditEnd="updateWebdavRepository(event);" sortableColumns="true" >
-				<mx:columns>
-					<mx:DataGridColumn headerText="名称" dataField="name" editable="false"/>
-					<mx:DataGridColumn headerText="路径" dataField="path" editable="true"/>
-					<mx:DataGridColumn headerText="用户名" dataField="username" editable="true"/>
-					<mx:DataGridColumn headerText="密码" dataField="password" editable="true"/>
-				</mx:columns>
-			</mx:DataGrid>
-		<mx:Button   label="添加" x="274" y="308" width="65" height="28" click="popWebdavWin();"/>
-		<mx:Button id="deletewebdavbutton" x="406" y="308" label="删除" click="deleteWebdavItem();" width="65" height="28"/>
-		</mx:Canvas>
+		<!--<mx:Canvas id="c4" label="webdav文件" width="744" height="414" x="0" y = "0" visible="false">-->
+			<!--<mx:DataGrid id="webdavDataGrid" dataProvider="{webdavRepository}" x="38" y="35" width="664" height="214" editable="true" itemEditEnd="updateWebdavRepository(event);" sortableColumns="true" >-->
+				<!--<mx:columns>-->
+					<!--<mx:DataGridColumn headerText="名称" dataField="name" editable="false"/>-->
+					<!--<mx:DataGridColumn headerText="路径" dataField="path" editable="true"/>-->
+					<!--<mx:DataGridColumn headerText="用户名" dataField="username" editable="true"/>-->
+					<!--<mx:DataGridColumn headerText="密码" dataField="password" editable="true"/>-->
+				<!--</mx:columns>-->
+			<!--</mx:DataGrid>-->
+		<!--<mx:Button   label="添加" x="274" y="308" width="65" height="28" click="popWebdavWin();"/>-->
+		<!--<mx:Button id="deletewebdavbutton" x="406" y="308" label="删除" click="deleteWebdavItem();" width="65" height="28"/>-->
+		<!--</mx:Canvas>-->
 	</mx:TabNavigator> 
 	<mx:VBox id="box" verticalGap="0" height="177" width="754" maxWidth="600" maxHeight="300"  x="141" y="11" borderColor="#8E1313">
 	    

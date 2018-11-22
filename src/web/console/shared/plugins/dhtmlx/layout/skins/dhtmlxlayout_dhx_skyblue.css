@@ -240,7 +240,7 @@ table.dhtmlxLayoutPolyContainer_dhx_skyblue td.dhtmlxLayoutSinglePoly div.dhtmlx
 	height: 100%;
 	width: 18px;
 	bottom: 0px;
-	height=100%;
+	height:100%;
 	background-image: url("../imgs/dhxlayout_dhx_skyblue/dhxlayout_collapsedver.gif");
 	background-repeat: repeat-y;
 }
@@ -249,7 +249,7 @@ table.dhtmlxLayoutPolyContainer_dhx_skyblue td.dhtmlxLayoutSinglePoly div.dhtmlx
 	position: absolute;
 	width: 100%;
 	bottom: 1px;
-	bottom=-1px;
+	bottom:-1px;
 	border-bottom: 1px solid #a4bed4;
 }
 /* inner objects */
@@ -401,7 +401,7 @@ div.dhxLayout_Cover_dhx_skyblue {
 	amargin-right: 1px;
 }
 .dhtmlxMenu_dhx_skyblue_bottom_border {
-	height=25;
+	height:25px;
 	border-bottom: #C2D5DC 1px solid;
 }
 .dhtmlxToolbar_dhx_skyblue_bottom_top {
@@ -425,7 +425,7 @@ table.dhtmlxLayoutPolyContainer_dhx_skyblue div.dhtmlxLayoutPolyProgressBGIMG {
 	top: 0px;
 	width: 100%;
 	height: 100%;
-	background-image: url("../imgs/dhxlayout_dhx_skyblue/dhxlayout_progress.gif");
+	/*background-image: url("../imgs/dhxlayout_dhx_skyblue/dhxlayout_progress.gif");*/
 	background-repeat: no-repeat;
 	background-position: center center;
 }

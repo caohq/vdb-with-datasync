@@ -91,4 +91,15 @@
 		<dispatcher>FORWARD</dispatcher>
 	</filter-mapping>
 
+	<servlet>
+		<servlet-name>mainServlet</servlet-name>
+		<servlet-class>
+			datasync.controller.MainSevlet
+		</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>mainServlet</servlet-name>
+		<url-pattern>*.do</url-pattern>
+	</servlet-mapping>
+
 </web-app>
