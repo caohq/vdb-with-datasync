@@ -97,9 +97,11 @@ public class MainSevlet extends HttpServlet{
     //获取本地数据源数据路径（路径/文件）
     public List<Object> searchBdDirListPath(HttpServletRequest req, HttpServletResponse res) throws IOException {
         LocalConnDaoService localConnDaoService=new LocalConnDaoService();
+        JSONObject jsonObject = new JSONObject();
         List<Object> list=localConnDaoService.searchBdDirListPathImp(req, res);
         PrintWriter out = res.getWriter();
-        out.println(list);
+        jsonObject.put("list",list);
+        out.println(jsonObject);
         return list;
     }
 
@@ -168,7 +170,7 @@ public class MainSevlet extends HttpServlet{
         datatask.setCreateTime(sdf.format(date));
         datatask.setDataSourceName(res.getParameter("connDataName"));//数据源名称
         if(connDataValueArray.length>2){
-           datatask.setDataTaskType("db");//数据源类型
+           datatask.setDataTaskType(connDataValueArray[connDataValueArray.length-2]);//数据源类型
         }
         datatask.setStatus("0");
         int flag = new DataTaskService().insertDatatask(datatask);
@@ -192,6 +194,17 @@ public class MainSevlet extends HttpServlet{
     public  JSONObject submitFileData(HttpServletRequest req, HttpServletResponse res) throws SQLException {
         JSONObject jsonObject = new JSONObject();
         DataTask datatask = new DataTask();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Date date=new Date();
+        String  connDataName=req.getParameter("connDataName");//本地连接名称
+        String  getCheckedFile=req.getParameter("getCheckedFile");//文件路径
+        String  getLocalTaskName=req.getParameter("getLocalTaskName");//获取任务名称
+        datatask.setCreateTime(sdf.format(date));
+        datatask.setDataSourceName(connDataName);//数据源名称
+        datatask.setDataTaskName(getLocalTaskName);//任务名
+        datatask.setFilePath(getCheckedFile);
+        datatask.setDataTaskType("file");
+        datatask.setStatus("0");
         int flag = new DataTaskService().insertDatatask(datatask);
         return jsonObject;
     }

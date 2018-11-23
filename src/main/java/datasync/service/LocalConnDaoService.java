@@ -11,7 +11,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class LocalConnDaoService {
 
@@ -38,13 +40,13 @@ public class LocalConnDaoService {
         RepositoriesService rs=new RepositoriesService();//getAllRepositories
         String uri=req.getParameter("dirListData");
         List<FileRepository> fileRepository=rs.getAllRepositories(uri);
-        List<Object> listFileName = new ArrayList<Object>();
+        List<Map<Object,Object>> listFileName = new ArrayList<Map<Object, Object>>();
         if (1!=fileRepository.size()){
             for(int j=0;j<fileRepository.size()-1;j++){
                 String path=((LocalRepository) fileRepository.get(j)).getPath();
                 File file = new File(path);
                 if(file.isDirectory()){//判断是否为路径
-                    ArrayList<Object> listFileNameDirs= (ArrayList<Object>) findAllFileDirByPath(file,listFileName);
+                    List<Map<Object, Object>> listFileNameDirs= findAllFileDirByPath(file,listFileName);
                     list.addAll(listFileNameDirs);
                 }else{
                     list.add(file.getName());
@@ -55,7 +57,7 @@ public class LocalConnDaoService {
     }
 
     //获取路径下所有文件-递归
-    public List<Object> findAllFileDirByPath(File file, List<Object> list){
+    public List<Map<Object,Object>> findAllFileDirByPath(File file, List<Map<Object,Object>> list){
         if(file!=null){
             if(file.isDirectory()){
                 File[] fileArray=file.listFiles();
@@ -67,7 +69,9 @@ public class LocalConnDaoService {
                 }
             }
             else{
-                list.add(file.getName());
+                Map<Object,Object> map=new HashMap<Object, Object>();
+                map.put(file,file.getName());
+                list.add(map);
             }
         }
         return list;

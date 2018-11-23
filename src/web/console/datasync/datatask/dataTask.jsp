@@ -32,6 +32,11 @@
             text-align: center;
             vertical-align: middle!important;
         }
+
+        .table {
+            font-size:12px;
+        }
+
         /*.fixed-table-container thead th {*/
              /*line-height: 0px !important;*/
         /*}*/
@@ -41,34 +46,34 @@
     <div>
         <div class="alert alert-info" role="alert" style="margin:0  3px;height: 66px;">
         <!--查询条件 -->
-        <div class="row">
-            <form class="form-inline">
-                <div class="form-group" >
-                    <label >数据类型</label>
-                    <select  id="dataSourceList" class="form-control" style="width: 150px">
-                        <option value="">全部</option>
-                        <option value="db">关系数据库</option>
-                        <option value="file">文件数据库</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label  >状态</label>
-                    <select  id="dataStatusList" class="form-control" style="width: 150px">
-                        <option value="">全部</option>
-                        <option value="1">上传完成</option>
-                        <option value="0">未上传</option>
-                    </select>
-                </div>
-                <button type="button" class="btn blue" style="margin-left: 49px" id="seachTaskSource">查询</button>
-                <button type="button" class="btn green" style="margin-left: 49px" onclick="relCreateTask('settingtask/settingTask.jsp')">新建任务</button>
-            </form>
-        </div>
-        <div class="table_div">
-            <table id="dataTaskTableID" class="table table-bordered" style="text-align: center;">
+            <div class="row">
+                <form class="form-inline">
+                    <div class="form-group" >
+                        <label >数据类型</label>
+                        <select  id="dataSourceList" class="form-control" style="width: 150px">
+                            <option value="">全部</option>
+                            <option value="db">关系数据库</option>
+                            <option value="file">文件数据库</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label  >状态</label>
+                        <select  id="dataStatusList" class="form-control" style="width: 150px">
+                            <option value="">全部</option>
+                            <option value="1">上传完成</option>
+                            <option value="0">未上传</option>
+                        </select>
+                    </div>
+                    <button type="button" class="btn blue" style="margin-left: 49px" id="seachTaskSource">查询</button>
+                    <button type="button" class="btn green" style="margin-left: 49px" onclick="relCreateTask('settingtask/settingTask.jsp')">新建任务</button>
+                </form>
+            </div>
+            <div class="table_div">
+                <table id="dataTaskTableID" class="table table-bordered" style="text-align: center;">
 
-            </table>
+                </table>
+            </div>
         </div>
-    </div>
     </div>
 
     <script type="text/javascript">
@@ -159,7 +164,6 @@
         function relCreateTask(params) {
             parent.goToPage(params);
         }
-
     </script>
 
 </body>
