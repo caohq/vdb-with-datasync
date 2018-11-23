@@ -30,6 +30,9 @@
             text-align: center;
             vertical-align: middle!important;
         }
+        .table {
+            font-size:12px;
+        }
 
         /*.fixed-table-container thead th {*/
              /*line-height: 0px !important;*/
@@ -89,7 +92,6 @@
             },
             success:function (data) {
                 var DataList = JSON.parse(data);
-                debugger
                 loadDataTaskList(DataList.dataTasks);
             },
             error:function () {

@@ -83,22 +83,6 @@
                             设置任务
                         </a>
                     </div>
-                    <div style="background-color: #438AEB;height: 30px;text-align: center ;margin-top: 2px; width: 80%;" >
-                        <a data-href="pages/middleman/table.html" href="javascript:void(0)" style="font-size:20px;text-align:center;display:block;position: relative;top:50%;transform:translateY(-50%);">
-                            数据源管理
-                        </a>
-                    </div>
-                    <div style="background-color: #438AEB;height: 30px;text-align: center ;margin-top: 2px; width: 80%;" >
-                        <a data-href="pages/middleman/table.html" href="javascript:void(0)" style="font-size:20px;text-align:center;display:block;position: relative;top:50%;transform:translateY(-50%);">
-                            用户设置
-                        </a>
-                    </div>
-                    <div style="background-color: #438AEB;height: 30px;text-align: center ;margin-top: 2px; width: 80%;" >
-                        <a data-href="pages/middleman/table.html" href="javascript:void(0)" style="font-size:20px;text-align:center;display:block;position: relative;top:50%;transform:translateY(-50%);">
-                            专题信息
-                        </a>
-                    </div>
-
                 </div>
             </li>
             <label class="lab1" id='lab1'></label>
@@ -118,14 +102,13 @@
 </div>
 
 <script type="text/javascript" src="/console/shared/bootstrap-3.3.7/js/bootstrap-table.js"></script>
-<script type="text/javascript">
 
+<script type="text/javascript">
      // 带参数函数
       function goToPage(param){
         document.getElementById("iframe").src=param;
         $("#myIframe").attr("src",param);
       }
-
 </script>
 
 </body>

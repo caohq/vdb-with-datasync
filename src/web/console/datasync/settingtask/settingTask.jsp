@@ -30,37 +30,6 @@
         TABLE {
             font-size: 10.5pt;
         }
-        /*tbody {*/
-            /*display: table-row-group;*/
-            /*vertical-align: middle;*/
-            /*border-color: inherit;*/
-        /*}*/
-        /*tr {*/
-            /*display: table-row;*/
-            /*vertical-align: inherit;*/
-            /*border-color: inherit;*/
-        /*}*/
-        /*.right_titleleft {*/
-            /*height: 54px;*/
-            /*background: url(/console/shared/images/right_title_bg.jpg) no-repeat right;*/
-            /*width: 143px;*/
-            /*float: left;*/
-        /*}*/
-        /*.right_titlemid {*/
-            /*height: 54px;*/
-            /*padding-top: 23px;*/
-            /*padding-left: 5px;*/
-            /*padding-right: 5px;*/
-            /*background: url(/console/shared/images/right_titlemid_bg.jpg) repeat-x top;*/
-            /*float: left;*/
-        /*}*/
-        /*.right_titleright {*/
-            /*height: 54px;*/
-            /*width: 151px;*/
-            /*background: url(/console/shared/images/right_titleleft_bg.jpg) no-repeat left;*/
-            /*float: left;*/
-            /*margin-left: -5px;*/
-        /*}*/
     </style>
 </head>
 <body style="overflow: auto; height: 400px;">
@@ -267,12 +236,13 @@
                 $('#bdDirDiv').empty();//清空div
                 document.getElementById("bdTableLabel").style.display="block";//显示“选择表资源标签”
                 document.getElementById("bdSubmitButton").style.display="block";//显示“选择表资源标签”
-                var json = data.substr(1,data.length-4);
-                var dataArray=json.split(",");
-                debugger
-                for(var i=0;i<dataArray.length;i++){
-                    //var path=dataArray[i].substr(dataArray[i].indexOf('?')+2,dataArray[i].length);
-                    $("#bdDirDiv").append("<div style='width: 300px;float:left;'><input type='checkbox' value='"+dataArray[i]+"'>"+dataArray[i]+"</input></div>");
+                var obj=JSON.parse(data).list;
+                for (var i=0;i<obj.length;i++){
+                  for (var prop in obj[i]) {
+                      if (obj[i].hasOwnProperty(prop)) {
+                          $("#bdDirDiv").append("<div style='width: 300px;float:left;'><input type='checkbox' value='"+prop+"'>"+obj[i][prop]+"</input></div>");
+                      }
+                  }
                 }
             },
             error:function () {
@@ -388,7 +358,6 @@
     //数据源（数据库）任务新建检测
     function checkTaskData() {
         var checked=true;
-        var taskName = $("#fileName").val();//获取弹出框内任务名称
         var sql=$('#sqlInputBox').val();//获取sql语句
         var createNewTableName=$('#createNewTableName').val();//获取新建表名
         var checkedValue=getChecedValue();
@@ -402,27 +371,42 @@
             alert("请至少输入sql语句或选择表资源！");
             return;
         }
-
         return checked;
     }
 
     //本地文件任务提交
     function submitLocalFileData(){
-        $('#createLocalFileModal').modal('show');
+        var getCheckedFile=getChecedValue();//获取选中的文件
+        if(getCheckedFile=="" || getCheckedFile ==null){
+            alert("请选择文件！");
+            return;
+        }else{
+          $('#createLocalFileModal').modal('show');
+        }
         return;
     }
 
     // 关闭弹框， 获取输入值，然后执行逻辑--本地
     $("#createLocalFileSureBut").click(function (){
-        var connDataName = $("#selectId option:selected")[0].text;//获取数据源
-        var connDataValue = $("#selectId option:selected")[0].value;//获取数据源value
+        var connDataName = $("#selectBdDirID  option:selected")[0].text;//获取数据源
+        var connDataValue = $("#selectBdDirID  option:selected")[0].value;//获取数据源value
+        var getCheckedFile=getChecedValue();//获取选中的文件
+        var getLocalTaskName=$("#localFileName").val();//获取本地新建任务名称
+        if(getLocalTaskName==null || getLocalTaskName==""){
+            $('#checkedLocalFileName').html("请输入任务名称！");
+            return;
+        }
         $.ajax({
             type:"POST",
             url:"/submitFileData.do",
             data:{
-
+                connDataName:connDataName,
+                getCheckedFile:getCheckedFile,
+                getLocalTaskName:getLocalTaskName
             },
             success:function (dataSession) {
+                $("#createLocalFileModal").modal("hide");//隐藏弹出框
+                parent.goToPage("datatask/dataTask.jsp");
 
             },
             error:function () {
@@ -430,6 +414,16 @@
             }
         })
     });
+
+    //检测任务名称
+    $("#localFileName").bind("input propertychange",function(){
+        //你要触发的函数内容
+        if($("#localFileName").val()!="" && $("#localFileName").val()!=null){
+            $('#checkedLocalFileName').empty();
+        }else{
+            $('#checkedLocalFileName').html("请输入任务名称！");
+        }
+    })
 
 
 </script>
