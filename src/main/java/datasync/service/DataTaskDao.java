@@ -14,8 +14,6 @@ import java.util.List;
 
 
 public class DataTaskDao {
-
-
     public int insertDatatask(final DataTask datatask){
         boolean flag = false;
         final String sql = "insert into t_datatask(dataSourceName,dataTaskName,dataTaskType," +

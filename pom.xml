@@ -422,7 +422,9 @@
             <version>4.2</version>
         </dependency>
     </dependencies>
+
     <repositories>
+
         <repository>
             <id>central</id>
             <name>Central Repository</name>
@@ -432,10 +434,13 @@
                 <enabled>false</enabled>
             </snapshots>
         </repository>
+
         <repository>
             <id>PlanetMirror</id>
             <name>Planet Mirror</name>
             <url>http://nexus.talanlabs.com/content/repositories/releases/</url>
         </repository>
+
     </repositories>
+
 </project>

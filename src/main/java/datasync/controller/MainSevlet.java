@@ -7,7 +7,6 @@ import datasync.service.LocalConnDaoService;
 import net.sf.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import javax.annotation.Resource;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
