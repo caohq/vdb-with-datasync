@@ -117,7 +117,4 @@ public class DataTask {
     public void setSqlFilePath(String sqlFilePath) {
         this.sqlFilePath = sqlFilePath;
     }
-
-
-
 }

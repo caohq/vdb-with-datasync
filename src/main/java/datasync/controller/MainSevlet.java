@@ -4,6 +4,7 @@ import datasync.entity.DataTask;
 import datasync.service.DataConnDaoService;
 import datasync.service.DataTaskService;
 import datasync.service.LocalConnDaoService;
+import datasync.service.UploadTaskService;
 import net.sf.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,10 +71,29 @@ public class MainSevlet extends HttpServlet{
             } catch (SQLException e) {
                 e.printStackTrace();
             }
-        }else{
+        } else if("/uploadTask.do".equals(path)) {  //处理上传按钮的点击事件，上传数据任务的数据， 此url需要一个请求参数taskId。
+            uploadTask(req, res);
+        }
+        else{
             //错误路径
             throw new RuntimeException("查无此页");
         }
+    }
+
+    /*
+     * 根据taskId完成task的上传任务, 任务上传包括 导出数据、打包数据、上传数据到中心端，中心端导入数据到存放数据的数据库
+     *
+     */
+    public boolean uploadTask(HttpServletRequest req, HttpServletResponse res)
+    {
+        String taskId = req.getParameter("taskId");
+        UploadTaskService uploadTaskService = new UploadTaskService();
+        uploadTaskService.exportTaskData(taskId);
+        uploadTaskService.packTaskData(taskId);
+        uploadTaskService.uploadTaskData(taskId);
+        uploadTaskService.importTaskData(taskId);
+
+        return true;
     }
 
     //查询数据库名称列表

@@ -24,7 +24,6 @@
         </div>
         <div class="div_foot">$requestLocale.message("vdb.copyright")</div>
         <div class="div_footright"></div>
-        
 </div>
     
 </body>
