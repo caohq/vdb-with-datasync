@@ -71,7 +71,7 @@
                 <select id="selectBdDirID"  class="form-control selectpicker" style="width: 200px;display: inline !important;"></select>
                 <div>
                     <label id="bdTableLabel">&nbsp;&nbsp;请选择资源</label>
-                    <div id="bdDirDiv" style="width: 70%;margin-left: 105px;height:200px;overflow-y:auto;"></div>
+                    <div id="bdDirDiv" style="margin-left: 40px;height:244px;overflow-y:auto;"></div>
                 </div>
             </div>
             <div style="width: 100%;height: 40px;float: right;">

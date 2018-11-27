@@ -12,10 +12,13 @@
     <title>Insert title here</title>
     <script type="text/javascript" src="/console/shared/js/jquery-3.2.1.min.js " ></script>
     <script src="/console/shared/bootstrap-3.3.7/js/bootstrap.js"></script>
+    <script src="/console/datasync/js/bootbox.min.js"></script>
+    <script src="/console/shared/bootstrap-toastr/toastr.js"></script>
     <link rel="stylesheet" type="text/css" href="/console/shared/bootstrap-3.3.7/css/bootstrap.css">
     <link rel="stylesheet" type="text/css" href="/console/shared/bootstrap-3.3.7/css/bootstrap-table.min.css">
     <link rel="stylesheet" type="text/css" href="/console/datasync/css/createTask.css" />
     <link rel="stylesheet" type="text/css" href="/console/datasync/css/style.min.css" />
+    <link rel="stylesheet" type="text/css" href="/console/shared/bootstrap-toastr/toastr.css" />
     <style>
         .alert-info {
             background-color: #f0f6fe;
@@ -47,29 +50,32 @@
 
 <div>
 
-
     <div class="alert alert-info" role="alert" style="margin:0  3px;height: 66px;">
         <!--查询条件 -->
         <div class="row">
             <form class="form-inline">
-                <div class="form-group" >
+                <div class="form-group" style="margin-left: 10px;">
+                    <label >任务标识</label>
+                    <input type="text" id="SearchDataTaskName" class="form-control sqlStatements" style="width: 160px;"/>
+                </div>
+                <div class="form-group" style="margin-left: 10px;">
                     <label >数据类型</label>
                     <select  id="dataSourceList" class="form-control" style="width: 150px">
-                        <option value="">全部</option>
+                        <option value="">请选择...</option>
                         <option value="db">关系数据库</option>
                         <option value="file">文件数据库</option>
                     </select>
                 </div>
-                <div class="form-group">
-                    <label  >状态</label>
+                <div class="form-group" style="margin-left: 10px;">
+                    <label>任务状态</label>
                     <select  id="dataStatusList" class="form-control" style="width: 150px">
-                        <option value="">全部</option>
+                        <option value="">请选择...</option>
                         <option value="1">上传完成</option>
                         <option value="0">未上传</option>
                     </select>
                 </div>
-                <button type="button" class="btn blue" style="margin-left: 49px" id="seachTaskSource">查询</button>
-                <button type="button" class="btn green" style="margin-left: 49px" onclick="relCreateTask('settingtask/settingTask.jsp')">新建任务</button>
+                <button type="button" class="btn blue" style="margin-left: 20px" onclick="searchDataBySql()">查询</button>
+                <button type="button" class="btn green" style="margin-left: 10px" onclick="relCreateTask('settingtask/settingTask.jsp')">新建任务</button>
             </form>
         </div>
         <div class="table_div">
@@ -86,11 +92,18 @@
     searchDataBySql();
     //查询任务列表
     function searchDataBySql(){
+        var SearchDataTaskName=$("#SearchDataTaskName").val();//任务标识
+        var dataSourceList=$("#dataSourceList  option:selected")[0].value;//数据类型
+        var dataStatusList=$("#dataStatusList").val();//任务状态
+
         $.ajax({
             type:"POST",
             url:"/searchDataTaskList.do",
             cache: false,
             data:{
+                SearchDataTaskName:SearchDataTaskName,
+                dataSourceList:dataSourceList,
+                dataStatusList:dataStatusList
             },
             success:function (data) {
                 var DataList = JSON.parse(data);
@@ -162,7 +175,7 @@
             // '<button class="btn btn-default details btn-xs" value="'+row.id+'" onclick="detail(value)">导出</button>&nbsp;',
             '<button class="btn btn-default details btn-xs" value="'+row.dataTaskId+'" onclick="ftpUpload(value)">上传</button>&nbsp;',
             '<button class="btn btn-default details btn-xs" value="'+row.dataTaskId+'" onclick="viewDtails(value)">查看</button>&nbsp;',
-            '<button class="btn btn-default delete btn-xs" onclick="deleteThis(this)" data-id="'+row.id+'">删除</button>',
+            '<button class="btn btn-default delete btn-xs" onclick="deleteThis(this)" data-id="'+row.dataTaskId+'">删除</button>'
         ].join('');
     }
 
@@ -180,25 +193,16 @@
             data:{},
             async:"false",
             success:function(data){
-
             },
             error:function () {
                 console.log("请求失败")
             }
-
         })
     };
 
     //查看详情按钮
     function viewDtails(value){
-       // $("#fileModal").modal('show');
-        openModal(value);
-    }
-
-    //打开模态框
-    function openModal(value){
         $("#taskIdHidden").val(value);
-        debugger
         var fatherBody = $(window.top.document.body);
         var id = 'pages';
         var dialog = $('#' + id);
@@ -214,6 +218,33 @@
 
         });
         fatherBody.append("<div id='backdropId' class='modal-backdrop fade in'></div>");
+    }
+
+    //删除
+    function deleteThis(el) {
+        bootbox.confirm("<span style='font-size: 16px'>确认要删除此条记录吗?</span>",function (r) {
+            if (r) {
+                el.parentNode.parentNode.remove(true);
+                debugger
+                var id = $(el).attr("data-id");//任务id
+                $.ajax({
+                    type: "POST",
+                    url: "/deleteTaskById.do",
+                    data: {
+                        taskId: id
+                    },
+                    async: "false",
+                    success: function (data) {
+                        toastr["success"]("删除成功");
+                    },
+                    error: function () {
+                        console.log("请求失败")
+                    }
+                })
+            } else {
+
+            }
+        })
     };
 
 </script>

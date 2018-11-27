@@ -3,15 +3,18 @@ package datasync.service;
 import datasync.entity.DataTask;
 import datasync.mapper.DataTaskMapper;
 import org.apache.commons.dbcp.BasicDataSource;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 
-import javax.xml.crypto.Data;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.List;
+import java.util.Map;
 
 
 public class DataTaskDao {
@@ -54,17 +57,31 @@ public class DataTaskDao {
         return generatedId;
     }
 
-    public List<DataTask> getDataTaskList(String connData){
-//        StringBuilder sb = new StringBuilder();
-//        sb.append("select * from t_datatask");
-        String sql = "select * from t_datatask order  by  DataTaskId desc ";
+    public List<DataTask> getDataTaskList(Map<Object,Object> params){
+        StringBuffer sql = new StringBuffer();
+        sql.append("select * from t_datatask t where 1=1 ");
+        //String sql = "select * from t_datatask order  by  DataTaskId desc ";
+        if(StringUtils.isNotEmpty((String) params.get("SearchDataTaskName"))) {//任务标识
+            sql.append("  and t.dataTaskName like  '%"+params.get("SearchDataTaskName")+"%'");
+        }
+        if(StringUtils.isNotEmpty((String) params.get("dataSourceList"))) {//数据类型
+            if("file".equals((String) params.get("dataSourceList"))){
+            sql.append("  and t.dataTaskType = '"+params.get("dataSourceList")+"'");
+            }else{
+                sql.append("  and t.dataTaskType != 'file'");
+            }
+        }
+        if(StringUtils.isNotEmpty((String) params.get("dataStatusList"))) {//状态
+            sql.append("  and t.status = '"+params.get("dataStatusList")+"'");
+        }
+        sql.append(" order  by  DataTaskId desc");
         JdbcTemplate jdbcTemplate=new JdbcTemplate();
         BasicDataSource ds=new BasicDataSource();
         ds.setDriverClassName("org.sqlite.JDBC");
         ds.setUrl("jdbc:sqlite::resource:vdb_datasync.db");
 //        ds.setUrl("jdbc:sqlite:D:/workspace/vdb2.0/vdb-2.0/src/main/resources/DataSyncSQLite3.db");
         jdbcTemplate.setDataSource(ds);
-        List<DataTask> DataTaskList = jdbcTemplate.query(sql, new DataTaskMapper());
+        List<DataTask> DataTaskList = jdbcTemplate.query(sql+"", new DataTaskMapper());
 
         return DataTaskList;
     }
@@ -80,5 +97,18 @@ public class DataTaskDao {
         jdbcTemplate.setDataSource(ds);
         List<DataTask> list = jdbcTemplate.query(sql, new Object[]{taskId}, new DataTaskMapper());
         return list.size() > 0 ? list.get(0) : null;
+    }
+
+    //根据id删除task
+    public int deleteTaskById(String taskId){
+        String sql = "delete from t_datatask where  dataTaskId = "+taskId+"";
+        JdbcTemplate jdbcTemplate=new JdbcTemplate();
+        BasicDataSource ds=new BasicDataSource();
+        ds.setDriverClassName("org.sqlite.JDBC");
+        ds.setUrl("jdbc:sqlite::resource:vdb_datasync.db");
+        jdbcTemplate.setDataSource(ds);
+        int result = jdbcTemplate.update(sql);//query(sql, new Object[]{taskId}, new DataTaskMapper());
+
+        return result;
     }
 }
