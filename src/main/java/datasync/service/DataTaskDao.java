@@ -9,11 +9,14 @@ import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 
+import javax.xml.crypto.Data;
 import java.sql.*;
 import java.util.List;
 
 
 public class DataTaskDao {
+
+
     public int insertDatatask(final DataTask datatask){
         boolean flag = false;
         final String sql = "insert into t_datatask(dataSourceName,dataTaskName,dataTaskType," +
@@ -64,5 +67,18 @@ public class DataTaskDao {
         List<DataTask> DataTaskList = jdbcTemplate.query(sql, new DataTaskMapper());
 
         return DataTaskList;
+    }
+
+    //根据id获取任务对象
+    public DataTask getDataTaskInfById(String taskId){
+        DataTask dataTask=new DataTask();
+        String sql = "select * from t_datatask where dataTaskId = ?";
+        JdbcTemplate jdbcTemplate=new JdbcTemplate();
+        BasicDataSource ds=new BasicDataSource();
+        ds.setDriverClassName("org.sqlite.JDBC");
+        ds.setUrl("jdbc:sqlite::resource:vdb_datasync.db");
+        jdbcTemplate.setDataSource(ds);
+        List<DataTask> list = jdbcTemplate.query(sql, new Object[]{taskId}, new DataTaskMapper());
+        return list.size() > 0 ? list.get(0) : null;
     }
 }

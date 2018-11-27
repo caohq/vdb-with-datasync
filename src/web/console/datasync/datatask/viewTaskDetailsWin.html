@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>任务详情</title>
+</head>
+
+<body>
+<!-- 模态框（Modal） -->
+<div id="fileModal" class="modal fade" tabindex="-1" data-width="400">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-primary">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">任务详情查看</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal">
+                    <div class="form-group">
+                        <label  class="col-sm-3 control-label">任务标识:</label>
+                        <div class="col-sm-8 modediv" id="file-dataTaskName"></div>
+                    </div>
+                    <div class="form-group">
+                        <label  class="col-sm-3 control-label">数据源ID:</label>
+                        <div class="col-sm-8 modediv" id="file-dataSourceId"></div>
+                    </div>
+                    <!--<%&#45;&#45;<div class="form-group">-->
+                    <!--<label  class="col-sm-3 control-label">表名:</label>-->
+                    <!--<div class="col-sm-8 modediv" id="file-tableName"></div>-->
+                <!--</div>-->
+                    <!--<div class="form-group">-->
+                        <!--<label  class="col-sm-3 control-label">SQL语句:</label>-->
+                        <!--<div class="col-sm-8 modediv" id="file-sqlString"></div>-->
+                    <!--</div>-->
+                    <!--<div class="form-group">-->
+                        <!--<label  class="col-sm-3 control-label">逻辑表名:</label>-->
+                        <!--<div class="col-sm-8 modediv" id="file-sqlTableNameEn"></div>-->
+                    <!--</div>&#45;&#45;%>-->
+                    <div class="form-group">
+                        <label  class="col-sm-3 control-label">文件路径:</label>
+                        <div class="col-sm-8 modediv" id="file-filePath"></div>
+                    </div>
+                    <div class="form-group">
+                        <label  class="col-sm-3 control-label">创建时间:</label>
+                        <div class="col-sm-8 modediv" id="file-createTime"></div>
+                    </div>
+                    <div class="form-group">
+                        <label  class="col-sm-3 control-label">创建者:</label>
+                        <div class="col-sm-8 modediv" id="file-creator"></div>
+                    </div>
+                    <!--<%&#45;&#45;<div class="form-group">-->
+                    <!--<label  class="col-sm-3 control-label">上传进度:</label>-->
+                    <!--<div class="col-sm-8"></div>-->
+                <!--</div>&#45;&#45;%>-->
+                    <div class="form-group">
+                        <label  class="col-sm-3 control-label">任务状态:</label>
+                        <div class="col-sm-8 modediv" id="file-status"></div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <!--<button type="button" class="btn green" data-dismiss="modal" ><i-->
+                        <!--class="glyphicon glyphicon-ok"></i>确认-->
+                <!--</button>-->
+                <button type="button" data-dismiss="modal" class="btn  btn-danger">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    $("#fileModal").modal("show");
+    $("#fileModal").on("hide.bs.modal",function(){
+        $(window.top.document.body)[0].ownerDocument.getElementById("pages").remove();
+        $(window.top.document.body)[0].ownerDocument.getElementById("backdropId").remove();
+    });
+
+    $(function(){
+        var taskId=this.document.activeElement.contentDocument.getElementById("taskIdHidden").value;
+        debugger
+            $.ajax({
+                type: "post",
+                url:"/searchTaskDetailById.do",
+                cache: false,
+                data: {taskId: taskId},
+                success: function(data) {
+
+
+                },
+                error: function() {
+                    alert("出错了");
+                }
+            });
+
+        }
+    );
+
+
+
+
+</script>
+</body>
+
+</html>

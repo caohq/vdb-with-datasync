@@ -15,5 +15,9 @@ public class DataTaskService {
         return new DataTaskDao().getDataTaskList(connData);
     }
 
+    public DataTask getDataTaskInfById(String id){
+        return new DataTaskDao().getDataTaskInfById(id);
+    }
+
 
 }

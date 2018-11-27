@@ -109,7 +109,7 @@
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpcore</artifactId>
-            <version>4.0.1</version>
+            <version>4.4.4</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/net.sourceforge.jexcelapi/jxl -->
         <dependency>
@@ -421,10 +421,20 @@
             <artifactId>sqljdbc</artifactId>
             <version>4.2</version>
         </dependency>
+        <!--fastjson-->
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>1.2.47</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>4.5.2</version>
+        </dependency>
     </dependencies>
-
     <repositories>
-
         <repository>
             <id>central</id>
             <name>Central Repository</name>
@@ -434,13 +444,10 @@
                 <enabled>false</enabled>
             </snapshots>
         </repository>
-
         <repository>
             <id>PlanetMirror</id>
             <name>Planet Mirror</name>
             <url>http://nexus.talanlabs.com/content/repositories/releases/</url>
         </repository>
-
     </repositories>
-
 </project>

@@ -1,21 +1,29 @@
 package datasync.controller;
 
 import datasync.entity.DataTask;
+import datasync.entity.FtpUtil;
 import datasync.service.DataConnDaoService;
 import datasync.service.DataTaskService;
 import datasync.service.LocalConnDaoService;
-import datasync.service.UploadTaskService;
 import net.sf.json.JSONObject;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import javax.annotation.Resource;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.xml.crypto.Data;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.charset.Charset;
 import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -71,29 +79,14 @@ public class MainSevlet extends HttpServlet{
             } catch (SQLException e) {
                 e.printStackTrace();
             }
-        } else if("/uploadTask.do".equals(path)) {  //处理上传按钮的点击事件，上传数据任务的数据， 此url需要一个请求参数taskId。
-            uploadTask(req, res);
-        }
-        else{
+        }else if("/ftpLocalUpload.do".equals(path)){
+            ftpLocalUpload(req,res);
+        }else if ("/searchTaskDetailById.do".equals(path)){
+            searchTaskDetailById(req,res);
+        }else{
             //错误路径
             throw new RuntimeException("查无此页");
         }
-    }
-
-    /*
-     * 根据taskId完成task的上传任务, 任务上传包括 导出数据、打包数据、上传数据到中心端，中心端导入数据到存放数据的数据库
-     *
-     */
-    public boolean uploadTask(HttpServletRequest req, HttpServletResponse res)
-    {
-        String taskId = req.getParameter("taskId");
-        UploadTaskService uploadTaskService = new UploadTaskService();
-        uploadTaskService.exportTaskData(taskId);
-        uploadTaskService.packTaskData(taskId);
-        uploadTaskService.uploadTaskData(taskId);
-        uploadTaskService.importTaskData(taskId);
-
-        return true;
     }
 
     //查询数据库名称列表
@@ -174,7 +167,7 @@ public class MainSevlet extends HttpServlet{
         return list;
     }
 
-
+   //新建数据库任务
     public JSONObject submitSqlData(HttpServletRequest res, HttpServletResponse req) throws SQLException {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         Date date=new Date();
@@ -201,6 +194,7 @@ public class MainSevlet extends HttpServlet{
         return jsonObject;
     }
 
+    //数据任务---获取任务列表
     public JSONObject searchDataTaskList(HttpServletRequest req, HttpServletResponse res) throws IOException {
         PrintWriter out = res.getWriter();
         JSONObject jsonObject = new JSONObject();
@@ -211,6 +205,7 @@ public class MainSevlet extends HttpServlet{
         return jsonObject;
     }
 
+    //新建任务--本地文件上传任务
     public  JSONObject submitFileData(HttpServletRequest req, HttpServletResponse res) throws SQLException {
         JSONObject jsonObject = new JSONObject();
         DataTask datatask = new DataTask();
@@ -227,6 +222,114 @@ public class MainSevlet extends HttpServlet{
         datatask.setStatus("0");
         int flag = new DataTaskService().insertDatatask(datatask);
         return jsonObject;
+    }
+
+
+    public  int ftpLocalUpload(HttpServletRequest req, HttpServletResponse res){
+        com.alibaba.fastjson.JSONObject jsonObject=new com.alibaba.fastjson.JSONObject();
+        int dataTaskId=1;
+        String processId="";
+        String host = "10.0.86.77";
+        String userName = "ftpUsercode2";
+        String password = "ftpPasswordcode2";
+        String port = "21";
+        String remoteFilepath = "/";
+        String subjectCode = "code2";
+        String portalUrl ="10.0.86.77/portal";
+        FtpUtil ftpUtil = new FtpUtil();
+        DataTask dataTask = new DataTaskService().getDataTaskInfById("6");
+        logger.info("数据任务名称为：本地测试任务\n");
+        try {
+            ftpUtil.connect(host, Integer.parseInt(port), userName, password);
+            String result = "";
+            if(dataTask.getDataTaskType().equals("file")){
+                String[] localFileList = dataTask.getFilePath().split(",");//D:%_%workspace%_%workspace_datasync%_%datasync%_%out%_%artifacts%_%drsr_war_exploded%_%zipFile%_%code2_3.zip
+                result = ftpUtil.upload(host, userName, password, port, localFileList, processId,remoteFilepath,dataTask,subjectCode).toString();
+                if(localFileList.length == 0){
+                    return 0;
+                }
+            }else if(dataTask.getDataTaskType().equals("mysql")){
+                remoteFilepath = remoteFilepath+subjectCode+"_"+dataTask.getDataTaskId()+"/";
+                String[] localFileList = {dataTask.getFilePath()};
+                result = ftpUtil.upload(host, userName, password, port, localFileList, processId,remoteFilepath,dataTask,subjectCode).toString();
+                if(localFileList.length == 0){
+                    return 0;
+                }
+            }
+            logger.info("ftpDataTaskId"+dataTask.getDataTaskId()+"上传状态:" + result + "\n");
+            ftpUtil.disconnect();
+            if(result.equals("Upload_New_File_Success")||result.equals("Upload_From_Break_Succes")){
+                String dataTaskString = jsonObject.toJSONString(dataTask);
+                com.alibaba.fastjson.JSONObject requestJSON=new com.alibaba.fastjson.JSONObject();
+                requestJSON.put("dataTask",dataTaskString);
+                requestJSON.put("subjectCode",subjectCode);
+                String requestString = jsonObject.toJSONString(requestJSON);
+                HttpClient httpClient = null;
+                HttpPost postMethod = null;
+                HttpResponse response = null;
+                try {
+                    httpClient = HttpClients.createDefault();
+//                    postMethod = new HttpPost("http://localhost:8080/portal/service/getDataTask");
+                    postMethod = new HttpPost("http://"+portalUrl+"/service/getDataTask");
+//                    postMethod = new HttpPost(portalUrl);
+                    postMethod.addHeader("Content-type", "application/json; charset=utf-8");
+//                    postMethod.addHeader("X-Authorization", "AAAA");//设置请求头
+                    postMethod.setEntity(new StringEntity(requestString, Charset.forName("UTF-8")));
+                    response = httpClient.execute(postMethod);//获取响应
+                    int statusCode = response.getStatusLine().getStatusCode();
+                    System.out.println("HTTP Status Code:" + statusCode);
+                    if (statusCode != HttpStatus.SC_OK) {
+                        System.out.println("HTTP请求未成功！HTTP Status Code:" + response.getStatusLine());
+                    }
+                    HttpEntity httpEntity = response.getEntity();
+                    String reponseContent = EntityUtils.toString(httpEntity);
+                    EntityUtils.consume(httpEntity);//释放资源
+                    System.out.println("响应内容：" + reponseContent);
+                    if(reponseContent.equals("1")){
+                        dataTask.setStatus("1");
+                      //  dataTaskService.update(dataTask);
+                        logger.info("导入成功"+ "\n");
+                        logger.info("=========================上传流程结束========================" + "\r\n"+"\n\n\n\n\n");
+                        return 1;
+                    }else{
+                        logger.info("导入失败"+ "\n");
+                        logger.info("=========================上传流程结束========================" + "\r\n"+"\n\n\n\n\n");
+                        return 0;
+                    }
+                } catch (IOException e) {
+                    logger.info("导入失败"+ "\n");
+                    logger.error("导入异常IOException:"+e+ "\n");
+                    logger.info("=========================上传流程结束========================" + "\r\n"+"\n\n\n\n\n");
+                    e.printStackTrace();
+                }
+            }else{
+                logger.info("导入失败"+ "\n");
+                logger.info("=========================上传流程结束========================" + "\r\n"+"\n\n\n\n\n");
+                return 0;
+            }
+        } catch (IOException e) {
+            logger.error("连接FTP出错:"+e+ "\n");
+            logger.info("=========================上传流程结束========================" + "\r\n"+"\n\n\n\n\n");
+            System.out.println("连接FTP出错：" + e.getMessage());
+            return 0;
+        }
+
+
+
+
+        return 1;
+
+    }
+
+    public JSONObject searchTaskDetailById(HttpServletRequest req, HttpServletResponse res){
+        String taskId=req.getParameter("taskId");
+        JSONObject jsonObject = new JSONObject();
+        DataTask dataTask = new DataTaskService().getDataTaskInfById(taskId);
+
+      //  List
+
+        return  jsonObject;
+
     }
 
 }
