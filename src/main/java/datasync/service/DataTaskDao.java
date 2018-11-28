@@ -19,7 +19,7 @@ import java.util.Map;
 
 public class DataTaskDao {
 
-
+    //添加任务
     public int insertDatatask(final DataTask datatask){
         boolean flag = false;
         final String sql = "insert into t_datatask(dataSourceName,dataTaskName,dataTaskType," +
@@ -52,6 +52,7 @@ public class DataTaskDao {
         return generatedId;
     }
 
+    //查询任务列表
     public List<DataTask> getDataTaskList(Map<Object,Object> params){
         StringBuffer sql = new StringBuffer();
         sql.append("select * from t_datatask t where 1=1 ");

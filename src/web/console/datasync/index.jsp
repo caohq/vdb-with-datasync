@@ -86,7 +86,7 @@
                 </div>
             </li>
             <label class="lab1" id='lab1'></label>
-            <li class="li2" style="height: 482px;">
+            <li class="li2" style="height: 100%;">
                 <div  style="float: left;width: 100%;height: 100%;min-height: 300px;overflow:hidden;margin-left: 6px;" >
                 <div class="right_top_div" style="width: 100%;height: 5%;">
                     <div class="right_top_left_div">
@@ -94,7 +94,7 @@
                         <font style="color:#fffd4d;font-size:12px"><strong>首页 -&gt; 目录配置</strong></font>
                     </div>
                 </div>
-                <iframe src="settingtask/settingTask.jsp" width="100%" style="border:none;height: 95%;" id="iframe"></iframe>
+                <iframe src="settingtask/settingTask.jsp" width="100%" style="border:none;height: 85%;" id="iframe"></iframe>
                 </div>
             </li>
         </ul>
@@ -108,7 +108,7 @@
     // 切换iframe页面
       function goToPage(param){
         document.getElementById("iframe").src=param;
-        $("#myIframe").attr("src",param);
+        //$("#myIframe").attr("src",param);
       }
 </script>
 

@@ -69,7 +69,7 @@
 <div  id="footDiv" class="foot_div" style="z-index:99999999;" >
     <div id="footTopDiv" class="foot_top" style="height: 10px;" ></div>
     <div class="foot_div" style="height: 38px !important;">
-        Powered By 中国科学院计算机网络信息中心·科学数据中心 2010年5月
+        Powered By 中国科学院计算机网络信息中心·科学数据中心 2018年12月
     </div>
 </div>
 </body>
