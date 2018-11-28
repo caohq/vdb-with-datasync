@@ -86,12 +86,12 @@ public class MainSevlet extends HttpServlet{
      */
     public boolean uploadTask(HttpServletRequest req, HttpServletResponse res)
     {
-        String taskId = req.getParameter("taskId");
+        String dataTaskId = req.getParameter("taskId");
         UploadTaskService uploadTaskService = new UploadTaskService();
-        uploadTaskService.exportTaskData(taskId);
-        uploadTaskService.packTaskData(taskId);
-        uploadTaskService.uploadTaskData(taskId);
-        uploadTaskService.importTaskData(taskId);
+        uploadTaskService.exportTaskData(req, dataTaskId);
+        uploadTaskService.packTaskData(dataTaskId);
+        uploadTaskService.uploadTaskData(dataTaskId);
+        uploadTaskService.importTaskData(dataTaskId);
 
         return true;
     }

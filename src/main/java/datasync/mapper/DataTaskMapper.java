@@ -10,7 +10,6 @@ import java.sql.SQLException;
  * Created by xiajl on 2018/9/30 .
  */
 public class DataTaskMapper implements RowMapper {
-
     @Override
     public Object mapRow(ResultSet resultSet, int i) throws SQLException {
         DataTask dataTask = new DataTask();
