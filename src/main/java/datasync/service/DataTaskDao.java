@@ -1,8 +1,8 @@
 package datasync.service;
 
+import datasync.connection.SqlLiteDataConnection;
 import datasync.entity.DataTask;
 import datasync.mapper.DataTaskMapper;
-import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
@@ -25,14 +25,9 @@ public class DataTaskDao {
         final String sql = "insert into t_datatask(dataSourceName,dataTaskName,dataTaskType," +
                 "tableName,sqlString,sqlTableNameEn,sqlFilePath,filePath,createTime,creator,status) " +
                 "VALUES (?,?,?,?,?,?,?,?,?,?,?)";
-
         KeyHolder keyHolder = new GeneratedKeyHolder();
-        JdbcTemplate jdbcTemplate=new JdbcTemplate();
-        BasicDataSource ds=new BasicDataSource();
-        ds.setDriverClassName("org.sqlite.JDBC");
-        ds.setUrl("jdbc:sqlite::resource:vdb_datasync.db");
-//        ds.setUrl("jdbc:sqlite:D:/workspace/vdb2.0/vdb-2.0/src/main/resources/DataSyncSQLite3.db");
-        jdbcTemplate.setDataSource(ds);
+        SqlLiteDataConnection sqlLiteDataConnection=new SqlLiteDataConnection();
+        JdbcTemplate jdbcTemplate=sqlLiteDataConnection.makeJdbcTemplate();
         jdbcTemplate.update(new PreparedStatementCreator() {
             @Override
             public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
@@ -75,12 +70,8 @@ public class DataTaskDao {
             sql.append("  and t.status = '"+params.get("dataStatusList")+"'");
         }
         sql.append(" order  by  DataTaskId desc");
-        JdbcTemplate jdbcTemplate=new JdbcTemplate();
-        BasicDataSource ds=new BasicDataSource();
-        ds.setDriverClassName("org.sqlite.JDBC");
-        ds.setUrl("jdbc:sqlite::resource:vdb_datasync.db");
-//        ds.setUrl("jdbc:sqlite:D:/workspace/vdb2.0/vdb-2.0/src/main/resources/DataSyncSQLite3.db");
-        jdbcTemplate.setDataSource(ds);
+        SqlLiteDataConnection sqlLiteDataConnection=new SqlLiteDataConnection();
+        JdbcTemplate jdbcTemplate=sqlLiteDataConnection.makeJdbcTemplate();
         List<DataTask> DataTaskList = jdbcTemplate.query(sql+"", new DataTaskMapper());
 
         return DataTaskList;
@@ -90,11 +81,8 @@ public class DataTaskDao {
     public DataTask getDataTaskInfById(String taskId){
         DataTask dataTask=new DataTask();
         String sql = "select * from t_datatask where dataTaskId = ?";
-        JdbcTemplate jdbcTemplate=new JdbcTemplate();
-        BasicDataSource ds=new BasicDataSource();
-        ds.setDriverClassName("org.sqlite.JDBC");
-        ds.setUrl("jdbc:sqlite::resource:vdb_datasync.db");
-        jdbcTemplate.setDataSource(ds);
+        SqlLiteDataConnection sqlLiteDataConnection=new SqlLiteDataConnection();
+        JdbcTemplate jdbcTemplate=sqlLiteDataConnection.makeJdbcTemplate();
         List<DataTask> list = jdbcTemplate.query(sql, new Object[]{taskId}, new DataTaskMapper());
         return list.size() > 0 ? list.get(0) : null;
     }
@@ -102,13 +90,9 @@ public class DataTaskDao {
     //根据id删除task
     public int deleteTaskById(String taskId){
         String sql = "delete from t_datatask where  dataTaskId = "+taskId+"";
-        JdbcTemplate jdbcTemplate=new JdbcTemplate();
-        BasicDataSource ds=new BasicDataSource();
-        ds.setDriverClassName("org.sqlite.JDBC");
-        ds.setUrl("jdbc:sqlite::resource:vdb_datasync.db");
-        jdbcTemplate.setDataSource(ds);
+        SqlLiteDataConnection sqlLiteDataConnection=new SqlLiteDataConnection();
+        JdbcTemplate jdbcTemplate=sqlLiteDataConnection.makeJdbcTemplate();
         int result = jdbcTemplate.update(sql);//query(sql, new Object[]{taskId}, new DataTaskMapper());
-
         return result;
     }
 }
