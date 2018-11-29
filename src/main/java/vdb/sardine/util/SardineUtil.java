@@ -216,17 +216,10 @@ public class SardineUtil
 	{
 		if (GET_RESOURCES == null)
 		{
-			try
-			{
-				GET_RESOURCES = new StringEntity("<?xml version=\"1.0\" encoding=\"utf-8\" ?>\n" +
-													"<propfind xmlns=\"DAV:\">\n" +
-													"	<allprop/>\n" +
-													"</propfind>", "UTF-8");
-			}
-			catch (UnsupportedEncodingException e)
-			{
-				// Ignored
-			}
+			GET_RESOURCES = new StringEntity("<?xml version=\"1.0\" encoding=\"utf-8\" ?>\n" +
+												"<propfind xmlns=\"DAV:\">\n" +
+												"	<allprop/>\n" +
+												"</propfind>", "UTF-8");
 		}
 
 		return GET_RESOURCES;

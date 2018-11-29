@@ -1,8 +1,8 @@
-package datasync.utils;
+package datasync.entity;
 
-import cn.csdb.drsr.model.DataTask;
-import cn.csdb.drsr.service.ConfigPropertyService;
+
 import com.alibaba.fastjson.JSONObject;
+import datasync.service.ConfigPropertyService;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;

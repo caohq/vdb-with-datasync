@@ -6,7 +6,14 @@ import java.sql.SQLException;
 
 public class MysqlDataConnection {
 
-    public Connection makeConn(String dataConnParams) throws ClassNotFoundException, SQLException {
+    /**
+     *
+     * @param dataConnParams
+     * @return
+     * @throws ClassNotFoundException
+     * @throws SQLException
+     */
+    public static Connection makeConn(String dataConnParams) throws ClassNotFoundException, SQLException {
         String [] dataArray=dataConnParams.replace("$",",").split(",");
         String driver = "com.mysql.jdbc.Driver";
         String url = "jdbc:mysql://"+dataArray[1]+":"+dataArray[2]+"/"+dataArray[6]+"?useUnicode=true&characterEncoding=UTF-8&createDatabaseIfNotExist=true";

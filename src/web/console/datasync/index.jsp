@@ -104,7 +104,8 @@
 <script type="text/javascript" src="/console/shared/bootstrap-3.3.7/js/bootstrap-table.js"></script>
 
 <script type="text/javascript">
-     // 带参数函数
+
+    // 切换iframe页面
       function goToPage(param){
         document.getElementById("iframe").src=param;
         $("#myIframe").attr("src",param);

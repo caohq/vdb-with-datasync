@@ -1,4 +1,4 @@
-package datasync.utils.dataSrc;
+package datasync.utils;
 
 import java.io.File;
 import java.io.IOException;

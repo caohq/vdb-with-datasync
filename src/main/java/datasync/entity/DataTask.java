@@ -18,16 +18,20 @@ public class DataTask {
     private String status;
     private DataSrc dataSrc;
 
-    public String getDataSourceName() { return dataSourceName; }
-
-    public void setDataSourceName(String dataSourceName) { this.dataSourceName = dataSourceName; }
-
-    public DataSrc getDataSrc() {
-        return dataSrc;
+    public int getDataTaskId() {
+        return dataTaskId;
     }
 
-    public void setDataSrc(DataSrc dataSrc) {
-        this.dataSrc = dataSrc;
+    public void setDataTaskId(int dataTaskId) {
+        this.dataTaskId = dataTaskId;
+    }
+
+    public String getDataSourceName() {
+        return dataSourceName;
+    }
+
+    public void setDataSourceName(String dataSourceName) {
+        this.dataSourceName = dataSourceName;
     }
 
     public String getDataTaskName() {
@@ -44,14 +48,6 @@ public class DataTask {
 
     public void setDataTaskType(String dataTaskType) {
         this.dataTaskType = dataTaskType;
-    }
-
-    public int getDataTaskId() {
-        return dataTaskId;
-    }
-
-    public void setDataTaskId(int dataTaskId) {
-        this.dataTaskId = dataTaskId;
     }
 
     public String getTableName() {
@@ -76,6 +72,14 @@ public class DataTask {
 
     public void setSqlTableNameEn(String sqlTableNameEn) {
         this.sqlTableNameEn = sqlTableNameEn;
+    }
+
+    public String getSqlFilePath() {
+        return sqlFilePath;
+    }
+
+    public void setSqlFilePath(String sqlFilePath) {
+        this.sqlFilePath = sqlFilePath;
     }
 
     public String getFilePath() {
@@ -110,11 +114,30 @@ public class DataTask {
         this.status = status;
     }
 
-    public String getSqlFilePath() {
-        return sqlFilePath;
+    public DataSrc getDataSrc() {
+        return dataSrc;
     }
 
-    public void setSqlFilePath(String sqlFilePath) {
-        this.sqlFilePath = sqlFilePath;
+    public void setDataSrc(DataSrc dataSrc) {
+        this.dataSrc = dataSrc;
+    }
+
+    @Override
+    public String toString() {
+        return "DataTask{" +
+                "dataTaskId=" + dataTaskId +
+                ", dataSourceName='" + dataSourceName + '\'' +
+                ", dataTaskName='" + dataTaskName + '\'' +
+                ", dataTaskType='" + dataTaskType + '\'' +
+                ", tableName='" + tableName + '\'' +
+                ", sqlString='" + sqlString + '\'' +
+                ", sqlTableNameEn='" + sqlTableNameEn + '\'' +
+                ", sqlFilePath='" + sqlFilePath + '\'' +
+                ", filePath='" + filePath + '\'' +
+                ", createTime='" + createTime + '\'' +
+                ", creator='" + creator + '\'' +
+                ", status='" + status + '\'' +
+                ", dataSrc=" + dataSrc +
+                '}';
     }
 }
