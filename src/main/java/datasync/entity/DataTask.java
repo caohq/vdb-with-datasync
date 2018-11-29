@@ -4,8 +4,8 @@ import java.util.Date;
 
 
 public class DataTask {
-    private int dataTaskId;
-    private String dataSourceName;
+    private String dataTaskId;
+    private int dataSourceId;
     private String dataTaskName;
     private String dataTaskType;
     private String tableName;
@@ -13,11 +13,21 @@ public class DataTask {
     private String sqlTableNameEn;
     private String sqlFilePath;
     private String filePath;
-    private String createTime;
+    private String subjectCode;
+    private Date createTime;
     private String creator;
     private String status;
+    private String LogPath;
     private DataSrc dataSrc;
 
+    public String getSubjectCode() {
+        return subjectCode;
+    }
+
+    public void setSubjectCode(String subjectCode) {
+        this.subjectCode = subjectCode;
+	}
+	
     public int getDataTaskId() {
         return dataTaskId;
     }
@@ -50,6 +60,25 @@ public class DataTask {
         this.dataTaskType = dataTaskType;
     }
 
+<<<<<<< HEAD
+    public String getDataTaskId() {
+        return dataTaskId;
+    }
+
+    public void setDataTaskId(String dataTaskId) {
+        this.dataTaskId = dataTaskId;
+    }
+
+    public int getDataSourceId() {
+        return dataSourceId;
+    }
+
+    public void setDataSourceId(int dataSourceId) {
+        this.dataSourceId = dataSourceId;
+    }
+
+=======
+>>>>>>> e14a8d801ecf0ce8d39335277410909693ce4b81
     public String getTableName() {
         return tableName;
     }
@@ -90,11 +119,11 @@ public class DataTask {
         this.filePath = filePath;
     }
 
-    public String getCreateTime() {
+    public Date getCreateTime() {
         return createTime;
     }
 
-    public void setCreateTime(String createTime) {
+    public void setCreateTime(Date createTime) {
         this.createTime = createTime;
     }
 
@@ -122,6 +151,16 @@ public class DataTask {
         this.dataSrc = dataSrc;
     }
 
+<<<<<<< HEAD
+    public String getLogPath() {
+        return LogPath;
+    }
+
+    public void setLogPath(String logPath) {
+        LogPath = logPath;
+    }
+
+=======
     @Override
     public String toString() {
         return "DataTask{" +
@@ -140,4 +179,5 @@ public class DataTask {
                 ", dataSrc=" + dataSrc +
                 '}';
     }
+>>>>>>> e14a8d801ecf0ce8d39335277410909693ce4b81
 }

@@ -9,10 +9,7 @@ import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.List;
 import java.util.Map;
 
@@ -22,9 +19,9 @@ public class DataTaskDao {
     //添加任务
     public int insertDatatask(final DataTask datatask){
         boolean flag = false;
-        final String sql = "insert into t_datatask(dataSourceName,dataTaskName,dataTaskType," +
-                "tableName,sqlString,sqlTableNameEn,sqlFilePath,filePath,createTime,creator,status) " +
-                "VALUES (?,?,?,?,?,?,?,?,?,?,?)";
+        final String sql = "insert into t_datatask(dataSourceId,dataTaskName,dataTaskType," +
+                "tableName,sqlString,sqlTableNameEn,sqlFilePath,filePath,createTime,creator,status,datataskId,subjectCode) " +
+                "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)";
         KeyHolder keyHolder = new GeneratedKeyHolder();
         SqlLiteDataConnection sqlLiteDataConnection=new SqlLiteDataConnection();
         JdbcTemplate jdbcTemplate=sqlLiteDataConnection.makeJdbcTemplate();
@@ -32,7 +29,7 @@ public class DataTaskDao {
             @Override
             public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
                 PreparedStatement ps = connection.prepareStatement(sql,Statement.RETURN_GENERATED_KEYS);
-                ps.setString(1,datatask.getDataSourceName());
+                ps.setInt(1,datatask.getDataSourceId());
                 ps.setString(2,datatask.getDataTaskName());
                 ps.setString(3,datatask.getDataTaskType());
                 ps.setString(4,datatask.getTableName());
@@ -40,9 +37,11 @@ public class DataTaskDao {
                 ps.setString(6,datatask.getSqlTableNameEn());
                 ps.setString(7,datatask.getSqlFilePath());
                 ps.setString(8,datatask.getFilePath());
-                ps.setString(9,datatask.getCreateTime());
+                ps.setTimestamp(9,new Timestamp(datatask.getCreateTime().getTime()));
                 ps.setString(10,datatask.getCreator());
                 ps.setString(11,datatask.getStatus());
+                ps.setString(12,datatask.getDataTaskId());
+                ps.setString(13,datatask.getSubjectCode());
                 return ps;
             }
         },keyHolder);
@@ -70,7 +69,7 @@ public class DataTaskDao {
         if(StringUtils.isNotEmpty((String) params.get("dataStatusList"))) {//状态
             sql.append("  and t.status = '"+params.get("dataStatusList")+"'");
         }
-        sql.append(" order  by  DataTaskId desc");
+        sql.append(" order  by  CreateTime desc");
         SqlLiteDataConnection sqlLiteDataConnection=new SqlLiteDataConnection();
         JdbcTemplate jdbcTemplate=sqlLiteDataConnection.makeJdbcTemplate();
         List<DataTask> DataTaskList = jdbcTemplate.query(sql+"", new DataTaskMapper());
@@ -90,7 +89,7 @@ public class DataTaskDao {
 
     //根据id删除task
     public int deleteTaskById(String taskId){
-        String sql = "delete from t_datatask where  dataTaskId = "+taskId+"";
+        String sql = "delete from t_datatask where  dataTaskId = '"+taskId+"'";
         SqlLiteDataConnection sqlLiteDataConnection=new SqlLiteDataConnection();
         JdbcTemplate jdbcTemplate=sqlLiteDataConnection.makeJdbcTemplate();
         int result = jdbcTemplate.update(sql);//query(sql, new Object[]{taskId}, new DataTaskMapper());

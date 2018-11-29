@@ -4,6 +4,7 @@ import datasync.entity.DataTask;
 import datasync.entity.FtpUtil;
 import datasync.service.DataConnDaoService;
 import datasync.service.DataTaskService;
+import datasync.service.FileResourceService;
 import datasync.service.LocalConnDaoService;
 import datasync.service.UploadTaskService;
 import net.sf.json.JSONObject;
@@ -23,13 +24,13 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.charset.Charset;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.*;
-
 
 public class MainSevlet extends HttpServlet{
 
@@ -225,8 +226,8 @@ public class MainSevlet extends HttpServlet{
         datatask.setTableName(res.getParameter("checkedValue"));//选择表的名称
         datatask.setSqlString(res.getParameter("sql"));//SQL语句
         datatask.setSqlTableNameEn(res.getParameter("createNewTableName"));//新建表名
-        datatask.setCreateTime(sdf.format(date));
-        datatask.setDataSourceName(res.getParameter("connDataName"));//数据源名称
+        datatask.setCreateTime(date);
+        datatask.setDataSourceId(0);//(res.getParameter("connDataName"));//数据源名称
         if(connDataValueArray.length>2){
            datatask.setDataTaskType(connDataValueArray[connDataValueArray.length-2]);//数据源类型
         }
@@ -268,13 +269,28 @@ public class MainSevlet extends HttpServlet{
         String  connDataName=req.getParameter("connDataName");//本地连接名称
         String  getCheckedFile=req.getParameter("getCheckedFile");//文件路径
         String  getLocalTaskName=req.getParameter("getLocalTaskName");//获取任务名称
-        datatask.setCreateTime(sdf.format(date));
-        datatask.setDataSourceName(connDataName);//数据源名称
+        String datataskId=String.valueOf(UUID.randomUUID());
+        datatask.setCreateTime(date);
+        datatask.setDataSourceId(0);//数据源名称
         datatask.setDataTaskName(getLocalTaskName);//任务名
         datatask.setFilePath(getCheckedFile);
         datatask.setDataTaskType("file");
         datatask.setStatus("0");
+        datatask.setDataTaskId(datataskId);
         datatask.setCreator(session.getAttribute("SPRING_SECURITY_LAST_USERNAME")==null?"": (String) session.getAttribute("SPRING_SECURITY_LAST_USERNAME"));
+
+        List<String> filepaths =new LinkedList<String>();
+        String [] filepathArray=getCheckedFile.split(",");
+          for (String str:filepathArray){
+              ((LinkedList<String>) filepaths).add(str);
+          }
+        String fileName = "sdc001"+"_"+datataskId;
+        FileResourceService fileResourceService=new FileResourceService();
+        fileResourceService.packDataResource(fileName,filepaths,req.getSession().getServletContext().getRealPath("/"));
+        String zipFile =req.getSession().getServletContext().getRealPath("/") + "zipFile" + File.separator + fileName + ".zip";
+        DataTaskService dataTaskService=new DataTaskService();
+        datatask.setSqlFilePath(zipFile.replace(File.separator,"%_%"));
+        //boolean upresult = dataTaskService.update(dt);
         int flag = new DataTaskService().insertDatatask(datatask);
         return jsonObject;
     }
@@ -282,23 +298,24 @@ public class MainSevlet extends HttpServlet{
 
     public  int ftpLocalUpload(HttpServletRequest req, HttpServletResponse res){
         com.alibaba.fastjson.JSONObject jsonObject=new com.alibaba.fastjson.JSONObject();
+        String taskId=req.getParameter("taskId");
         int dataTaskId=1;
         String processId="";
         String host = "10.0.86.77";
-        String userName = "ftpUsercode2";
-        String password = "ftpPasswordcode2";
+        String userName = "ftpUserssdd";
+        String password = "ftpPasswordssdd";
         String port = "21";
         String remoteFilepath = "/";
-        String subjectCode = "code2";
+        String subjectCode = "sdc001";
         String portalUrl ="10.0.86.77/portal";
         FtpUtil ftpUtil = new FtpUtil();
-        DataTask dataTask = new DataTaskService().getDataTaskInfById("6");
+        DataTask dataTask = new DataTaskService().getDataTaskInfById(taskId);
         logger.info("数据任务名称为：本地测试任务\n");
         try {
             ftpUtil.connect(host, Integer.parseInt(port), userName, password);
             String result = "";
             if(dataTask.getDataTaskType().equals("file")){
-                String[] localFileList = dataTask.getFilePath().split(",");//D:%_%workspace%_%workspace_datasync%_%datasync%_%out%_%artifacts%_%drsr_war_exploded%_%zipFile%_%code2_3.zip
+                String[] localFileList = {dataTask.getSqlFilePath()};//D:%_%workspace%_%workspace_datasync%_%datasync%_%out%_%artifacts%_%drsr_war_exploded%_%zipFile%_%code2_3.zip
                 result = ftpUtil.upload(host, userName, password, port, localFileList, processId,remoteFilepath,dataTask,subjectCode).toString();
                 if(localFileList.length == 0){
                     return 0;
@@ -312,13 +329,15 @@ public class MainSevlet extends HttpServlet{
                 }
             }
             logger.info("ftpDataTaskId"+dataTask.getDataTaskId()+"上传状态:" + result + "\n");
+            logger.info("=========================上传流程结束========================" + "\n");
             ftpUtil.disconnect();
+            logger.info("=========================导入流程开始========================" + "\n");
             if(result.equals("Upload_New_File_Success")||result.equals("Upload_From_Break_Succes")){
-                String dataTaskString = jsonObject.toJSONString(dataTask);
-                com.alibaba.fastjson.JSONObject requestJSON=new com.alibaba.fastjson.JSONObject();
+                String dataTaskString = com.alibaba.fastjson.JSONObject.toJSONString(dataTask);
+                com.alibaba.fastjson.JSONObject requestJSON = new com.alibaba.fastjson.JSONObject();
                 requestJSON.put("dataTask",dataTaskString);
                 requestJSON.put("subjectCode",subjectCode);
-                String requestString = jsonObject.toJSONString(requestJSON);
+                String requestString = com.alibaba.fastjson.JSONObject.toJSONString(requestJSON);
                 HttpClient httpClient = null;
                 HttpPost postMethod = null;
                 HttpResponse response = null;
@@ -337,29 +356,30 @@ public class MainSevlet extends HttpServlet{
                         System.out.println("HTTP请求未成功！HTTP Status Code:" + response.getStatusLine());
                     }
                     HttpEntity httpEntity = response.getEntity();
+
                     String reponseContent = EntityUtils.toString(httpEntity);
                     EntityUtils.consume(httpEntity);//释放资源
                     System.out.println("响应内容：" + reponseContent);
                     if(reponseContent.equals("1")){
                         dataTask.setStatus("1");
-                      //  dataTaskService.update(dataTask);
                         logger.info("导入成功"+ "\n");
-                        logger.info("=========================上传流程结束========================" + "\r\n"+"\n\n\n\n\n");
+                        logger.info("=========================导入流程结束========================" + "\r\n"+"\n\n\n\n\n");
                         return 1;
                     }else{
                         logger.info("导入失败"+ "\n");
-                        logger.info("=========================上传流程结束========================" + "\r\n"+"\n\n\n\n\n");
+                        logger.info("=========================导入流程结束========================" + "\r\n"+"\n\n\n\n\n");
                         return 0;
                     }
                 } catch (IOException e) {
                     logger.info("导入失败"+ "\n");
                     logger.error("导入异常IOException:"+e+ "\n");
-                    logger.info("=========================上传流程结束========================" + "\r\n"+"\n\n\n\n\n");
+                    logger.info("=========================导入流程结束========================" + "\r\n"+"\n\n\n\n\n");
                     e.printStackTrace();
                 }
             }else{
+
                 logger.info("导入失败"+ "\n");
-                logger.info("=========================上传流程结束========================" + "\r\n"+"\n\n\n\n\n");
+                logger.info("=========================导入流程结束========================" + "\r\n"+"\n\n\n\n\n");
                 return 0;
             }
         } catch (IOException e) {
@@ -367,11 +387,9 @@ public class MainSevlet extends HttpServlet{
             logger.info("=========================上传流程结束========================" + "\r\n"+"\n\n\n\n\n");
             System.out.println("连接FTP出错：" + e.getMessage());
             return 0;
+        }finally {
+
         }
-
-
-
-
         return 1;
 
     }
