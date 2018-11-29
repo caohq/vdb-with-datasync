@@ -2,18 +2,15 @@ package datasync.service;
 
 import datasync.connection.MysqlDataConnection;
 import datasync.connection.SqlLiteDataConnection;
-import datasync.entity.DataSrc;
 import datasync.entity.DataTask;
 import datasync.mapper.DataTaskMapper;
 import datasync.utils.DDL2SQLUtils;
-import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.sql.Connection;
 import java.util.List;
@@ -63,7 +60,7 @@ public class UploadTaskService {
                 //以下为测试数据
                 String getConnectionParameter = "mysql-export$192.168.192.133$3306$root$123456$mysql$testdb";
                 DataTask dataTask1 = new DataTask();
-                dataTask1.setDataTaskId(Integer.parseInt(dataTaskId));
+                dataTask1.setDataTaskId(dataTaskId);
                 dataTask1.setTableName("t1;t2;");
                 dataTask1.setSqlString("select * from t1");
                 dataTask1.setSqlTableNameEn("t1Temp");
