@@ -46,7 +46,7 @@
 
     </style>
 </head>
-<body style="overflow: hidden;">
+<body style="overflow: auto;">
 
 <div>
 
@@ -132,7 +132,7 @@
             locale: "zh-CN",
             searchOnEnterKey:true,
             detailView: false,
-            height:380,
+           // height:380,
             columns:[ {
                 field: 'dataTaskId',
                 title: 'id'
@@ -167,7 +167,9 @@
         $('#dataTaskTableID').bootstrapTable('load', dataList);
         $('#dataTaskTableID').bootstrapTable('hideColumn', 'dataTaskId');
         $('#dataTaskTableID').bootstrapTable('hideColumn', 'dataSo');
+       // $("#dataTaskTableID").bootstrapTable('resetView');
     };
+
 
     //为操作添加按钮
     function operateFormatter(value, row, index) {//赋予的参数

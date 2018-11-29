@@ -6,7 +6,7 @@
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page  language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
-<html>
+<html style="height: 82%;">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>Insert title here</title>
@@ -32,10 +32,9 @@
         }
     </style>
 </head>
-<body style="overflow: auto; height: 400px;">
+<body style="overflow: auto; ">
 
-
-<div>
+<div class="content">
 
     <div style="width:50%;float:left;margin-left: 46px;margin-top: 20px;height:27px;">
         <span style="font-weight: 700;font-size: 24px;">数据源:&nbsp;&nbsp;&nbsp;&nbsp;</span>
@@ -59,7 +58,7 @@
                 <input id="sqlInputBox" class="form-control sqlStatements" style="width: 300px;display: inline !important;" type="text"/>
                 <input id="createNewTableName" class="form-control sqlStatements" style="width: 100px;display: inline !important;" type="text" placeholder="请输入表名"/>
                 <button type="button" class="btn blue preview" onclick="showPreviewModal()" >预览</button>
-                <button type="button" class="btn green" onclick="addSql()"><span class="glyphicon glyphicon-plus"></span>sql查询</button>
+                <button type="button" class="btn green" onclick="addSqlInput()"><span class="glyphicon glyphicon-plus"></span>sql查询</button>
                 <button type="button" class="btn green" onclick="submitSqlData()">提交</button>
             </div>
         </div>
@@ -131,13 +130,18 @@
 
     <input type="hidden" id="sql"/>
     <input type="hidden" id="connData"/>
+
 </div>
 
 <script type="text/javascript" src="/console/shared/bootstrap-3.3.7/js/bootstrap-table.js"></script>
 <script type="text/javascript">
     $.ajaxSettings.async=false;
     start();
-    loadBdDataDir();
+    loadBdDataList();
+    // $(function(){
+    //     debugger
+    //     window.parent.document.getElementById("iframe").height=$('.content').height();
+    // });
     function start() {
         document.getElementById("tableLabel").style.display="none";//隐藏“选择表资源标签”
         document.getElementById("bdTableLabel").style.display="none";//隐藏“选择表资源标签”
@@ -149,10 +153,10 @@
             url:"/searchDataList.do",
             data:{},
             success:function (dataSession) {
-                var dataSessiobArray=dataSession.substr(1,dataSession.length-4).split(',');
+                var dataSessiobArray=dataSession.replace(/\[|]/g,'').split(',');
                 $("#selectId").append("<option style='width: 300px;display: none;'>请选择...</option>");
                 for(var i=0;i<dataSessiobArray.length;i++){
-                    $("#selectId").append("<option style=width: 300px; value='"+ dataSessiobArray[i]+"'>"+ dataSessiobArray[i].substr(0, dataSessiobArray[i].indexOf('$'))+"</option>");
+                    $("#selectId").append("<option style=width: 300px; value='"+ dataSessiobArray[i].replace(/[\r\n]/g,"")+"'>"+ dataSessiobArray[i].substr(0, dataSessiobArray[i].indexOf('$'))+"</option>");
                 }
             },
             error:function () {
@@ -161,6 +165,7 @@
         })
     };
 
+    //选中数据库，加载tables
     $("#selectId").on("change",function () {
         var connData = $("#selectId option:selected")[0].value;//获取数据库参数
         $.ajax({
@@ -202,7 +207,7 @@
     });
 
     //加载本地数据源列表
-    function loadBdDataDir() {
+    function loadBdDataList() {
         $.ajax({
             type:"POST",
             url:"/searchBdDirList.do",
@@ -296,6 +301,7 @@
         }else
             return;
     }
+
     // 关闭弹框， 获取输入值，然后执行逻辑
     $("#createFileSureBut").click(function (){
         var connDataName = $("#selectId option:selected")[0].text;//获取数据源
@@ -425,6 +431,16 @@
         }
     })
 
+    //添加sql语句
+    function addSqlInput(){
+        $("#sjk").append("<div style=\"width: 100%;height: 40px;margin-top: 20px;margin-bottom: 20px; \" id=\"sqlSearchDiv\">\n" +
+            "                <label>sql查询</label>\n" +
+            "                <input id=\"sqlInputBox\" class=\"form-control sqlStatements\" style=\"width: 300px;display: inline !important;\" type=\"text\"/>\n" +
+            "                <input id=\"createNewTableName\" class=\"form-control sqlStatements\" style=\"width: 100px;display: inline !important;\" type=\"text\" placeholder=\"请输入表名\"/>\n" +
+            "                <button type=\"button\" class=\"btn blue preview\" onclick=\"showPreviewModal()\" >预览</button>\n" +
+            "                <button type=\"button\" class=\"btn blue preview\" onclick=\"showPreviewModal()\" >删除</button>\n" +
+            "            </div>");
+    }
 
 </script>
 
