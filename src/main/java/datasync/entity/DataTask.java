@@ -20,28 +20,20 @@ public class DataTask {
     private String LogPath;
     private DataSrc dataSrc;
 
-    public String getSubjectCode() {
-        return subjectCode;
-    }
-
-    public void setSubjectCode(String subjectCode) {
-        this.subjectCode = subjectCode;
-	}
-	
-    public int getDataTaskId() {
+    public String getDataTaskId() {
         return dataTaskId;
     }
 
-    public void setDataTaskId(int dataTaskId) {
+    public void setDataTaskId(String dataTaskId) {
         this.dataTaskId = dataTaskId;
     }
 
-    public String getDataSourceName() {
-        return dataSourceName;
+    public int getDataSourceId() {
+        return dataSourceId;
     }
 
-    public void setDataSourceName(String dataSourceName) {
-        this.dataSourceName = dataSourceName;
+    public void setDataSourceId(int dataSourceId) {
+        this.dataSourceId = dataSourceId;
     }
 
     public String getDataTaskName() {
@@ -60,25 +52,6 @@ public class DataTask {
         this.dataTaskType = dataTaskType;
     }
 
-<<<<<<< HEAD
-    public String getDataTaskId() {
-        return dataTaskId;
-    }
-
-    public void setDataTaskId(String dataTaskId) {
-        this.dataTaskId = dataTaskId;
-    }
-
-    public int getDataSourceId() {
-        return dataSourceId;
-    }
-
-    public void setDataSourceId(int dataSourceId) {
-        this.dataSourceId = dataSourceId;
-    }
-
-=======
->>>>>>> e14a8d801ecf0ce8d39335277410909693ce4b81
     public String getTableName() {
         return tableName;
     }
@@ -119,6 +92,14 @@ public class DataTask {
         this.filePath = filePath;
     }
 
+    public String getSubjectCode() {
+        return subjectCode;
+    }
+
+    public void setSubjectCode(String subjectCode) {
+        this.subjectCode = subjectCode;
+    }
+
     public Date getCreateTime() {
         return createTime;
     }
@@ -143,15 +124,6 @@ public class DataTask {
         this.status = status;
     }
 
-    public DataSrc getDataSrc() {
-        return dataSrc;
-    }
-
-    public void setDataSrc(DataSrc dataSrc) {
-        this.dataSrc = dataSrc;
-    }
-
-<<<<<<< HEAD
     public String getLogPath() {
         return LogPath;
     }
@@ -160,12 +132,19 @@ public class DataTask {
         LogPath = logPath;
     }
 
-=======
+    public DataSrc getDataSrc() {
+        return dataSrc;
+    }
+
+    public void setDataSrc(DataSrc dataSrc) {
+        this.dataSrc = dataSrc;
+    }
+
     @Override
     public String toString() {
         return "DataTask{" +
-                "dataTaskId=" + dataTaskId +
-                ", dataSourceName='" + dataSourceName + '\'' +
+                "dataTaskId='" + dataTaskId + '\'' +
+                ", dataSourceId=" + dataSourceId +
                 ", dataTaskName='" + dataTaskName + '\'' +
                 ", dataTaskType='" + dataTaskType + '\'' +
                 ", tableName='" + tableName + '\'' +
@@ -173,11 +152,12 @@ public class DataTask {
                 ", sqlTableNameEn='" + sqlTableNameEn + '\'' +
                 ", sqlFilePath='" + sqlFilePath + '\'' +
                 ", filePath='" + filePath + '\'' +
-                ", createTime='" + createTime + '\'' +
+                ", subjectCode='" + subjectCode + '\'' +
+                ", createTime=" + createTime +
                 ", creator='" + creator + '\'' +
                 ", status='" + status + '\'' +
+                ", LogPath='" + LogPath + '\'' +
                 ", dataSrc=" + dataSrc +
                 '}';
     }
->>>>>>> e14a8d801ecf0ce8d39335277410909693ce4b81
 }

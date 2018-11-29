@@ -63,7 +63,7 @@ public class UploadTaskService {
                 //以下为测试数据
                 String getConnectionParameter = "mysql-export$192.168.192.133$3306$root$123456$mysql$testdb";
                 DataTask dataTask1 = new DataTask();
-                dataTask1.setDataTaskId(Integer.parseInt(dataTaskId));
+                dataTask1.setDataTaskId(dataTaskId);
                 dataTask1.setTableName("t1;t2;");
                 dataTask1.setSqlString("select * from t1");
                 dataTask1.setSqlTableNameEn("t1Temp");
