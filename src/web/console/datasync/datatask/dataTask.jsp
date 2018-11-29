@@ -36,12 +36,19 @@
         .table {
             font-size:12px;
         }
+        .progress {
+            height: 18px !important;
+            margin-bottom: 0px !important;
+        }
 
         /*.fixed-table-container thead th {*/
              /*line-height: 0px !important;*/
         /*}*/
         .fixed-table-container{
             height: 339px !important;
+        }
+        .sr-only {
+            position: relative !important;
         }
 
     </style>
@@ -157,7 +164,8 @@
                 }
             }, {
                 field: 'status',
-                title: '上传进度'
+                title: '上传进度',
+                formatter: processFormatter
             }, {
                 field: 'status',
                 title: '状态',
@@ -187,9 +195,10 @@
         return [
             // '<button class="btn btn-default details btn-xs" value="'+row.id+'" onclick="detail(value)">导出</button>&nbsp;',
             '<button class="btn btn-default details btn-xs" value="'+row.dataTaskId+'" onclick="exportDataTask(this)">导出</button>&nbsp;',
-            '<button class="btn btn-default details btn-xs" value="'+row.dataTaskId+'" onclick="dataTaskUpload(value)">上传</button>&nbsp;',
+            '<button class="btn btn-default details btn-xs" value="'+row.dataTaskId+'" onclick="ftpUpload(value)">上传</button>&nbsp;',
             '<button class="btn btn-default details btn-xs" value="'+row.dataTaskId+'" onclick="viewDtails(value)">查看</button>&nbsp;',
-            '<button class="btn btn-default delete btn-xs" onclick="deleteThis(this)" data-id="'+row.dataTaskId+'">删除</button>'
+            '<button class="btn btn-default delete btn-xs" onclick="deleteThis(this)" data-id="'+row.dataTaskId+'">删除</button>',
+            '<button class="btn btn-default delete btn-xs" onclick="loadLog(this)" data-id="'+row.dataTaskId+'">日志</button>'
         ].join('');
     }
 
@@ -224,12 +233,15 @@
 
     //导出-上传按钮
     function ftpUpload(taskId){
+        debugger
+        $("#"+taskId+"")[0].style.width="70%";
         $.ajax({
             type:"POST",
             url:"/ftpLocalUpload.do",
             data:{taskId:taskId},
             async:"false",
             success:function(data){
+                searchDataBySql();
             },
             error:function () {
                 console.log("请求失败")
@@ -262,7 +274,6 @@
         bootbox.confirm("<span style='font-size: 16px'>确认要删除此条记录吗?</span>",function (r) {
             if (r) {
                 el.parentNode.parentNode.remove(true);
-                debugger
                 var id = $(el).attr("data-id");//任务id
                 $.ajax({
                     type: "POST",
@@ -284,6 +295,45 @@
         })
     };
 
+    //进度条
+    var processFormatter = function (value, row, index) {
+        debugger
+        if(value==0){
+            var process = "<div class=\"progress progress-striped active\" >\n" +
+                "\t<div id=\""+row.dataTaskId+"\" class=\"progress-bar progress-bar-success\" role=\"progressbar\"\n" +
+                "\t\t aria-valuenow=\"60\" aria-valuemin=\"0\" aria-valuemax=\"100\"\n" +
+                "\t\t style=\"width: 0%;\">\n" +
+                 "\t\t<span class=\"sr-only\" id='"+row.dataTaskId+"Text'></span>\n" +
+                "\t</div>\n" +
+                "</div>";
+            return process;
+        }else{
+            var process = "<div class=\"progress progress-striped active\" >\n" +
+                "\t<div id=\"progressBar\" class=\"progress-bar progress-bar-success\" role=\"progressbar\"\n" +
+                "\t\t aria-valuenow=\"60\" aria-valuemin=\"0\" aria-valuemax=\"100\"\n" +
+                "\t\t style=\"width: 100%;\">\n" +
+                 "\t\t<span class=\"sr-only\">100%</span>\n" +
+                "\t</div>\n" +
+                "</div>";
+            return process;
+        }
+    };
+
+    //下载日志
+    function loadLog(el){
+      //  window.open("/console/datasync/logFile/数据任务日志.txt?download");
+    //    window.location.href="/console/datasync/logFile/数据任务日志.txt?download";
+
+        var a;
+
+        a =window.open("/console/datasync/logFile/数据任务日志.txt","_blank", "width=0, height=0,status=0");
+
+        a.document.execCommand("SaveAs");
+
+        // //a.close();
+
+
+    }
 
 </script>
 

@@ -2,11 +2,7 @@ package datasync.controller;
 
 import datasync.entity.DataTask;
 import datasync.entity.FtpUtil;
-import datasync.service.DataConnDaoService;
-import datasync.service.DataTaskService;
-import datasync.service.FileResourceService;
-import datasync.service.LocalConnDaoService;
-import datasync.service.UploadTaskService;
+import datasync.service.*;
 import net.sf.json.JSONObject;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -260,7 +256,8 @@ public class MainSevlet extends HttpServlet{
     }
 
     //新建任务--本地文件上传任务
-    public  JSONObject submitFileData(HttpServletRequest req, HttpServletResponse res) throws SQLException {
+    public  JSONObject submitFileData(HttpServletRequest req, HttpServletResponse res) throws SQLException, IOException {
+        PrintWriter out = res.getWriter();
         JSONObject jsonObject = new JSONObject();
         DataTask datatask = new DataTask();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -296,7 +293,8 @@ public class MainSevlet extends HttpServlet{
     }
 
 
-    public  int ftpLocalUpload(HttpServletRequest req, HttpServletResponse res){
+    public  int ftpLocalUpload(HttpServletRequest req, HttpServletResponse res) throws IOException {
+        PrintWriter out = res.getWriter();
         com.alibaba.fastjson.JSONObject jsonObject=new com.alibaba.fastjson.JSONObject();
         String taskId=req.getParameter("taskId");
         int dataTaskId=1;
@@ -306,7 +304,7 @@ public class MainSevlet extends HttpServlet{
         String password = "ftpPasswordssdd";
         String port = "21";
         String remoteFilepath = "/";
-        String subjectCode = "sdc001";
+        String subjectCode = "ssdd";
         String portalUrl ="10.0.86.77/portal";
         FtpUtil ftpUtil = new FtpUtil();
         DataTask dataTask = new DataTaskService().getDataTaskInfById(taskId);
@@ -362,6 +360,8 @@ public class MainSevlet extends HttpServlet{
                     System.out.println("响应内容：" + reponseContent);
                     if(reponseContent.equals("1")){
                         dataTask.setStatus("1");
+                        int num= new DataTaskService().updateDataTaskStatusById(taskId);
+                        out.println("上传成功!");
                         logger.info("导入成功"+ "\n");
                         logger.info("=========================导入流程结束========================" + "\r\n"+"\n\n\n\n\n");
                         return 1;

@@ -12,6 +12,7 @@ import org.springframework.jdbc.support.KeyHolder;
 import java.sql.*;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 
 public class DataTaskDao {
@@ -40,7 +41,7 @@ public class DataTaskDao {
                 ps.setTimestamp(9,new Timestamp(datatask.getCreateTime().getTime()));
                 ps.setString(10,datatask.getCreator());
                 ps.setString(11,datatask.getStatus());
-                ps.setString(12,datatask.getDataTaskId());
+                ps.setString(12, String.valueOf(UUID.randomUUID()));
                 ps.setString(13,datatask.getSubjectCode());
                 return ps;
             }
@@ -69,7 +70,7 @@ public class DataTaskDao {
         if(StringUtils.isNotEmpty((String) params.get("dataStatusList"))) {//状态
             sql.append("  and t.status = '"+params.get("dataStatusList")+"'");
         }
-        sql.append(" order  by  CreateTime desc");
+        sql.append(" order  by   status,CreateTime desc");
         SqlLiteDataConnection sqlLiteDataConnection=new SqlLiteDataConnection();
         JdbcTemplate jdbcTemplate=sqlLiteDataConnection.makeJdbcTemplate();
         List<DataTask> DataTaskList = jdbcTemplate.query(sql+"", new DataTaskMapper());
@@ -90,6 +91,14 @@ public class DataTaskDao {
     //根据id删除task
     public int deleteTaskById(String taskId){
         String sql = "delete from t_datatask where  dataTaskId = '"+taskId+"'";
+        SqlLiteDataConnection sqlLiteDataConnection=new SqlLiteDataConnection();
+        JdbcTemplate jdbcTemplate=sqlLiteDataConnection.makeJdbcTemplate();
+        int result = jdbcTemplate.update(sql);//query(sql, new Object[]{taskId}, new DataTaskMapper());
+        return result;
+    }
+    //根据id修改task导入状态
+    public int updateDataTaskStatusById(String taskId){
+        String sql = "update  t_datatask  set  status ='1' where  dataTaskId = '"+taskId+"'";
         SqlLiteDataConnection sqlLiteDataConnection=new SqlLiteDataConnection();
         JdbcTemplate jdbcTemplate=sqlLiteDataConnection.makeJdbcTemplate();
         int result = jdbcTemplate.update(sql);//query(sql, new Object[]{taskId}, new DataTaskMapper());
