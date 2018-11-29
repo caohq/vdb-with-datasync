@@ -6,7 +6,7 @@ import java.sql.SQLException;
 
 public class OracleDataConnection {
 
-    public Connection makeConn(String dataConnParams) throws ClassNotFoundException, SQLException {
+    public static Connection makeConn(String dataConnParams) throws ClassNotFoundException, SQLException {
         String [] dataArray=dataConnParams.replace("$",",").split(",");
         String driver="oracle.jdbc.driver.OracleDriver";
         String url="jdbc:oracle:thin:@"+dataArray[1]+":1521:"+dataArray[6]+"";

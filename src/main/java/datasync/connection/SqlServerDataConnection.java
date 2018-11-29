@@ -3,7 +3,7 @@ package datasync.connection;
 import java.sql.*;
 
 public class SqlServerDataConnection {
-    public Connection makeConn(String dataConnParams) throws ClassNotFoundException, SQLException {
+    public static Connection makeConn(String dataConnParams) throws ClassNotFoundException, SQLException {
         String [] dataArray=dataConnParams.replace("$",",").split(",");
         String driver = "com.microsoft.sqlserver.jdbc.SQLServerDriver";
         String url = "jdbc:sqlserver://"+dataArray[1]+":1433;DatabaseName="+dataArray[6]+";";

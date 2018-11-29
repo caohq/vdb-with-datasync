@@ -6,6 +6,7 @@ import datasync.service.DataConnDaoService;
 import datasync.service.DataTaskService;
 import datasync.service.FileResourceService;
 import datasync.service.LocalConnDaoService;
+import datasync.service.UploadTaskService;
 import net.sf.json.JSONObject;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -86,10 +87,51 @@ public class MainSevlet extends HttpServlet{
             searchTaskDetailById(req,res);
         }else if("/deleteTaskById.do".equals(path)){
             deleteTaskById(req,res);
-        }else{
+        } else if ("/exportTaskData.do".equals(path))
+        {
+            uploadTask(req, res);
+        }
+        else{
             //错误路径
             throw new RuntimeException("查无此页");
         }
+    }
+
+    /*
+     * 根据taskId完成task的上传任务, 任务上传包括 导出数据、打包数据、上传数据到中心端，中心端导入数据到存放数据的数据库
+     *
+     */
+    public void uploadTask(HttpServletRequest req, HttpServletResponse res) throws IOException {
+        PrintWriter out = res.getWriter();
+        String dataTaskId = req.getParameter("dataTaskId");
+
+        System.out.println("enterring uploadTask - dataTaskId = " + dataTaskId);
+
+        UploadTaskService uploadTaskService = new UploadTaskService();
+        boolean exported = uploadTaskService.exportDataTask(req, dataTaskId);
+        if (exported)
+        {
+            try {
+                res.getWriter().println("success");
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+        }
+        else
+        {
+            try {
+                res.getWriter().println("failed");
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+        }
+        /*uploadTaskService.packTaskData(dataTaskId);
+        uploadTaskService.uploadTaskData(dataTaskId);
+        uploadTaskService.importTaskData(dataTaskId);*/
     }
 
     //查询数据库名称列表

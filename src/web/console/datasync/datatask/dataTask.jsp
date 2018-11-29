@@ -186,11 +186,35 @@
     function operateFormatter(value, row, index) {//赋予的参数
         return [
             // '<button class="btn btn-default details btn-xs" value="'+row.id+'" onclick="detail(value)">导出</button>&nbsp;',
-            '<button class="btn btn-default details btn-xs" value="'+row.dataTaskId+'" onclick="ftpUpload(value)">上传</button>&nbsp;',
+            '<button class="btn btn-default details btn-xs" value="'+row.dataTaskId+'" onclick="exportDataTask(this)">导出</button>&nbsp;',
+            '<button class="btn btn-default details btn-xs" value="'+row.dataTaskId+'" onclick="dataTaskUpload(value)">上传</button>&nbsp;',
             '<button class="btn btn-default details btn-xs" value="'+row.dataTaskId+'" onclick="viewDtails(value)">查看</button>&nbsp;',
             '<button class="btn btn-default delete btn-xs" onclick="deleteThis(this)" data-id="'+row.dataTaskId+'">删除</button>'
         ].join('');
     }
+
+    //
+    function exportDataTask(btn)
+    {
+        $.ajax({
+        type:"POST",
+        url:"/exportTaskData.do",
+        data:{dataTaskId: $(btn).attr("value")},
+        success: function(data){
+            if (data.trim() == "success") {
+                alert("数据任务导出请求成功 - 请求返回消息:" + data + "\n导出成功");
+            }
+            else
+            {
+                alert("数据任务导出请求成功 - 请求返回消息:" + data + "\n导出失败");
+            }
+        },
+        error: function (data) {
+            alert("数据任务导出请求失败 - " + data);
+        }
+    });
+    }
+
 
     //创建任务按钮-调用父类方法
     function relCreateTask(params){

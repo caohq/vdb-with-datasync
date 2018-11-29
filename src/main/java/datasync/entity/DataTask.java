@@ -26,14 +26,22 @@ public class DataTask {
 
     public void setSubjectCode(String subjectCode) {
         this.subjectCode = subjectCode;
+	}
+	
+    public int getDataTaskId() {
+        return dataTaskId;
     }
 
-    public DataSrc getDataSrc() {
-        return dataSrc;
+    public void setDataTaskId(int dataTaskId) {
+        this.dataTaskId = dataTaskId;
     }
 
-    public void setDataSrc(DataSrc dataSrc) {
-        this.dataSrc = dataSrc;
+    public String getDataSourceName() {
+        return dataSourceName;
+    }
+
+    public void setDataSourceName(String dataSourceName) {
+        this.dataSourceName = dataSourceName;
     }
 
     public String getDataTaskName() {
@@ -52,6 +60,7 @@ public class DataTask {
         this.dataTaskType = dataTaskType;
     }
 
+<<<<<<< HEAD
     public String getDataTaskId() {
         return dataTaskId;
     }
@@ -68,6 +77,8 @@ public class DataTask {
         this.dataSourceId = dataSourceId;
     }
 
+=======
+>>>>>>> e14a8d801ecf0ce8d39335277410909693ce4b81
     public String getTableName() {
         return tableName;
     }
@@ -90,6 +101,14 @@ public class DataTask {
 
     public void setSqlTableNameEn(String sqlTableNameEn) {
         this.sqlTableNameEn = sqlTableNameEn;
+    }
+
+    public String getSqlFilePath() {
+        return sqlFilePath;
+    }
+
+    public void setSqlFilePath(String sqlFilePath) {
+        this.sqlFilePath = sqlFilePath;
     }
 
     public String getFilePath() {
@@ -124,14 +143,15 @@ public class DataTask {
         this.status = status;
     }
 
-    public String getSqlFilePath() {
-        return sqlFilePath;
+    public DataSrc getDataSrc() {
+        return dataSrc;
     }
 
-    public void setSqlFilePath(String sqlFilePath) {
-        this.sqlFilePath = sqlFilePath;
+    public void setDataSrc(DataSrc dataSrc) {
+        this.dataSrc = dataSrc;
     }
 
+<<<<<<< HEAD
     public String getLogPath() {
         return LogPath;
     }
@@ -140,4 +160,24 @@ public class DataTask {
         LogPath = logPath;
     }
 
+=======
+    @Override
+    public String toString() {
+        return "DataTask{" +
+                "dataTaskId=" + dataTaskId +
+                ", dataSourceName='" + dataSourceName + '\'' +
+                ", dataTaskName='" + dataTaskName + '\'' +
+                ", dataTaskType='" + dataTaskType + '\'' +
+                ", tableName='" + tableName + '\'' +
+                ", sqlString='" + sqlString + '\'' +
+                ", sqlTableNameEn='" + sqlTableNameEn + '\'' +
+                ", sqlFilePath='" + sqlFilePath + '\'' +
+                ", filePath='" + filePath + '\'' +
+                ", createTime='" + createTime + '\'' +
+                ", creator='" + creator + '\'' +
+                ", status='" + status + '\'' +
+                ", dataSrc=" + dataSrc +
+                '}';
+    }
+>>>>>>> e14a8d801ecf0ce8d39335277410909693ce4b81
 }

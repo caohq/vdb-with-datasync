@@ -5,7 +5,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 public class SqlLiteDataConnection {
 
-    public JdbcTemplate makeJdbcTemplate(){
+    public static JdbcTemplate makeJdbcTemplate(){
         JdbcTemplate jdbcTemplate=new JdbcTemplate();
         BasicDataSource ds=new BasicDataSource();
         ds.setDriverClassName("org.sqlite.JDBC");
