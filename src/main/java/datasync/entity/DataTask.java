@@ -4,8 +4,8 @@ import java.util.Date;
 
 
 public class DataTask {
-    private int dataTaskId;
-    private String dataSourceName;
+    private String dataTaskId;
+    private int dataSourceId;
     private String dataTaskName;
     private String dataTaskType;
     private String tableName;
@@ -13,14 +13,20 @@ public class DataTask {
     private String sqlTableNameEn;
     private String sqlFilePath;
     private String filePath;
-    private String createTime;
+    private String subjectCode;
+    private Date createTime;
     private String creator;
     private String status;
+    private String LogPath;
     private DataSrc dataSrc;
 
-    public String getDataSourceName() { return dataSourceName; }
+    public String getSubjectCode() {
+        return subjectCode;
+    }
 
-    public void setDataSourceName(String dataSourceName) { this.dataSourceName = dataSourceName; }
+    public void setSubjectCode(String subjectCode) {
+        this.subjectCode = subjectCode;
+    }
 
     public DataSrc getDataSrc() {
         return dataSrc;
@@ -46,12 +52,20 @@ public class DataTask {
         this.dataTaskType = dataTaskType;
     }
 
-    public int getDataTaskId() {
+    public String getDataTaskId() {
         return dataTaskId;
     }
 
-    public void setDataTaskId(int dataTaskId) {
+    public void setDataTaskId(String dataTaskId) {
         this.dataTaskId = dataTaskId;
+    }
+
+    public int getDataSourceId() {
+        return dataSourceId;
+    }
+
+    public void setDataSourceId(int dataSourceId) {
+        this.dataSourceId = dataSourceId;
     }
 
     public String getTableName() {
@@ -86,11 +100,11 @@ public class DataTask {
         this.filePath = filePath;
     }
 
-    public String getCreateTime() {
+    public Date getCreateTime() {
         return createTime;
     }
 
-    public void setCreateTime(String createTime) {
+    public void setCreateTime(Date createTime) {
         this.createTime = createTime;
     }
 
@@ -118,6 +132,12 @@ public class DataTask {
         this.sqlFilePath = sqlFilePath;
     }
 
+    public String getLogPath() {
+        return LogPath;
+    }
 
+    public void setLogPath(String logPath) {
+        LogPath = logPath;
+    }
 
 }

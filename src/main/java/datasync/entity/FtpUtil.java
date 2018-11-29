@@ -177,6 +177,7 @@ public class FtpUtil {
     public UploadStatus upload(String host, String username, String password, String port, String[] localFileList, String processId,String remoteFilepath,DataTask dataTask,String subjectCode) throws IOException {
 //        ftpClient.enterLocalPassiveMode();
 //        ftpClient.enterRemotePassiveMode();
+        //FTPClient ftpClient=new FTPClient();
         ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
         ftpClient.setControlEncoding("GBK");
         System.out.println(ftpClient.getStatus());

@@ -14,9 +14,9 @@ public class DataTaskMapper implements RowMapper {
     @Override
     public Object mapRow(ResultSet resultSet, int i) throws SQLException {
         DataTask dataTask = new DataTask();
-        dataTask.setDataTaskId(resultSet.getInt("DataTaskId"));
+        dataTask.setDataTaskId(resultSet.getString("DataTaskId"));
         dataTask.setDataTaskName(resultSet.getString("DataTaskName"));
-        dataTask.setDataSourceName(resultSet.getString("DataSourceName"));
+        dataTask.setDataSourceId(resultSet.getInt("DataSourceId"));
         dataTask.setDataTaskType(resultSet.getString("DataTaskType"));
         dataTask.setTableName(resultSet.getString("TableName"));
         dataTask.setSqlString(resultSet.getString("SqlString"));
@@ -24,8 +24,10 @@ public class DataTaskMapper implements RowMapper {
         dataTask.setSqlFilePath(resultSet.getString("SqlFilePath"));
         dataTask.setFilePath(resultSet.getString("FilePath"));
         dataTask.setCreator(resultSet.getString("Creator"));
-        dataTask.setCreateTime(resultSet.getString("CreateTime"));
+        dataTask.setCreateTime(resultSet.getTimestamp("CreateTime"));
         dataTask.setStatus(resultSet.getString("Status"));
+        dataTask.setSubjectCode(resultSet.getString("SubjectCode"));
+        dataTask.setLogPath(resultSet.getString("LogPath"));
         return dataTask;
     }
 }

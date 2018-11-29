@@ -22,9 +22,13 @@ public class DataSrc {
     private String fileType;
     private String filePath;
     private String createTime;
+    private String SubjectCode;
     private int stat;
 
-    public String getFilePath() { return filePath; }
+
+    public String getFilePath() {
+        return filePath;
+    }
 
     public void setFilePath(String filePath) {
         this.filePath = filePath;
@@ -132,5 +136,13 @@ public class DataSrc {
 
     public void setStat(int stat) {
         this.stat = stat;
+    }
+
+    public String getSubjectCode() {
+        return SubjectCode;
+    }
+
+    public void setSubjectCode(String subjectCode) {
+        SubjectCode = subjectCode;
     }
 }

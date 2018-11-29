@@ -297,6 +297,8 @@
         $("#createFileTitle").text(title);
         var checked= checkTaskData();
         if(checked==true){
+            var dateDef = new Date();
+            $("#fileName").val("数据任务-"+dateDef.getFullYear()+dateDef.getMonth()+dateDef.getDate()+dateDef.getHours()+dateDef.getMinutes()+dateDef.getSeconds());
            $('#createFileMModal').modal('show');
         }else
             return;
@@ -387,7 +389,9 @@
             alert("请选择文件！");
             return;
         }else{
-          $('#createLocalFileModal').modal('show');
+            var dateDef = new Date();
+            $("#localFileName").val("数据任务-"+dateDef.getFullYear()+dateDef.getMonth()+dateDef.getDate()+dateDef.getHours()+dateDef.getMinutes()+dateDef.getSeconds());
+            $('#createLocalFileModal').modal('show');
         }
         return;
     }
@@ -434,12 +438,12 @@
     //添加sql语句
     function addSqlInput(){
         $("#sjk").append("<div style=\"width: 100%;height: 40px;margin-top: 20px;margin-bottom: 20px; \" id=\"sqlSearchDiv\">\n" +
-            "                <label>sql查询</label>\n" +
-            "                <input id=\"sqlInputBox\" class=\"form-control sqlStatements\" style=\"width: 300px;display: inline !important;\" type=\"text\"/>\n" +
-            "                <input id=\"createNewTableName\" class=\"form-control sqlStatements\" style=\"width: 100px;display: inline !important;\" type=\"text\" placeholder=\"请输入表名\"/>\n" +
-            "                <button type=\"button\" class=\"btn blue preview\" onclick=\"showPreviewModal()\" >预览</button>\n" +
-            "                <button type=\"button\" class=\"btn blue preview\" onclick=\"showPreviewModal()\" >删除</button>\n" +
-            "            </div>");
+            " <label>sql查询</label>\n" +
+            " <input id=\"sqlInputBox\" class=\"form-control sqlStatements\" style=\"width: 300px;display: inline !important;\" type=\"text\"/>\n" +
+            " <input id=\"createNewTableName\" class=\"form-control sqlStatements\" style=\"width: 100px;display: inline !important;\" type=\"text\" placeholder=\"请输入表名\"/>\n" +
+            " <button type=\"button\" class=\"btn blue preview\" onclick=\"showPreviewModal()\" >预览</button>\n" +
+            " <button type=\"button\" class=\"btn blue preview\" onclick=\"showPreviewModal()\" >删除</button>\n" +
+            " </div>");
     }
 
 </script>

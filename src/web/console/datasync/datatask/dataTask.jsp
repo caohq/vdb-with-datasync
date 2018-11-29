@@ -146,17 +146,28 @@
                 field: 'dataTaskType',
                 title: '数据来源类型'
             }, {
-                field: 'dataSourceName',
+                field: 'dataSourceId',
                 title: '数据源'
             }, {
                 field: 'createTime',
-                title: '创建时间'
+                title: '创建时间',
+                formatter: function (value, row, index) {
+                //——修改——获取日期列的值进行转换
+                    return new Date(value.time).toLocaleDateString().replace(/\//g, "-")+" "+new Date(value.time).toLocaleTimeString().replace(/\//g, "-");
+                }
             }, {
                 field: 'status',
                 title: '上传进度'
             }, {
                 field: 'status',
-                title: '状态'
+                title: '状态',
+                formatter: function (value, row, index) {
+                   if(value==0){
+                    return "未上传";
+                   }else{
+                       return "上传完成";
+                   }
+                }
             }, {
                 field: 'Desc',
                 title: '操作',
@@ -188,11 +199,11 @@
     }
 
     //导出-上传按钮
-    function ftpUpload(value){
+    function ftpUpload(taskId){
         $.ajax({
             type:"POST",
             url:"/ftpLocalUpload.do",
-            data:{},
+            data:{taskId:taskId},
             async:"false",
             success:function(data){
             },
@@ -248,6 +259,7 @@
             }
         })
     };
+
 
 </script>
 

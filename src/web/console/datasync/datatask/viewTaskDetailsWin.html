@@ -120,22 +120,22 @@
             data: {taskId: taskId},
             success: function(data) {
                 if("file"==JSON.parse(data).dataTask.dataTaskType){
-                   $("#file-createTime").html(JSON.parse(data).dataTask.createTime);
-                   $("#file-dataSourceName").html(JSON.parse(data).dataTask.dataSourceName);
+                   $("#file-createTime").html(new Date(JSON.parse(data).dataTask.createTime.time).toLocaleDateString().replace(/\//g, "-")+" "+new Date(JSON.parse(data).dataTask.createTime.time).toLocaleTimeString().replace(/\//g, "-"));
+                   $("#file-dataSourceName").html(JSON.parse(data).dataTask.dataSourceId);
                    $("#file-filePath").html(JSON.parse(data).dataTask.filePath.replace(/,/g,"<br/>"));//<br/>
                    $("#file-dataTaskName").html(JSON.parse(data).dataTask.dataTaskName);
                    $("#file-creator").html(JSON.parse(data).dataTask.creator);
-                   $("#file-status").html(JSON.parse(data).dataTask.status);
+                   $("#file-status").html(JSON.parse(data).dataTask.status=="0"?"未上传":"上传成功");
                    $("#fileModal").modal("show");
                 }else{
                     $("#pre-dataTaskName").html(JSON.parse(data).dataTask.dataTaskName);
-                    $("#pre-dataSourceName").html(JSON.parse(data).dataTask.dataSourceName);
+                    $("#pre-dataSourceName").html(JSON.parse(data).dataTask.dataSourceId);
                     $("#pre-tableName").html(JSON.parse(data).dataTask.tableName);
                     $("#pre-sqlString").html(JSON.parse(data).dataTask.sqlString);
                     $("#pre-sqlTableNameEn").html(JSON.parse(data).dataTask.sqlTableNameEn);
-                    $("#pre-createTime").html(JSON.parse(data).dataTask.createTime);
+                    $("#pre-createTime").html(new Date(JSON.parse(data).dataTask.createTime.time).toLocaleDateString().replace(/\//g, "-")+" "+new Date(JSON.parse(data).dataTask.createTime.time).toLocaleTimeString().replace(/\//g, "-"));
                     $("#pre-creator").html(JSON.parse(data).dataTask.creator);
-                    $("#pre-status").html(JSON.parse(data).dataTask.status);
+                    $("#pre-status").html(JSON.parse(data).dataTask.status=="0"?"未上传":"上传成功");
                     $("#dataModal").modal("show");
                 }
             },
