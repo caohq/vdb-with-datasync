@@ -44,12 +44,10 @@
         height: 10px;
         background: #428BEA;
     }
-    body{
+    body {
         font-family: "宋体";
         font-size: 12px;
     }
-
-
 </style>
 <body>
 <div style="width: 100%;height: 80px;">
