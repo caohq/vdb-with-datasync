@@ -233,8 +233,8 @@
 
     //导出-上传按钮
     function ftpUpload(taskId){
-        debugger
         $("#"+taskId+"")[0].style.width="70%";
+        $("#"+taskId+"Text")[0].textContent="上传中...";
         $.ajax({
             type:"POST",
             url:"/ftpLocalUpload.do",
@@ -297,7 +297,6 @@
 
     //进度条
     var processFormatter = function (value, row, index) {
-        debugger
         if(value==0){
             var process = "<div class=\"progress progress-striped active\" >\n" +
                 "\t<div id=\""+row.dataTaskId+"\" class=\"progress-bar progress-bar-success\" role=\"progressbar\"\n" +
