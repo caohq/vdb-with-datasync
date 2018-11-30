@@ -4,13 +4,13 @@ package datasync.service;
 import com.alibaba.fastjson.JSON;
 import datasync.utils.ConfigUtil;
 import com.alibaba.fastjson.JSONObject;
-import org.apache.commons.httpclient.HttpClient;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 public class LoginService
@@ -20,7 +20,9 @@ public class LoginService
         //1、访问中心端验证登录是否成功
         int loginStatus = 0;
 
-        String configFilePath = LoginService.class.getClassLoader().getResource("config.properties").getFile();
+        //String temp = LoginService.class.getClassLoader().getResource("../../WE").getFile();
+
+        String configFilePath = LoginService.class.getClassLoader().getResource("../../WEB-INF/config.properties").getFile();
 
         try {
             String portalUrl = ConfigUtil.getConfigItem(configFilePath, "PortalUrl");
@@ -41,7 +43,7 @@ public class LoginService
                 content = content + line;
             }
             JSONObject loginObject = JSON.parseObject(content);
-            loginStatus = Integer.parseInt((String)(loginObject.get("loginStatus")));
+            loginStatus = Integer.parseInt(loginObject.get("loginStatus") + "");
 
             //validate user pass
             if (loginStatus == 1)
@@ -59,7 +61,7 @@ public class LoginService
 
     private boolean getSubjectConfig(String userName) throws Exception
     {
-        String configFilePath = LoginService.class.getClassLoader().getResource("config.properties").getFile();
+        String configFilePath = LoginService.class.getClassLoader().getResource("../../WEB-INF/config.properties").getFile();
         System.out.println(configFilePath);
         String portalUrl = ConfigUtil.getConfigItem(configFilePath, "PortalUrl");
         String getSubjectApiPath = "/api/getSubjectByUser/" + userName;
@@ -81,7 +83,7 @@ public class LoginService
         }
         JSONObject subjectInfo = JSON.parseObject(content);
 
-        LinkedHashMap dataMap = (LinkedHashMap) subjectInfo.get("data");
+        JSONObject dataMap = (JSONObject) subjectInfo.get("data");
 
         String subjectName = "";
         if (dataMap.get("subjectName") != null)

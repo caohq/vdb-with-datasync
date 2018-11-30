@@ -20,7 +20,7 @@ public class ConfigPropertyService {
 
     @PostConstruct
     private void initWac() throws IOException {
-        ClassPathResource classPathResource = new ClassPathResource("/config.properties");
+        ClassPathResource classPathResource = new ClassPathResource("/WEB-INF/config.properties");
         drsrProperties = PropertiesLoaderUtils.loadProperties(classPathResource);
     }
 

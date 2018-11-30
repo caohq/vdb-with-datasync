@@ -11,25 +11,25 @@ import java.io.IOException;
 public class LoginServlet extends HttpServlet {
     private LoginService loginService = new LoginService();
 
-    protected void service(HttpServletRequest request, HttpServletResponse res) throws ServletException, IOException {
+    protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String userName = request.getParameter("userName");
         String password = request.getParameter("password");
 
-        String loginNotice = "";
         int loginStatus = 0; // log success or not， 0 ：success, 1: failed, notice : username or password is wrong
         loginStatus = loginService.validateLogin(userName, password);
 
-        String retView = "";
+        String loginNotice = "";
+
         if (loginStatus == 1)
         {
-            retView = "redirect:/starter.jsp";
+            loginNotice = "success";
         }
         else
         {
-            retView = "redirect:/index.jsp";
+            loginNotice = "fail";
         }
 
-        res.sendRedirect(retView);
+        response.getWriter().println(loginNotice);
     }
 }
 

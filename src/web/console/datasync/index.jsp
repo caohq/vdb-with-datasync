@@ -27,7 +27,7 @@
      <div class="login_in_div">
          <h1>datasync登录</h1>
          <hr style="width: 60%"/>
-         <form action="" method="post">
+         <form action="/login" method="post">
             <label for="userName">用户名：</label>
             <input type="text" id="userName" class="" name="userName" style="width: 200px;margin: 10px;"/>
             <br />
