@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 package datasync.service;
 
 import com.alibaba.fastjson.JSON;
@@ -9,7 +9,6 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
-
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.LinkedHashMap;
@@ -61,7 +60,7 @@ public class LoginService
     private boolean getSubjectConfig(String userName) throws Exception
     {
         String configFilePath = LoginService.class.getClassLoader().getResource("config.properties").getFile();
-
+        System.out.println(configFilePath);
         String portalUrl = ConfigUtil.getConfigItem(configFilePath, "PortalUrl");
         String getSubjectApiPath = "/api/getSubjectByUser/" + userName;
 
@@ -148,5 +147,11 @@ public class LoginService
         ConfigUtil.setConfigItem(configFilePath, "Brief", brief);
 
         return true;
+    }
+
+    public static void main(String[] args)
+    {
+        LoginService loginService = new LoginService();
+        loginService.validateLogin("system", "123456");
     }
 }
