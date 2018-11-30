@@ -1,16 +1,12 @@
 package datasync.controller;
 
 import datasync.service.LoginService;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+//import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 public class LoginServlet extends HttpServlet {
     private LoginService loginService = new LoginService();
@@ -26,11 +22,13 @@ public class LoginServlet extends HttpServlet {
         String retView = "";
         if (loginStatus == 1)
         {
-            retView = "redirect:/index";
+            retView = "redirect:/starter.jsp";
         }
         else
         {
-            retView = "redirect:/";
+            retView = "redirect:/index.jsp";
         }
+
+        res.sendRedirect(retView);
     }
 }

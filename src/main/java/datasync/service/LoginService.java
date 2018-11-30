@@ -1,9 +1,16 @@
 package datasync.service;
 
+import com.alibaba.fastjson.JSON;
 import datasync.utils.ConfigUtil;
 import com.alibaba.fastjson.JSONObject;
-import org.springframework.web.client.RestTemplate;
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.util.LinkedHashMap;
 
 public class LoginService
@@ -19,22 +26,27 @@ public class LoginService
             String portalUrl = ConfigUtil.getConfigItem(configFilePath, "PortalUrl");
             String loginApiPath = "/api/clientLogin";
             String url = "http://" + portalUrl + loginApiPath + "?" + "userName=" + userName + "&password=" + password;
-            RestTemplate restTemplate = new RestTemplate();
-            JSONObject loginObject = restTemplate.getForObject(url, JSONObject.class);
+            //RestTemplate restTemplate = new RestTemplate();
+            //JSONObject loginObject = restTemplate.getForObject(url, JSONObject.class);
 
+            DefaultHttpClient client = new DefaultHttpClient();
+            HttpGet request = new HttpGet(url);
+            HttpResponse response = client.execute(request);
+            HttpEntity entity = response.getEntity();
+            String content = "";
+            String line = "";
+            BufferedReader reader = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+            while ((line = reader.readLine()) != null)
+            {
+                content = content + line;
+            }
+            JSONObject loginObject = JSON.parseObject(content);
             loginStatus = Integer.parseInt((String)(loginObject.get("loginStatus")));
 
             //validate user pass
             if (loginStatus == 1)
             {
-
-                //String isInitialized = ConfigUtil.getConfigItem(configFilePath, "IsInitialized");
-
-                //config file not initialized
-                /*if (isInitialized.trim().equals("false"))
-                {*/
                 getSubjectConfig(userName);
-                /*}*/
             }
        }
        catch (Exception e)
@@ -45,7 +57,7 @@ public class LoginService
        return  loginStatus;
     }
 
-    private boolean getSubjectConfig(String userName)
+    private boolean getSubjectConfig(String userName) throws Exception
     {
         String configFilePath = LoginService.class.getClassLoader().getResource("config.properties").getFile();
 
@@ -54,8 +66,20 @@ public class LoginService
 
         String url = "http://" + portalUrl + getSubjectApiPath;
 
-        RestTemplate restTemplate = new RestTemplate();
-        JSONObject subjectInfo = restTemplate.getForObject(url, JSONObject.class);
+        /*RestTemplate restTemplate = new RestTemplate();
+        JSONObject subjectInfo = restTemplate.getForObject(url, JSONObject.class);*/
+        DefaultHttpClient client = new DefaultHttpClient();
+        HttpGet request = new HttpGet(url);
+        HttpResponse response = client.execute(request);
+        HttpEntity entity = response.getEntity();
+        String content = "";
+        String line = "";
+        BufferedReader reader = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+        while ((line = reader.readLine()) != null)
+        {
+            content = content + line;
+        }
+        JSONObject subjectInfo = JSON.parseObject(content);
 
         LinkedHashMap dataMap = (LinkedHashMap) subjectInfo.get("data");
 
