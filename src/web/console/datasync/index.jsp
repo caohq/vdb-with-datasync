@@ -14,9 +14,20 @@
     <link rel="stylesheet" type="text/css" href="/console/datasync/css/style.min.css" />
 </head>
 <body style="overflow: hidden;">
-<a onclick="start()">safasdfasdf</a>
 
+<h1>datasync登录</h1>
+<hr />
 
+<form action="" method="post">
+    <label for="userName">用户名：</label>
+    <input type="text" id="userName" name="userName"/>
+    <br />
+    <label for="userName">密&nbsp;&nbsp;&nbsp;&nbsp;码：</label>
+    <input type="text" id="password" name="password" />
+    <br />
+    &nbsp;&nbsp;&nbsp;&nbsp;<input type="reset" id="reset" name="reset"/>
+    &nbsp;&nbsp;&nbsp;&nbsp;<input type="submit" id="submit" name="submit"/>
+</form>
 
 </body>
 </html>
