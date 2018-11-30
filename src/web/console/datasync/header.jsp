@@ -44,11 +44,10 @@
         height: 10px;
         background: #428BEA;
     }
-    body{
+    body {
         font-family: "宋体";
         font-size: 12px;
     }
-
 
     #top_left_div {
         height: 77px;
@@ -57,7 +56,6 @@
     .top_mod td a {
         color: #FFF !important;
     }
-
 
 </style>
 <body>

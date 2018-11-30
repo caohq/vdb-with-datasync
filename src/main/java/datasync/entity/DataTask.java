@@ -139,4 +139,25 @@ public class DataTask {
     public void setDataSrc(DataSrc dataSrc) {
         this.dataSrc = dataSrc;
     }
+
+    @Override
+    public String toString() {
+        return "DataTask{" +
+                "dataTaskId='" + dataTaskId + '\'' +
+                ", dataSourceId=" + dataSourceId +
+                ", dataTaskName='" + dataTaskName + '\'' +
+                ", dataTaskType='" + dataTaskType + '\'' +
+                ", tableName='" + tableName + '\'' +
+                ", sqlString='" + sqlString + '\'' +
+                ", sqlTableNameEn='" + sqlTableNameEn + '\'' +
+                ", sqlFilePath='" + sqlFilePath + '\'' +
+                ", filePath='" + filePath + '\'' +
+                ", subjectCode='" + subjectCode + '\'' +
+                ", createTime=" + createTime +
+                ", creator='" + creator + '\'' +
+                ", status='" + status + '\'' +
+                ", LogPath='" + LogPath + '\'' +
+                ", dataSrc=" + dataSrc +
+                '}';
+    }
 }

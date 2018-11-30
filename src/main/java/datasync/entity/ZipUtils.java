@@ -27,10 +27,13 @@ public class ZipUtils {
         zipArchiveOutputStream.putArchiveEntry(entry);
         if (!file.isDirectory()) {
             entry.setUnixMode(UnixStat.DEFAULT_FILE_PERM);
-            try (FileInputStream fileInputStream = new FileInputStream(file)) {
+            try {
+                FileInputStream fileInputStream = new FileInputStream(file);
                 IOUtils.copy(fileInputStream, zipArchiveOutputStream);
+                fileInputStream.close();
             } finally {
                 zipArchiveOutputStream.closeArchiveEntry();
+
             }
         } else {
             entry.setUnixMode(UnixStat.DEFAULT_DIR_PERM);
