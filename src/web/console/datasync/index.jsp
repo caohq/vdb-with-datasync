@@ -22,24 +22,21 @@
 
     </style>
 </head>
-<body style="overflow: hidden;margin: 0;">
-<div>
-  <div style="position: relative;background-image: url('/console/datasync/vdbNewLog/images/Log03_bg.jpg');background-repeat-y:no-repeat;height: 100%;width: 100%;background-size: 94%">
-     <div class="login_in_div">
-         <h1>datasync登录</h1>
-         <hr style="width: 60%"/>
-         <form action="" method="post">
-            <label for="userName">用户名：</label>
-            <input type="text" id="userName" class="" name="userName" style="width: 200px;margin: 10px;"/>
-            <br />
-            <label for="userName">密&nbsp;&nbsp;&nbsp;码：</label>
-            <input type="text" id="password" class="" name="password" style="width: 200px;margin: 10px;" />
-            <br />
-            &nbsp;&nbsp;&nbsp;&nbsp;<input type="reset" id="reset" name="reset"/>
-            &nbsp;&nbsp;&nbsp;&nbsp;<input type="submit" id="submit" name="submit"/>
-         </form>
-     </div>
-  </div>
-</div>
+<body style="overflow: hidden;">
+
+<h1>datasync登录</h1>
+<hr />
+
+<form action="" method="post">
+    <label for="userName">用户名：</label>
+    <input type="text" id="userName" name="userName"/>
+    <br />
+    <label for="userName">密&nbsp;&nbsp;&nbsp;&nbsp;码：</label>
+    <input type="text" id="password" name="password" />
+    <br />
+    &nbsp;&nbsp;&nbsp;&nbsp;<input type="reset" id="reset" name="reset"/>
+    &nbsp;&nbsp;&nbsp;&nbsp;<input type="submit" id="submit" name="submit"/>
+</form>
+
 </body>
 </html>
