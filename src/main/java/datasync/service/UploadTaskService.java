@@ -2,7 +2,9 @@ package datasync.service;
 
 import datasync.connection.MysqlDataConnection;
 import datasync.connection.SqlLiteDataConnection;
+import datasync.entity.DataSrc;
 import datasync.entity.DataTask;
+import datasync.mapper.DataSrcMapper;
 import datasync.mapper.DataTaskMapper;
 import datasync.utils.DDL2SQLUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -54,21 +56,23 @@ public class UploadTaskService {
         {
             try {
                 //测试用的connection 和 dataTask
-                //DataSrc dataSrc = dataTask.getDataSrc();
+                String dataSourceId = dataTask.getDataSourceId() + "";
+                DataSrc dataSrc = getDataSource(dataSourceId);
+                String getConnectionParameter = dataSrc.getDataSourceType();
                 //String getConnectionParameter = dataSrc.getDataSourceName() + "$" + dataSrc.getHost() + "$" + dataSrc.getPort() + "$" + dataSrc.getUserName() + "$" + dataSrc.getPassword() +"$mysql$" + dataSrc.getDatabaseName();
 
                 //以下为测试数据
-                String getConnectionParameter = "mysql-export$192.168.192.133$3306$root$123456$mysql$testdb";
+                /*String getConnectionParameter = "mysql-export$192.168.192.133$3306$root$123456$mysql$testdb";
                 DataTask dataTask1 = new DataTask();
                 dataTask1.setDataTaskId(dataTaskId);
                 dataTask1.setTableName("t1;t2;");
                 dataTask1.setSqlString("select * from t1");
-                dataTask1.setSqlTableNameEn("t1Temp");
+                dataTask1.setSqlTableNameEn("t1Temp");*/
 
                 Connection mysqlDataConnection = MysqlDataConnection.makeConn(getConnectionParameter);
                 System.out.println("mysqlDataConnection = " + mysqlDataConnection);
 
-                exportTaskDataFromSql(request, mysqlDataConnection, dataTask1);
+                exportTaskDataFromSql(request, mysqlDataConnection, dataTask);
             }
             catch (Exception e)
             {
@@ -138,6 +142,20 @@ public class UploadTaskService {
 
         if (dataTaskList.size() != 0) {
             return dataTaskList.get(0);
+        }
+        else {
+            return null;
+        }
+    }
+
+    private DataSrc getDataSource(String dataSrcId)
+    {
+        String sql = "select * from t_datasource where DataSourceId = ?" ;
+        JdbcTemplate jdbcTemplate = SqlLiteDataConnection.makeJdbcTemplate();
+        List<DataSrc> dataSrcList = jdbcTemplate.query(sql, new Object[]{dataSrcId}, new DataSrcMapper());
+
+        if (dataSrcList.size() != 0) {
+            return dataSrcList.get(0);
         }
         else {
             return null;

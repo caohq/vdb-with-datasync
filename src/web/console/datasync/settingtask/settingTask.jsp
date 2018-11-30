@@ -412,7 +412,8 @@
             data:{
                 connDataName:connDataName,
                 getCheckedFile:getCheckedFile,
-                getLocalTaskName:getLocalTaskName
+                getLocalTaskName:getLocalTaskName,
+                connDataValue:connDataValue
             },
             success:function (dataSession) {
                 $("#createLocalFileModal").modal("hide");//隐藏弹出框

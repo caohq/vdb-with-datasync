@@ -24,7 +24,7 @@
         #wrap li.li1{width: 15%}
         #wrap li.li2{width: 85%}
         #wrap li.li3{width:0px;display: none;}
-        #wrap label{float: left;width: 8.8px;height: 90%;
+        #wrap label{float: left;width: 8.8px;height: 100%;
             position: absolute;cursor: e-resize;}
         #wrap label.lab1{background: #438AEB;}
         #wrap label.lab2{}

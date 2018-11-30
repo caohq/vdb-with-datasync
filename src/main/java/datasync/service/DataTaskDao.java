@@ -18,7 +18,7 @@ import java.util.UUID;
 public class DataTaskDao {
 
     //添加任务
-    public int insertDatatask(final DataTask datatask){
+    public int insertDatatask(final DataTask datatask,String connData,String dataSourceName){
         boolean flag = false;
         final String sql = "insert into t_datatask(dataSourceId,dataTaskName,dataTaskType," +
                 "tableName,sqlString,sqlTableNameEn,sqlFilePath,filePath,createTime,creator,status,datataskId,subjectCode) " +
@@ -26,11 +26,13 @@ public class DataTaskDao {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         SqlLiteDataConnection sqlLiteDataConnection=new SqlLiteDataConnection();
         JdbcTemplate jdbcTemplate=sqlLiteDataConnection.makeJdbcTemplate();
+        final String taskId=String.valueOf(UUID.randomUUID());
+        final int dataSourceId= (int) System.currentTimeMillis();
         jdbcTemplate.update(new PreparedStatementCreator() {
             @Override
             public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
                 PreparedStatement ps = connection.prepareStatement(sql,Statement.RETURN_GENERATED_KEYS);
-                ps.setInt(1,datatask.getDataSourceId());
+                ps.setInt(1, dataSourceId);
                 ps.setString(2,datatask.getDataTaskName());
                 ps.setString(3,datatask.getDataTaskType());
                 ps.setString(4,datatask.getTableName());
@@ -41,11 +43,12 @@ public class DataTaskDao {
                 ps.setTimestamp(9,new Timestamp(datatask.getCreateTime().getTime()));
                 ps.setString(10,datatask.getCreator());
                 ps.setString(11,datatask.getStatus());
-                ps.setString(12, String.valueOf(UUID.randomUUID()));
+                ps.setString(12, taskId);
                 ps.setString(13,datatask.getSubjectCode());
                 return ps;
             }
         },keyHolder);
+        insertDataSrc(dataSourceId,dataSourceName,connData);
 
         int generatedId = keyHolder.getKey().intValue();
 
@@ -103,5 +106,27 @@ public class DataTaskDao {
         JdbcTemplate jdbcTemplate=sqlLiteDataConnection.makeJdbcTemplate();
         int result = jdbcTemplate.update(sql);//query(sql, new Object[]{taskId}, new DataTaskMapper());
         return result;
+    }
+
+    public int insertDataSrc(final int dataSourceId, final String dataSourceName, final String connData){
+        final String sql = "insert into t_datasource(dataSourceId,dataSourceName,dataSourceType)" +
+                "VALUES (?,?,?)";
+        SqlLiteDataConnection sqlLiteDataConnection=new SqlLiteDataConnection();
+        JdbcTemplate jdbcTemplate=sqlLiteDataConnection.makeJdbcTemplate();
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        jdbcTemplate.update(new PreparedStatementCreator() {
+            @Override
+            public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
+                PreparedStatement ps = connection.prepareStatement(sql,Statement.RETURN_GENERATED_KEYS);
+                ps.setInt(1,dataSourceId);
+                ps.setString(2,dataSourceName);
+                ps.setString(3,connData);
+                return ps;
+            }
+        },keyHolder);
+
+        int generatedId = keyHolder.getKey().intValue();
+
+        return generatedId;
     }
 }

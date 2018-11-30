@@ -4,7 +4,7 @@
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Insert title here</title>
+    <title>登陆页面</title>
     <script type="text/javascript" src="/console/shared/js/jquery-3.2.1.min.js " ></script>
     <script src="/console/shared/bootstrap-3.3.7/js/bootstrap.js"></script>
     <script src="/console/datasync/js/dragdiv.js"></script>
@@ -17,14 +17,13 @@
             height: 30%;
             width: 50%;
             margin: -15% 0 0 -25%;
-
         }
 
     </style>
 </head>
 <body style="overflow: hidden;margin: 0;">
 <div>
-  <div style="position: relative;background-image: url('/console/datasync/vdbNewLog/images/Log03_bg.jpg');background-repeat-y:no-repeat;height: 100%;width: 100%;background-size: 94%">
+  <div class="backgrond-image" style="position: relative;background-image: url('/console/datasync/vdbNewLog/images/Log03_bg.jpg');background-repeat-y:no-repeat;height: 100%;width: 100%;background-size: 94%">
      <div class="login_in_div">
          <h1>datasync登录</h1>
          <hr style="width: 60%"/>

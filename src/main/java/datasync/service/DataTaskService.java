@@ -8,8 +8,8 @@ import java.util.Map;
 
 public class DataTaskService {
 
-    public int insertDatatask(DataTask datatask) throws SQLException {
-        return new DataTaskDao().insertDatatask(datatask);
+    public int insertDatatask(DataTask datatask,String connData,String dataSourceName) throws SQLException {
+        return new DataTaskDao().insertDatatask(datatask,connData,dataSourceName);
     }
 
     public List<DataTask> getDataTaskList(Map<Object,Object> params){

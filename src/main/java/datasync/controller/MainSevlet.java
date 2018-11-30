@@ -217,6 +217,7 @@ public class MainSevlet extends HttpServlet{
         HttpSession session=res.getSession();
         String connDataValue=res.getParameter("connDataValue");
         String [] connDataValueArray=connDataValue.split("\\$");
+        String dataSourceName=res.getParameter("connDataName");
 //        datatask.setDataSourceId(5);
         datatask.setDataTaskName(res.getParameter("taskName"));//任务名
         datatask.setTableName(res.getParameter("checkedValue"));//选择表的名称
@@ -229,7 +230,7 @@ public class MainSevlet extends HttpServlet{
         }
         datatask.setCreator(session.getAttribute("SPRING_SECURITY_LAST_USERNAME")==null?"": (String) session.getAttribute("SPRING_SECURITY_LAST_USERNAME"));
         datatask.setStatus("0");
-        int flag = new DataTaskService().insertDatatask(datatask);
+        int flag = new DataTaskService().insertDatatask(datatask,connDataValue,dataSourceName);
         jsonObject.put("result",flag);
         if(flag < 0){
             return  jsonObject;
@@ -264,6 +265,7 @@ public class MainSevlet extends HttpServlet{
         Date date=new Date();
         HttpSession session=req.getSession();
         String  connDataName=req.getParameter("connDataName");//本地连接名称
+        String connDataValue=req.getParameter("connDataValue");//数据源名称
         String  getCheckedFile=req.getParameter("getCheckedFile");//文件路径
         String  getLocalTaskName=req.getParameter("getLocalTaskName");//获取任务名称
         String datataskId=String.valueOf(UUID.randomUUID());
@@ -288,7 +290,7 @@ public class MainSevlet extends HttpServlet{
         DataTaskService dataTaskService=new DataTaskService();
         datatask.setSqlFilePath(zipFile.replace(File.separator,"%_%"));
         //boolean upresult = dataTaskService.update(dt);
-        int flag = new DataTaskService().insertDatatask(datatask);
+        int flag = new DataTaskService().insertDatatask(datatask,connDataName,connDataValue);
         return jsonObject;
     }
 
@@ -394,6 +396,7 @@ public class MainSevlet extends HttpServlet{
 
     }
 
+    //通过id查询task信息
     public JSONObject searchTaskDetailById(HttpServletRequest req, HttpServletResponse res) throws IOException {
         String taskId=req.getParameter("taskId");
         PrintWriter out = res.getWriter();
@@ -404,6 +407,8 @@ public class MainSevlet extends HttpServlet{
         return  jsonObject;
     }
 
+
+    //通过id删除task
     public int deleteTaskById(HttpServletRequest req, HttpServletResponse res) throws IOException {
         PrintWriter out = res.getWriter();
         String taskId=req.getParameter("taskId");

@@ -78,7 +78,7 @@
     <div class="top_mod">
         <table cellpadding="0" cellspacing="0" border="0">
             <tr>
-                <td><a href="#">数据配置</a></td>
+                <td><a href="/console/catalog/index.jsp">数据配置</a></td>
                 <td width="1"></td>
                 <td><a href="#">数据任务</a></td>
                 <td width="1"></td>
