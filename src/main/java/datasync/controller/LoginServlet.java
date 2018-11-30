@@ -26,13 +26,11 @@ public class LoginServlet extends HttpServlet {
         String retView = "";
         if (loginStatus == 1)
         {
-            request.getSession().setAttribute("userName", userName);
             retView = "redirect:/index";
         }
         else
         {
             retView = "redirect:/";
-            attributes.addFlashAttribute("loginNotice", "用户名或密码错误！");
         }
     }
 }
