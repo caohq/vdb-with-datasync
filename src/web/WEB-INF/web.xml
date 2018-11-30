@@ -92,25 +92,14 @@
 	</filter-mapping>
 
 	<servlet>
-	<servlet-name>mainServlet</servlet-name>
-	<servlet-class>
-		datasync.controller.MainSevlet
-	</servlet-class>
-</servlet>
-	<servlet-mapping>
 		<servlet-name>mainServlet</servlet-name>
-		<url-pattern>*.do</url-pattern>
-	</servlet-mapping>
-
-	<servlet>
-		<servlet-name>loginServlet</servlet-name>
 		<servlet-class>
-			datasync.controller.LoginServlet
+			datasync.controller.MainSevlet
 		</servlet-class>
 	</servlet>
 	<servlet-mapping>
-		<servlet-name>loginServlet</servlet-name>
-		<url-pattern>login.do</url-pattern>
+		<servlet-name>mainServlet</servlet-name>
+		<url-pattern>*.do</url-pattern>
 	</servlet-mapping>
 
 </web-app>
