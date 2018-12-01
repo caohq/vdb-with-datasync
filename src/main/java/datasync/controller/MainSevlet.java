@@ -85,7 +85,7 @@ public class MainSevlet extends HttpServlet{
             deleteTaskById(req,res);
         } else if ("/exportTaskData.do".equals(path))
         {
-            uploadTask(req, res);
+          //  uploadTask(req, res,data);
         }
         else{
             //错误路径
@@ -97,15 +97,15 @@ public class MainSevlet extends HttpServlet{
      * 根据taskId完成task的上传任务, 任务上传包括 导出数据、打包数据、上传数据到中心端，中心端导入数据到存放数据的数据库
      *
      */
-    public void uploadTask(HttpServletRequest req, HttpServletResponse res) throws IOException {
+    public String uploadTask(HttpServletRequest req, HttpServletResponse res,String dataTaskId) throws IOException {
         PrintWriter out = res.getWriter();
-        String dataTaskId = req.getParameter("dataTaskId");
+//      getWriter  String dataTaskId = req.getParameter("dataTaskId");
 
-        System.out.println("enterring uploadTask - dataTaskId = " + dataTaskId);
+      //  System.out.println("enterring uploadTask - dataTaskId = " + dataTaskId);
 
         UploadTaskService uploadTaskService = new UploadTaskService();
-        boolean exported = uploadTaskService.exportDataTask(req, dataTaskId);
-        if (exported)
+        String zipFilePath = uploadTaskService.exportDataTask(req, dataTaskId);
+        if (zipFilePath!=null || zipFilePath!="")
         {
             try {
                 res.getWriter().println("success");
@@ -125,6 +125,8 @@ public class MainSevlet extends HttpServlet{
                 e.printStackTrace();
             }
         }
+        return zipFilePath;
+
         /*uploadTaskService.packTaskData(dataTaskId);
         uploadTaskService.uploadTaskData(dataTaskId);
         uploadTaskService.importTaskData(dataTaskId);*/
@@ -209,29 +211,40 @@ public class MainSevlet extends HttpServlet{
     }
 
    //新建数据库任务
-    public JSONObject submitSqlData(HttpServletRequest res, HttpServletResponse req) throws SQLException {
+    public JSONObject submitSqlData(HttpServletRequest res, HttpServletResponse req) throws SQLException, IOException {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         Date date=new Date();
         JSONObject jsonObject = new JSONObject();
         DataTask datatask = new DataTask();
         HttpSession session=res.getSession();
+        String datataskId=String.valueOf(UUID.randomUUID());
         String connDataValue=res.getParameter("connDataValue");
         String [] connDataValueArray=connDataValue.split("\\$");
         String dataSourceName=res.getParameter("connDataName");
+        int dataSourceId= (int) System.currentTimeMillis();
 //        datatask.setDataSourceId(5);
+        datatask.setDataTaskId(datataskId);
         datatask.setDataTaskName(res.getParameter("taskName"));//任务名
         datatask.setTableName(res.getParameter("checkedValue"));//选择表的名称
         datatask.setSqlString(res.getParameter("sql"));//SQL语句
         datatask.setSqlTableNameEn(res.getParameter("createNewTableName"));//新建表名
         datatask.setCreateTime(date);
-        datatask.setDataSourceId(0);//(res.getParameter("connDataName"));//数据源名称
+        datatask.setDataSourceId(dataSourceId);//(res.getParameter("connDataName"));//数据源名称
         if(connDataValueArray.length>2){
            datatask.setDataTaskType(connDataValueArray[connDataValueArray.length-2]);//数据源类型
         }
         datatask.setCreator(session.getAttribute("SPRING_SECURITY_LAST_USERNAME")==null?"": (String) session.getAttribute("SPRING_SECURITY_LAST_USERNAME"));
         datatask.setStatus("0");
         int flag = new DataTaskService().insertDatatask(datatask,connDataValue,dataSourceName);
+
+        String zipFilePath=uploadTask(res, req,datataskId);//打包
+        String fileName = "sdc001"+"_"+datataskId+"_sql.zip";
+        datatask.setSqlFilePath(zipFilePath+fileName);
+        int flag1= new DataTaskService().updateSqlFilePathById(datatask);
+
+
         jsonObject.put("result",flag);
+
         if(flag < 0){
             return  jsonObject;
         }
@@ -263,6 +276,7 @@ public class MainSevlet extends HttpServlet{
         DataTask datatask = new DataTask();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         Date date=new Date();
+        int dataSourceId= (int) System.currentTimeMillis();
         HttpSession session=req.getSession();
         String  connDataName=req.getParameter("connDataName");//本地连接名称
         String connDataValue=req.getParameter("connDataValue");//数据源名称
@@ -270,7 +284,7 @@ public class MainSevlet extends HttpServlet{
         String  getLocalTaskName=req.getParameter("getLocalTaskName");//获取任务名称
         String datataskId=String.valueOf(UUID.randomUUID());
         datatask.setCreateTime(date);
-        datatask.setDataSourceId(0);//数据源名称
+        datatask.setDataSourceId(dataSourceId);//数据源名称
         datatask.setDataTaskName(getLocalTaskName);//任务名
         datatask.setFilePath(getCheckedFile);
         datatask.setDataTaskType("file");
@@ -322,7 +336,7 @@ public class MainSevlet extends HttpServlet{
                 }
             }else if(dataTask.getDataTaskType().equals("mysql")){
                 remoteFilepath = remoteFilepath+subjectCode+"_"+dataTask.getDataTaskId()+"/";
-                String[] localFileList = {dataTask.getFilePath()};
+                String[] localFileList = {dataTask.getSqlFilePath()};
                 result = ftpUtil.upload(host, userName, password, port, localFileList, processId,remoteFilepath,dataTask,subjectCode).toString();
                 if(localFileList.length == 0){
                     return 0;

@@ -154,7 +154,7 @@ div.pagingBlock a.dhx_not_active{
 .dhtmlxGrid_selection {
    -moz-opacity: 0.5;
    filter: alpha(opacity = 50);
-   background-color:;
+   /*background-color:;*/
    opacity:0.5;
    border: 3px solid red;
 }

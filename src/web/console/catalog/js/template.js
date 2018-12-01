@@ -5,7 +5,9 @@ var topHeight;
 var footTopHeight;
 var footHeight;
 var treeTitleHeight;
-
+$(function () {
+    start();
+})
 function init() 
 {
 	var xmlurl="getDynamicTree.vpage?date="+new Date();
@@ -167,4 +169,11 @@ window.onresize = function(){
 	
 	//重新调整左侧树DIV的高度
 	document.getElementById("tree").style.height=layout.cells('a').getHeight()-treeTitleHeight;
+
+}
+
+function start(){
+	var div = '<ul class="top_mod"><li><a href="/console/catalog/index.jsp">数据配置</a></li><li><a href="/console/datasync/starter.jsp">数据任务</a></li><li><a href="#">数据汇交</a></li></ul>'
+    $("#topDiv").append(div);
+
 }

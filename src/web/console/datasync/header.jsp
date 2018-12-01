@@ -10,26 +10,6 @@
     <link href="/console/datasync/vdbNewLog/css/second.css" rel="stylesheet" type="text/css" />
 </head>
 <style>
-    /*.head{*/
-        /*float: left;*/
-        /*background: url(/console/shared/images/top_right_bg.jpg) top left no-repeat;*/
-        /*background-size:100% 100%;*/
-        /*width: 25%;*/
-        /*height: 100%;*/
-    /*}*/
-    /*.top_left_div{*/
-        /*height: 80px;*/
-        /*width: 403px;*/
-        /*float: left;*/
-        /*background: url(/console/shared/images/top_left_bg.jpg) top left no-repeat;*/
-        /*padding-top: 40px;*/
-        /*padding-left: 86px;*/
-    /*}*/
-    /*.title_left_title_div{*/
-        /*font-size: 16px;*/
-        /*font-family: "黑体";*/
-        /*color: #FFF;*/
-    /*}*/
     .foot_div {
         height: 48px;
         width: 100%;
@@ -53,39 +33,25 @@
         height: 77px;
         width: 418px !important;
     }
-    .top_mod td a {
+    .top_mod li{display: inline-block;font-size:14px;margin:10px;
+        line-height: 30px;width:100px;text-align: center;float: left}
+    .top_mod a {
         color: #FFF !important;
     }
 
 </style>
 <body>
-<%--<div style="width: 100%;height: 80px;">--%>
-    <%--<div class="head" style="width: 75%;height: 100%;background-image: url('/console/shared/images/top_mid_bg.jpg');background-repeat:repeat-x;">--%>
-        <%--<div class="top_left_div" >--%>
-            <%--<div class="title_left_title_div">--%>
-                <%--数据管理与共享平台--%>
-            <%--</div>--%>
-
-        <%--</div>--%>
-        <%--&lt;%&ndash;<img src="/console/shared/images/top_left_bg.jpg">&ndash;%&gt;--%>
-    <%--</div>--%>
-    <%--<div  class="head">--%>
-    <%--</div>--%>
-<%--</div>--%>
 
 <div class="top_div">
     <div class="top_left_div" id="top_left_div" style="padding-left: 86px !important;"></div>
-    <div class="top_mod">
-        <table cellpadding="0" cellspacing="0" border="0">
-            <tr>
-                <td><a href="/console/catalog/index.jsp">数据配置</a></td>
-                <td width="1"></td>
-                <td><a href="#">数据任务</a></td>
-                <td width="1"></td>
-                <td><a href="#">数据汇交</a></td>
-            </tr>
-        </table>
-    </div>
+    <ul class="top_mod">
+        <li>
+            <%--<a href="/j_spring_security_check?j_username=root&j_password=1&j_uri=%2Fconsole%2F">数据配置</a>--%>
+            <a href="/console/catalog/index.jsp">数据配置</a>
+        </li>
+        <li><a href="/console/datasync/starter.jsp">数据任务</a></li>
+        <li><a href="#">数据汇交</a></li>
+    </ul>
     <div class="top_right_div"><img src="/console/datasync/vdbNewLog/images/top_right_bg.jpg" width="350"  height="80" border="0" usemap="#Map" />
         <map name="Map" id="Map"> <area shape="rect" coords="196,19,335,46" href="#" /> </map>
     </div>

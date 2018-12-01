@@ -58,6 +58,12 @@
             line-height: 14px !important;
             text-align: left;
         }
+        #wrap li{
+            line-height: 30px;
+        }
+        #wrap li a:active{
+            background: none;
+        }
     </style>
 </head>
 <body style="overflow: hidden;">
@@ -74,12 +80,12 @@
                 </div>
                 <div style="width: 180px;height:90%;float:left;display: block;margin-left: 14px;margin-top: 20px;vertical-align:middle;">
                     <div style="background-color: #438AEB;height: 30px;text-align: center ;margin-top: 2px;width: 80%;" >
-                        <a onclick="goToPage('datatask/dataTask.jsp')" href="javascript:void(0)" style="font-size:20px;text-align:center;display:block;position: relative;top:50%;transform:translateY(-50%);">
+                        <a onclick="goToPage('datatask/dataTask.jsp')" href="javascript:void(0)" style="font-size:20px;text-align:center;display:block;">
                             数据任务
                         </a>
                     </div>
                     <div style="background-color: #438AEB;height: 30px;text-align: center ;margin-top: 2px; width: 80%;" >
-                        <a onclick="goToPage('settingtask/settingTask.jsp')" href="javascript:void(0)" style="font-size:20px;text-align:center;display:block;position: relative;top:50%;transform:translateY(-50%);">
+                        <a onclick="goToPage('settingtask/settingTask.jsp')" href="javascript:void(0)" style="font-size:20px;text-align:center;display:block;">
                             设置任务
                         </a>
                     </div>
@@ -94,7 +100,7 @@
                             <font style="color:#fffd4d;font-size:12px"><strong>首页 -&gt; 目录配置</strong></font>
                         </div>
                     </div>
-                    <iframe src="settingtask/settingTask.jsp" width="100%" style="border:none;height: 85%;" id="iframe"></iframe>
+                    <iframe src="datatask/dataTask.jsp" width="100%" style="border:none;height: 85%;" id="iframe"></iframe>
                 </div>
             </li>
         </ul>

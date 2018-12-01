@@ -51,7 +51,7 @@
             <select id="selectId" class="form-control selectpicker" style="width: 200px;display: inline !important;"></select>
             <div>
                 <label id="tableLabel" style="margin-top: 10px">&nbsp;&nbsp;选择表资源</label>
-                <div id="tablesDiv" style="margin-left: 40px;height:244px;overflow-y:auto;"></div>
+                <div id="tablesDiv" style="margin-left: 40px;height:260px;overflow-y:auto;"></div>
             </div>
             <div style="width: 100%;height: 40px;margin-top: 20px; " id="sqlSearchDiv">
                 <label>sql查询</label>
@@ -70,7 +70,7 @@
                 <select id="selectBdDirID"  class="form-control selectpicker" style="width: 200px;display: inline !important;"></select>
                 <div>
                     <label id="bdTableLabel">&nbsp;&nbsp;请选择资源</label>
-                    <div id="bdDirDiv" style="margin-left: 40px;height:244px;overflow-y:auto;"></div>
+                    <div id="bdDirDiv" style="margin-left: 40px;height:260px;overflow-y:auto;"></div>
                 </div>
             </div>
             <div style="width: 100%;height: 40px;float: right;">
@@ -298,7 +298,8 @@
         var checked= checkTaskData();
         if(checked==true){
             var dateDef = new Date();
-            $("#fileName").val("数据任务-"+dateDef.getFullYear()+dateDef.getMonth()+dateDef.getDate()+dateDef.getHours()+dateDef.getMinutes()+dateDef.getSeconds());
+            var  month=dateDef.getMonth()+1;
+            $("#fileName").val("数据任务-"+dateDef.getFullYear()+month+dateDef.getDate()+dateDef.getHours()+dateDef.getMinutes()+dateDef.getSeconds());
            $('#createFileMModal').modal('show');
         }else
             return;
@@ -390,7 +391,9 @@
             return;
         }else{
             var dateDef = new Date();
-            $("#localFileName").val("数据任务-"+dateDef.getFullYear()+dateDef.getMonth()+dateDef.getDate()+dateDef.getHours()+dateDef.getMinutes()+dateDef.getSeconds());
+            var month=dateDef.getMonth()+1;
+            $("#localFileName").val("数据任务-"+dateDef.getFullYear()+month+dateDef.getDate()+dateDef.getHours()+dateDef.getMinutes()+dateDef.getSeconds());
+            debugger
             $('#createLocalFileModal').modal('show');
         }
         return;

@@ -194,10 +194,10 @@
     function operateFormatter(value, row, index) {//赋予的参数
         return [
             // '<button class="btn btn-default details btn-xs" value="'+row.id+'" onclick="detail(value)">导出</button>&nbsp;',
-            '<button class="btn btn-default details btn-xs" value="'+row.dataTaskId+'" onclick="exportDataTask(this)">导出</button>&nbsp;',
+            // '<button class="btn btn-default details btn-xs" value="'+row.dataTaskId+'" onclick="exportDataTask(this)">导出</button>&nbsp;',
             '<button class="btn btn-default details btn-xs" value="'+row.dataTaskId+'" onclick="ftpUpload(value)">上传</button>&nbsp;',
             '<button class="btn btn-default details btn-xs" value="'+row.dataTaskId+'" onclick="viewDtails(value)">查看</button>&nbsp;',
-            '<button class="btn btn-default delete btn-xs" onclick="deleteThis(this)" data-id="'+row.dataTaskId+'">删除</button>',
+            '<button class="btn btn-default delete btn-xs" onclick="deleteThis(this)" data-id="'+row.dataTaskId+'">删除</button>&nbsp;',
             '<button class="btn btn-default delete btn-xs" onclick="loadLog(this)" data-id="'+row.dataTaskId+'">日志</button>'
         ].join('');
     }
