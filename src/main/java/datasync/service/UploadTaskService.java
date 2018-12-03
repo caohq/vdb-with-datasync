@@ -170,7 +170,7 @@ public class UploadTaskService {
         for (int i = 0; i < len; i++) {
             String sqlString = sqlStrings.split(";")[i];
             String sqlTableName = sqlTableNames.split(";")[i];
-            
+
             if (sqlString == null || sqlString.trim().equals(""))
             {
                 continue;
