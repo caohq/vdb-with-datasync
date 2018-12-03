@@ -28,14 +28,14 @@
          <h1>datasync登录</h1>
          <hr style="width: 60%"/>
          <form action="/login" method="post">
-            <label for="userName">用户名：</label>
-            <input type="text" id="userName" class="" name="userName" style="width: 200px;margin: 10px;"/>
-            <br />
-            <label for="userName">密&nbsp;&nbsp;&nbsp;码：</label>
-            <input type="text" id="password" class="" name="password" style="width: 200px;margin: 10px;" />
-            <br />
-            &nbsp;&nbsp;&nbsp;&nbsp;<input type="reset" id="reset" name="reset"/>
-            &nbsp;&nbsp;&nbsp;&nbsp;<input type="submit" id="submit" name="submit"/>
+             <label for="userName">用户名：</label>
+             <input type="text" id="userName" class="" name="userName" style="width: 200px;margin: 10px;"/>
+             <br />
+             <label for="userName">密&nbsp;&nbsp;&nbsp;码：</label>
+             <input type="text" id="password" class="" name="password" style="width: 200px;margin: 10px;" />
+             <br />
+             &nbsp;&nbsp;&nbsp;&nbsp;<input type="reset" id="reset" name="reset"/>
+             &nbsp;&nbsp;&nbsp;&nbsp;<input type="submit" id="submit" name="submit"/>
          </form>
      </div>
   </div>
