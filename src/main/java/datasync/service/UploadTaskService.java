@@ -127,7 +127,7 @@ public class UploadTaskService {
         fileList.add(struct);
         fileList.add(data);
         packTaskData(fileList,dataTaskId,request.getSession().getServletContext().getRealPath("/"));
-        return request.getSession().getServletContext().getRealPath("/")+"\\zipFile\\";
+        return request.getSession().getServletContext().getRealPath("/")+"zipFile\\";
     }
 
 

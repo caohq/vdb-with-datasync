@@ -47,13 +47,13 @@
     <ul class="top_mod">
         <li>
             <%--<a href="/j_spring_security_check?j_username=root&j_password=1&j_uri=%2Fconsole%2F">数据配置</a>--%>
-            <a href="/console/catalog/index.jsp">数据配置</a>
+            <a href="/console/catalog/index.jsp">数据管理</a>
         </li>
-        <li><a href="/console/datasync/starter.jsp">数据任务</a></li>
-        <li><a href="#">数据汇交</a></li>
+        <li><a href="/console/datasync/starter.jsp">数据汇交</a></li>
+        <%--<li><a href="#">数据汇交</a></li>--%>
     </ul>
     <div class="top_right_div"><img src="/console/datasync/vdbNewLog/images/top_right_bg.jpg" width="350"  height="80" border="0" usemap="#Map" />
-        <map name="Map" id="Map"> <area shape="rect" coords="196,19,335,46" href="#" /> </map>
+        <map name="Map" id="Map"> <area shape="rect" coords="196,19,335,46" href="/console/datasync/index.jsp" /> </map>
     </div>
 </div>
 

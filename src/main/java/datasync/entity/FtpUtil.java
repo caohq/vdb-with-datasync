@@ -2,12 +2,10 @@ package datasync.entity;
 
 
 import com.alibaba.fastjson.JSONObject;
-import datasync.service.ConfigPropertyService;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.ftp.FTPReply;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.*;
 import java.net.MalformedURLException;
@@ -23,9 +21,6 @@ import java.util.Map;
  * @create: 2018-09-27 10:16
  **/
 public class FtpUtil {
-
-    @Autowired
-    ConfigPropertyService configPropertyService;
 
     public static Map<String, Long> progressMap = new HashMap<String, Long>();
 
@@ -174,10 +169,9 @@ public class FtpUtil {
         return result;
     }
 
-    public UploadStatus upload(String host, String username, String password, String port, String[] localFileList, String processId,String remoteFilepath,DataTask dataTask,String subjectCode) throws IOException {
+    public UploadStatus upload(String[] localFileList, String processId,String remoteFilepath,DataTask dataTask,String subjectCode) throws IOException {
 //        ftpClient.enterLocalPassiveMode();
 //        ftpClient.enterRemotePassiveMode();
-        //FTPClient ftpClient=new FTPClient();
         ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
         ftpClient.setControlEncoding("GBK");
         System.out.println(ftpClient.getStatus());
@@ -361,5 +355,32 @@ public class FtpUtil {
             return 0L;
         }
         return progressMap.get(processId);
+    }
+
+    public boolean deleteFile(String delFile){
+        boolean flag = false;
+        try {
+            flag = ftpClient.deleteFile(delFile);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return flag;
+    }
+
+    public boolean removeDirectory(String delDirectory){
+        boolean flag = false;
+        try {
+            FTPFile[] files = ftpClient.listFiles(new String(delDirectory.getBytes("GBK"), "iso-8859-1"));
+            for(FTPFile file:files){
+                String fname = delDirectory+"/"+file.getName();
+                String name = new String(fname.getBytes("GBK"),"iso-8859-1");
+                boolean f = ftpClient.deleteFile(name);
+                System.out.println(f);
+            }
+            ftpClient.removeDirectory(delDirectory);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return flag;
     }
 }

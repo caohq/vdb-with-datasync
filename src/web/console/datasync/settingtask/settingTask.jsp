@@ -213,12 +213,13 @@
             url:"/searchBdDirList.do",
             data:{},
             success:function (dataSession) {
-                var dataSessiobArray=dataSession.substr(1,dataSession.length-4).split(',');
+                var dataSessiobArray=dataSession.replace(/\[|]/g,'').split(',');
+              //  var dataSessiobArray=dataSession.substr(1,dataSession.length-4).split(',');
                 $("#selectBdDirID").append("<option style='width: 300px;display: none;'>请选择...</option>");
                 for(var i=0;i<dataSessiobArray.length;i++){
                     var title=dataSessiobArray[i].substr(0, dataSessiobArray[i].indexOf('?*'));
                     var uri=dataSessiobArray[i].substr(dataSessiobArray[i].indexOf('?*')+2,dataSessiobArray[i].length);
-                    $("#selectBdDirID").append("<option style=width:300px; value='"+uri+"'>"+title+"</option>");
+                    $("#selectBdDirID").append("<option style=width:300px; value='"+uri.replace(/[\r\n]/g,"")+"'>"+title+"</option>");
                 }
             },
             error:function () {
