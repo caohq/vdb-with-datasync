@@ -1,6 +1,7 @@
 package datasync.service;
 
 import datasync.connection.MysqlDataConnection;
+import datasync.connection.OracleDataConnection;
 import datasync.connection.SqlLiteDataConnection;
 import datasync.entity.DataSrc;
 import datasync.entity.DataTask;
@@ -79,7 +80,33 @@ public class UploadTaskService {
                 e.printStackTrace();
             }
         }
+        else if (dataTaskType.equals("oracle"))  //mysql类型的数据任务, mysql类型的数据任务需要做
+        {
+            try {
+                //测试用的connection 和 dataTask
+                String dataSourceId = dataTask.getDataSourceId() + "";
+                DataSrc dataSrc = getDataSource(dataSourceId);
+                String getConnectionParameter = dataSrc.getDataSourceType();
+                //String getConnectionParameter = dataSrc.getDataSourceName() + "$" + dataSrc.getHost() + "$" + dataSrc.getPort() + "$" + dataSrc.getUserName() + "$" + dataSrc.getPassword() +"$mysql$" + dataSrc.getDatabaseName();
 
+                //以下为测试数据
+                /*String getConnectionParameter = "mysql-export$192.168.192.133$3306$root$123456$mysql$testdb";
+                DataTask dataTask1 = new DataTask();
+                dataTask1.setDataTaskId(dataTaskId);
+                dataTask1.setTableName("t1;t2;");
+                dataTask1.setSqlString("select * from t1");
+                dataTask1.setSqlTableNameEn("t1Temp");*/
+
+                Connection oracleDataConnection = OracleDataConnection.makeConn(getConnectionParameter);
+                System.out.println("mysqlDataConnection = " + oracleDataConnection);
+
+                exportTaskDataFromSql(request, oracleDataConnection, dataTask);
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+        }
         return true;
     }
 
@@ -89,8 +116,13 @@ public class UploadTaskService {
         String exportedDataDir = request.getSession().getServletContext().getRealPath("/exportedData" + File.separator + dataTaskId);
         System.out.println("enterring exportTaskDataFromSql - exportedDataDir = " + exportedDataDir + ", dataTaskId = " + dataTaskId);
 
+        //多表导出支持
         //直接选择的表名， tableName可能是多个
         String tableNames = dataTask.getTableName();
+        if (tableNames == null || tableNames.trim().equals(""))
+        {
+            tableNames = "";
+        }
         System.out.println("export tables - tableNames = " + tableNames);
 
         StringBuilder sqlSb = new StringBuilder();
@@ -107,13 +139,47 @@ public class UploadTaskService {
             dataSb.append("\n");
         }
 
-        //以select语句形式导出的数据
-        String sqlTableName = dataTask.getSqlTableNameEn();
-        String sqlString = dataTask.getSqlString();
-        System.out.println("export sqlString - sqlString = " + sqlString + ", sqlTableName = " + sqlTableName);
-        if (StringUtils.isNotEmpty(sqlString) && StringUtils.isNotEmpty(sqlTableName)) {
-            sqlSb.append(DDL2SQLUtils.generateDDLFromSql(connection, sqlString, sqlTableName));
-            dataSb.append(DDL2SQLUtils.generateInsertSqlFromSQL(connection, sqlString, sqlTableName));
+        //以select语句形式导出的数据，支持多条SqlString
+        String sqlTableNames = dataTask.getSqlTableNameEn();
+        String sqlStrings = dataTask.getSqlString();
+
+        //防止sqlTableNames一个值也没有，引发NullPointerException
+        if (sqlTableNames == null || sqlTableNames.trim().equals(""))
+        {
+            sqlTableNames = "";
+        }
+        //防止sqlStrings一个值也没有，引发NullPointerException
+        if (sqlStrings == null || sqlStrings.trim().equals(""))
+        {
+            sqlStrings = "";
+        }
+        System.out.println("export sqlString - sqlString = " + sqlStrings + ", sqlTableNames = " + sqlTableNames);
+
+        //要求sqlString的个数和sqlTableName的个数一致，如果不一致，就不导出sqlString的数据
+        int sqlStringNum = sqlStrings.split(";").length;
+        int sqlTableNameNum = sqlTableNames.split(";").length;
+        int len = 0;
+        if (sqlStringNum != sqlTableNameNum)
+        {
+            len = 0;
+        }
+        else
+        {
+            len = sqlStringNum;
+        }
+        for (int i = 0; i < len; i++) {
+            String sqlString = sqlStrings.split(";")[i];
+            String sqlTableName = sqlTableNames.split(";")[i];
+            
+            if (sqlString == null || sqlString.trim().equals(""))
+            {
+                continue;
+            }
+
+            if (StringUtils.isNotEmpty(sqlStrings) && StringUtils.isNotEmpty(sqlTableName)) {
+                sqlSb.append(DDL2SQLUtils.generateDDLFromSql(connection, sqlStrings, sqlTableName));
+                dataSb.append(DDL2SQLUtils.generateInsertSqlFromSQL(connection, sqlStrings, sqlTableName));
+            }
         }
 
         //导出表结构
@@ -121,18 +187,6 @@ public class UploadTaskService {
         //导出表数据
         DDL2SQLUtils.generateFile(exportedDataDir, "data.sql", dataSb.toString());
 
-    }
-
-    public boolean packTaskData(String taskId) {
-        return true;
-    }
-
-    public boolean uploadTaskData(String taskId) {
-        return true;
-    }
-
-    public boolean importTaskData(String taskId) {
-        return true;
     }
 
     private DataTask getDataTask(String dataTaskId) {
