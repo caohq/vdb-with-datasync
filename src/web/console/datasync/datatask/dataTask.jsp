@@ -45,7 +45,7 @@
              /*line-height: 0px !important;*/
         /*}*/
         .fixed-table-container{
-            height: 339px !important;
+            height: 404px !important;
         }
         .sr-only {
             position: relative !important;
@@ -54,7 +54,6 @@
     </style>
 </head>
 <body style="overflow: auto;">
-
 <div>
 
     <div class="alert alert-info" role="alert" style="margin:0  3px;height: 66px;">
@@ -194,11 +193,12 @@
     function operateFormatter(value, row, index) {//赋予的参数
         return [
             // '<button class="btn btn-default details btn-xs" value="'+row.id+'" onclick="detail(value)">导出</button>&nbsp;',
-            '<button class="btn btn-default details btn-xs" value="'+row.dataTaskId+'" onclick="exportDataTask(this)">导出</button>&nbsp;',
-            '<button class="btn btn-default details btn-xs" value="'+row.dataTaskId+'" onclick="ftpUpload(value)">上传</button>&nbsp;',
-            '<button class="btn btn-default details btn-xs" value="'+row.dataTaskId+'" onclick="viewDtails(value)">查看</button>&nbsp;',
-            '<button class="btn btn-default delete btn-xs" onclick="deleteThis(this)" data-id="'+row.dataTaskId+'">删除</button>',
-            '<button class="btn btn-default delete btn-xs" onclick="loadLog(this)" data-id="'+row.dataTaskId+'">日志</button>'
+            // '<button class="btn btn-default details btn-xs" value="'+row.dataTaskId+'" onclick="exportDataTask(this)">导出</button>&nbsp;',
+            '<button class="btn btn-default details btn-xs" value="'+row.dataTaskId+'" onclick="ftpUpload(value)"><a>上传</a></button>&nbsp;',
+            '<button class="btn btn-default details btn-xs" value="'+row.dataTaskId+'" onclick="viewDtails(value)"><a>查看</a></button>&nbsp;',
+            '<button class="btn btn-default delete btn-xs" onclick="deleteThis(this)" data-id="'+row.dataTaskId+'"><a>删除</a></button>&nbsp;',
+            '<button class="btn btn-default delete btn-xs" onclick="" data-id="'+row.dataTaskId+'"><a href="/console/datasync/logFile/数据任务日志.txt"\n' +
+            '   download="上传日志.txt">日志</a></button>'
         ].join('');
     }
 

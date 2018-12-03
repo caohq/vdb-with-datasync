@@ -12,7 +12,6 @@ import org.springframework.jdbc.support.KeyHolder;
 import java.sql.*;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 
 public class DataTaskDao {
@@ -26,13 +25,13 @@ public class DataTaskDao {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         SqlLiteDataConnection sqlLiteDataConnection=new SqlLiteDataConnection();
         JdbcTemplate jdbcTemplate=sqlLiteDataConnection.makeJdbcTemplate();
-        final String taskId=String.valueOf(UUID.randomUUID());
-        final int dataSourceId= (int) System.currentTimeMillis();
+       // final String taskId=String.valueOf(UUID.randomUUID());
+      //  final int dataSourceId= (int) System.currentTimeMillis();
         jdbcTemplate.update(new PreparedStatementCreator() {
             @Override
             public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
                 PreparedStatement ps = connection.prepareStatement(sql,Statement.RETURN_GENERATED_KEYS);
-                ps.setInt(1, dataSourceId);
+                ps.setInt(1, datatask.getDataSourceId());
                 ps.setString(2,datatask.getDataTaskName());
                 ps.setString(3,datatask.getDataTaskType());
                 ps.setString(4,datatask.getTableName());
@@ -43,12 +42,12 @@ public class DataTaskDao {
                 ps.setTimestamp(9,new Timestamp(datatask.getCreateTime().getTime()));
                 ps.setString(10,datatask.getCreator());
                 ps.setString(11,datatask.getStatus());
-                ps.setString(12, taskId);
+                ps.setString(12, datatask.getDataTaskId());
                 ps.setString(13,datatask.getSubjectCode());
                 return ps;
             }
         },keyHolder);
-        insertDataSrc(dataSourceId,dataSourceName,connData);
+        insertDataSrc(datatask.getDataSourceId(),dataSourceName,connData);
 
         int generatedId = keyHolder.getKey().intValue();
 
@@ -73,7 +72,7 @@ public class DataTaskDao {
         if(StringUtils.isNotEmpty((String) params.get("dataStatusList"))) {//状态
             sql.append("  and t.status = '"+params.get("dataStatusList")+"'");
         }
-        sql.append(" order  by   status,CreateTime desc");
+        sql.append(" order  by   CreateTime desc");
         SqlLiteDataConnection sqlLiteDataConnection=new SqlLiteDataConnection();
         JdbcTemplate jdbcTemplate=sqlLiteDataConnection.makeJdbcTemplate();
         List<DataTask> DataTaskList = jdbcTemplate.query(sql+"", new DataTaskMapper());
@@ -124,9 +123,16 @@ public class DataTaskDao {
                 return ps;
             }
         },keyHolder);
-
         int generatedId = keyHolder.getKey().intValue();
-
         return generatedId;
+    }
+
+    public int  updateSqlFilePathById(DataTask dataTask){
+
+        String sql = "update  t_datatask  set  sqlFilePath ='"+dataTask.getSqlFilePath()+"' where  dataTaskId = '"+dataTask.getDataTaskId()+"'";
+        SqlLiteDataConnection sqlLiteDataConnection=new SqlLiteDataConnection();
+        JdbcTemplate jdbcTemplate=sqlLiteDataConnection.makeJdbcTemplate();
+        int result = jdbcTemplate.update(sql);//query(sql, new Object[]{taskId}, new DataTaskMapper());
+        return result;
     }
 }

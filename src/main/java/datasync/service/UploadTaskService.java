@@ -16,37 +16,39 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.sql.Connection;
+import java.util.ArrayList;
 import java.util.List;
 
 public class UploadTaskService {
     private Logger logger = LoggerFactory.getLogger(UploadTaskService.class);
 
-    public boolean exportDataTask(HttpServletRequest request, String dataTaskId) {
+    public String exportDataTask(HttpServletRequest request,String dataTaskId) {
 
-        System.out.println("enterring exportDataTask - dataTaskId = " + dataTaskId);
+     //   System.out.println("enterring exportDataTask - dataTaskId = " + dataTaskId);
 
         //输入参数校验
         if (dataTaskId == null || dataTaskId.trim().equals(""))
         {
-            return false;
+            return "";
         }
 
         //getDataTask有可能是null
         DataTask dataTask = getDataTask(dataTaskId);
-        if (dataTask == null)
+        if (dataTaskId == null)
         {
-            return false;
+            return "";
         }
         System.out.println("dataTask = " + dataTask.toString());
 
         String dataTaskType = "";
         dataTaskType = dataTask.getDataTaskType();
         dataTaskType = dataTaskType.trim();
+        String ZipFilePath="";
 
         //防止dataTaskType字段没有值的情况
         if (dataTaskType == null || dataTaskType.equals(""))
         {
-            return false;
+            return "";
         }
 
         //file类型的数据任务, 目前在导出中对file类型的数据任务不做任何处理
@@ -73,7 +75,7 @@ public class UploadTaskService {
                 Connection mysqlDataConnection = MysqlDataConnection.makeConn(getConnectionParameter);
                 System.out.println("mysqlDataConnection = " + mysqlDataConnection);
 
-                exportTaskDataFromSql(request, mysqlDataConnection, dataTask);
+                ZipFilePath=exportTaskDataFromSql(request, mysqlDataConnection, dataTask);
             }
             catch (Exception e)
             {
@@ -107,10 +109,10 @@ public class UploadTaskService {
                 e.printStackTrace();
             }
         }
-        return true;
+        return ZipFilePath;
     }
 
-    private void exportTaskDataFromSql(HttpServletRequest request, Connection connection, DataTask dataTask)
+    private String exportTaskDataFromSql(HttpServletRequest request, Connection connection, DataTask dataTask)
     {
         String dataTaskId = dataTask.getDataTaskId() + "";
         String exportedDataDir = request.getSession().getServletContext().getRealPath("/exportedData" + File.separator + dataTaskId);
@@ -181,13 +183,36 @@ public class UploadTaskService {
                 dataSb.append(DDL2SQLUtils.generateInsertSqlFromSQL(connection, sqlStrings, sqlTableName));
             }
         }
-
         //导出表结构
         DDL2SQLUtils.generateFile(exportedDataDir, "struct.sql", sqlSb.toString());
         //导出表数据
         DDL2SQLUtils.generateFile(exportedDataDir, "data.sql", dataSb.toString());
-
+        String struct=exportedDataDir+"\\struct.sql";
+        String data=exportedDataDir+"\\data.sql";
+        List<String> fileList=new ArrayList<String>();
+        fileList.add(struct);
+        fileList.add(data);
+        packTaskData(fileList,dataTaskId,request.getSession().getServletContext().getRealPath("/"));
+        return request.getSession().getServletContext().getRealPath("/")+"zipFile\\";
     }
+
+
+    //对导出sql文件进行zip打包
+    public boolean packTaskData(List<String> fileList,String datataskId,String path) {
+        String fileName = "sdc001"+"_"+datataskId+"_sql";
+        FileResourceService fileResourceService=new FileResourceService();
+        fileResourceService.packDataResource(fileName,fileList,path);
+        return true;
+    }
+
+    public boolean uploadTaskData(String taskId) {
+        return true;
+    }
+
+    public boolean importTaskData(String taskId) {
+        return true;
+    }
+
 
     private DataTask getDataTask(String dataTaskId) {
         String sql = "select * from t_datatask where DataTaskId = ?" ;

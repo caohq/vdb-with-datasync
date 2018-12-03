@@ -67,7 +67,7 @@ $response.setDateHeader("Expires", 0)
 	<!--左侧树的DIV-->
 	<div id="treeDiv">
 		<div id="treeTitle" class="left_title_bg_div">
-			<div class="left_title_div">目录配置</div>
+			<div class="left_title_div">数据管理</div>
 		</div>
 		<div id="tree"></div>
 	</div>

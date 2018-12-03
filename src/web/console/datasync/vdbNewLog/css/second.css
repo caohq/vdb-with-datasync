@@ -31,15 +31,9 @@ li{ margin:0px; padding:0px; list-style-type:none;}
 .top_mod{ float:left;
 	padding-top:25px;
 }
-.top_mod td a{ width:93px;
-	height:35px;
-	display:block;
-	color:#FFF;
-	font-size:14px;
-	text-decoration:none;
-/*none	background: ;*/
-	line-height:35px;
-	/*//text-align:center; background:url(../images/link_bg.png)*/
+.top_mod li{display: inline-block;font-size:14px;margin:10px;}
+.top_mod a {
+	color: #FFF !important;
 }
 .top_mod td a:hover{ font-weight:bold;
 }
