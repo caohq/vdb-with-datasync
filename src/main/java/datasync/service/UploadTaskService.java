@@ -82,7 +82,7 @@ public class UploadTaskService {
                 e.printStackTrace();
             }
         }
-        else if (dataTaskType.equals("oracle"))  //mysql类型的数据任务, mysql类型的数据任务需要做
+        else if (dataTaskType.equals("oracle"))  //oracle类型的数据任务,支持多表和多条sql语句
         {
             try {
                 //测试用的connection 和 dataTask
