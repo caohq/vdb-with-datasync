@@ -130,6 +130,7 @@
 
     <input type="hidden" id="sql"/>
     <input type="hidden" id="connData"/>
+    <input type="hidden" id="dataTaskName"/>
 
 </div>
 
@@ -295,50 +296,73 @@
 
     // 修改弹出框的title, 显示弹框
     function submitSqlData(title){
-        $("#createFileTitle").text(title);
+
         var checked= checkTaskData();
         if(checked==true){
             var dateDef = new Date();
-            var  month=dateDef.getMonth()+1;
-            $("#fileName").val("数据任务-"+dateDef.getFullYear()+month+dateDef.getDate()+dateDef.getHours()+dateDef.getMinutes()+dateDef.getSeconds());
-           $('#createFileMModal').modal('show');
+            var month=dateDef.getMonth()+1;
+            var dataTaskName = ""+dateDef.getFullYear()+month+dateDef.getDate()+dateDef.getHours()+dateDef.getMinutes()+dateDef.getSeconds();
+            var connDataName = $("#selectId option:selected")[0].text;//获取数据源
+            var connDataValue = $("#selectId option:selected")[0].value;//获取数据源value
+            var sql=$('#sqlInputBox').val();//获取sql语句
+            var createNewTableName=$('#createNewTableName').val();//获取新建表名
+            var checkedValue=getChecedValue();
+            $.ajax({
+                type:"POST",
+                url:"/submitSqlData.do",
+                data:{
+                    connDataName:connDataName,
+                    taskName:dataTaskName,
+                    sql:sql,
+                    createNewTableName:createNewTableName,
+                    checkedValue:checkedValue,
+                    connDataValue:connDataValue,
+                    dataTaskName:dataTaskName
+                },
+                success:function (dataSession) {
+                    parent.goToPage("datatask/dataTask.jsp");
+                },
+                error:function () {
+                    console.log("请求失败")
+                }
+            })
         }else
             return;
     }
 
     // 关闭弹框， 获取输入值，然后执行逻辑
-    $("#createFileSureBut").click(function (){
-        var connDataName = $("#selectId option:selected")[0].text;//获取数据源
-        var connDataValue = $("#selectId option:selected")[0].value;//获取数据源value
-        var taskName = $("#fileName").val();//获取弹出框内任务名称
-        var sql=$('#sqlInputBox').val();//获取sql语句
-        var createNewTableName=$('#createNewTableName').val();//获取新建表名
-        var checkedValue=getChecedValue();
-        // var dataSourceType=$("[name='ways']")
-        if(taskName==null || taskName==""){
-           $('#checkedFileName').html("请输入任务名称！");
-            return;
-        }
-        $("#createFileMModal").modal("hide");//隐藏弹出框
-        $.ajax({
-            type:"POST",
-            url:"/submitSqlData.do",
-            data:{
-                connDataName:connDataName,
-                taskName:taskName,
-                sql:sql,
-                createNewTableName:createNewTableName,
-                checkedValue:checkedValue,
-                connDataValue:connDataValue
-            },
-            success:function (dataSession) {
-                parent.goToPage("datatask/dataTask.jsp");
-            },
-            error:function () {
-                console.log("请求失败")
-            }
-        })
-    });
+    // $("#createFileSureBut").click(function (){
+    //     var connDataName = $("#selectId option:selected")[0].text;//获取数据源
+    //     var connDataValue = $("#selectId option:selected")[0].value;//获取数据源value
+    //     var taskName = $("#fileName").val();//获取弹出框内任务名称
+    //     var sql=$('#sqlInputBox').val();//获取sql语句
+    //     var createNewTableName=$('#createNewTableName').val();//获取新建表名
+    //     var checkedValue=getChecedValue();
+    //     // var dataSourceType=$("[name='ways']")
+    //     if(taskName==null || taskName==""){
+    //        $('#checkedFileName').html("请输入任务名称！");
+    //         return;
+    //     }
+    //     $("#createFileMModal").modal("hide");//隐藏弹出框
+    //     $.ajax({
+    //         type:"POST",
+    //         url:"/submitSqlData.do",
+    //         data:{
+    //             connDataName:connDataName,
+    //             taskName:taskName,
+    //             sql:sql,
+    //             createNewTableName:createNewTableName,
+    //             checkedValue:checkedValue,
+    //             connDataValue:connDataValue
+    //         },
+    //         success:function (dataSession) {
+    //             parent.goToPage("datatask/dataTask.jsp");
+    //         },
+    //         error:function () {
+    //             console.log("请求失败")
+    //         }
+    //     })
+    // });
 
     //检测任务名称
     $("#fileName").bind("input propertychange",function(){
@@ -371,9 +395,12 @@
         var sql=$('#sqlInputBox').val();//获取sql语句
         var createNewTableName=$('#createNewTableName').val();//获取新建表名
         var checkedValue=getChecedValue();
-        if(createNewTableName==null || createNewTableName==""){
+        debugger
+        if(sql!=null && sql!=""){//有sql
+            if(createNewTableName==null || createNewTableName==""){
+                alert("请输入新建表名！");
+            }
             checked=false;
-            alert("请输入新建表名！");
             return;
         }
         if((sql==null || sql=="")&&(checkedValue==null || checkedValue=="")){
@@ -393,42 +420,63 @@
         }else{
             var dateDef = new Date();
             var month=dateDef.getMonth()+1;
-            $("#localFileName").val("数据任务-"+dateDef.getFullYear()+month+dateDef.getDate()+dateDef.getHours()+dateDef.getMinutes()+dateDef.getSeconds());
+            var dataTaskName = ""+dateDef.getFullYear()+month+dateDef.getDate()+dateDef.getHours()+dateDef.getMinutes()+dateDef.getSeconds();
+            $("#dataTaskName").val(dataTaskName)
+            var connDataName = $("#selectBdDirID  option:selected")[0].text;//获取数据源
+            var connDataValue = $("#selectBdDirID  option:selected")[0].value;//获取数据源value
+            var getLocalTaskName=$("#localFileName").val();//获取本地新建任务名称
             debugger
-            $('#createLocalFileModal').modal('show');
+            $.ajax({
+                type:"POST",
+                url:"/submitFileData.do",
+                data:{
+                    connDataName:connDataName,
+                    getCheckedFile:getCheckedFile,
+                    getLocalTaskName:getLocalTaskName,
+                    connDataValue:connDataValue,
+                    dataTaskName:dataTaskName
+                },
+                success:function (dataSession) {
+                    $("#createLocalFileModal").modal("hide");//隐藏弹出框
+                    parent.goToPage("datatask/dataTask.jsp");
+                },
+                error:function () {
+                    console.log("请求失败")
+                }
+            })
         }
         return;
     }
 
     // 关闭弹框， 获取输入值，然后执行逻辑--本地
-    $("#createLocalFileSureBut").click(function (){
-        var connDataName = $("#selectBdDirID  option:selected")[0].text;//获取数据源
-        var connDataValue = $("#selectBdDirID  option:selected")[0].value;//获取数据源value
-        var getCheckedFile=getChecedValue();//获取选中的文件
-        var getLocalTaskName=$("#localFileName").val();//获取本地新建任务名称
-        if(getLocalTaskName==null || getLocalTaskName==""){
-            $('#checkedLocalFileName').html("请输入任务名称！");
-            return;
-        }
-        $.ajax({
-            type:"POST",
-            url:"/submitFileData.do",
-            data:{
-                connDataName:connDataName,
-                getCheckedFile:getCheckedFile,
-                getLocalTaskName:getLocalTaskName,
-                connDataValue:connDataValue
-            },
-            success:function (dataSession) {
-                $("#createLocalFileModal").modal("hide");//隐藏弹出框
-                parent.goToPage("datatask/dataTask.jsp");
-
-            },
-            error:function () {
-                console.log("请求失败")
-            }
-        })
-    });
+    // $("#createLocalFileSureBut").click(function (){
+    //     var connDataName = $("#selectBdDirID  option:selected")[0].text;//获取数据源
+    //     var connDataValue = $("#selectBdDirID  option:selected")[0].value;//获取数据源value
+    //     var getCheckedFile=getChecedValue();//获取选中的文件
+    //     var getLocalTaskName=$("#localFileName").val();//获取本地新建任务名称
+    //     if(getLocalTaskName==null || getLocalTaskName==""){
+    //         $('#checkedLocalFileName').html("请输入任务名称！");
+    //         return;
+    //     }
+    //     $.ajax({
+    //         type:"POST",
+    //         url:"/submitFileData.do",
+    //         data:{
+    //             connDataName:connDataName,
+    //             getCheckedFile:getCheckedFile,
+    //             getLocalTaskName:getLocalTaskName,
+    //             connDataValue:connDataValue
+    //         },
+    //         success:function (dataSession) {
+    //             $("#createLocalFileModal").modal("hide");//隐藏弹出框
+    //             parent.goToPage("datatask/dataTask.jsp");
+    //
+    //         },
+    //         error:function () {
+    //             console.log("请求失败")
+    //         }
+    //     })
+    // });
 
     //检测任务名称
     $("#localFileName").bind("input propertychange",function(){

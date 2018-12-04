@@ -218,10 +218,11 @@ public class MainSevlet extends HttpServlet{
         JSONObject jsonObject = new JSONObject();
         DataTask datatask = new DataTask();
         HttpSession session=res.getSession();
-        String datataskId=String.valueOf(UUID.randomUUID());
+        String datataskId=res.getParameter("dataTaskName");//获取任务名称--id
         String connDataValue=res.getParameter("connDataValue");
         String [] connDataValueArray=connDataValue.split("\\$");
         String dataSourceName=res.getParameter("connDataName");
+       // String dataTaskName=res.getParameter("dataTaskName");//获取任务名称--id
         int dataSourceId= (int) System.currentTimeMillis();
 //        datatask.setDataSourceId(5);
         datatask.setDataTaskId(datataskId);
@@ -283,15 +284,16 @@ public class MainSevlet extends HttpServlet{
         String  connDataName=req.getParameter("connDataName");//本地连接名称
         String connDataValue=req.getParameter("connDataValue");//数据源名称
         String  getCheckedFile=req.getParameter("getCheckedFile");//文件路径
-        String  getLocalTaskName=req.getParameter("getLocalTaskName");//获取任务名称
-        String datataskId=String.valueOf(UUID.randomUUID());
+//        String  getLocalTaskName=req.getParameter("getLocalTaskName");//获取任务名称
+        String getLocalTaskName=req.getParameter("dataTaskName");//任務id
+        String datataskId=req.getParameter("dataTaskName");//任務id
         datatask.setCreateTime(date);
         datatask.setDataSourceId(dataSourceId);//数据源名称
         datatask.setDataTaskName(getLocalTaskName);//任务名
         datatask.setFilePath(getCheckedFile);
         datatask.setDataTaskType("file");
         datatask.setStatus("0");
-        datatask.setDataTaskId(datataskId);
+        datatask.setDataTaskId(req.getParameter("dataTaskName"));
         datatask.setCreator(session.getAttribute("SPRING_SECURITY_LAST_USERNAME")==null?"": (String) session.getAttribute("SPRING_SECURITY_LAST_USERNAME"));
 
         List<String> filepaths =new LinkedList<String>();
