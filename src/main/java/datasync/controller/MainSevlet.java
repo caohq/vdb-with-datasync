@@ -273,10 +273,10 @@ public class MainSevlet extends HttpServlet{
 
     //新建任务--本地文件上传任务
     public  JSONObject submitFileData(HttpServletRequest req, HttpServletResponse res) throws SQLException, IOException {
-        PrintWriter out = res.getWriter();
+   //     PrintWriter out = res.getWriter();
         JSONObject jsonObject = new JSONObject();
         DataTask datatask = new DataTask();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+    //    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         Date date=new Date();
         int dataSourceId= (int) System.currentTimeMillis();
         HttpSession session=req.getSession();

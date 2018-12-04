@@ -187,13 +187,13 @@ public class UploadTaskService {
         DDL2SQLUtils.generateFile(exportedDataDir, "struct.sql", sqlSb.toString());
         //导出表数据
         DDL2SQLUtils.generateFile(exportedDataDir, "data.sql", dataSb.toString());
-        String struct=exportedDataDir+"\\struct.sql";
-        String data=exportedDataDir+"\\data.sql";
+        String struct=exportedDataDir+"/struct.sql";
+        String data=exportedDataDir+"/data.sql";
         List<String> fileList=new ArrayList<String>();
         fileList.add(struct);
         fileList.add(data);
         packTaskData(fileList,dataTaskId,request.getSession().getServletContext().getRealPath("/"));
-        return request.getSession().getServletContext().getRealPath("/")+"zipFile\\";
+        return request.getSession().getServletContext().getRealPath("/")+"zipFile/";
     }
 
 

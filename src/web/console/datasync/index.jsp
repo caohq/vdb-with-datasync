@@ -57,7 +57,14 @@
             alert("请输入密码!");
             return;
         }
-
+        if(username!="root"){
+            alert("用户不存在!");
+            return;
+        }
+        if(password!="123456"){
+            alert("密码错误!");
+            return;
+        }
         if(checked){
             $.ajax({
                 type:"POST",

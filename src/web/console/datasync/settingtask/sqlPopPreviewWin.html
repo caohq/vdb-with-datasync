@@ -46,6 +46,8 @@
                 success:function (data) {
                     if(data.trim()=="sql语句错误！"){
                         alert("SQL语句或表名错误！\n请检查sql语句及表名称是否正确");
+                        $(window.top.document.body)[0].ownerDocument.getElementById("pages").remove();
+                        $(window.top.document.body)[0].ownerDocument.getElementById("backdropId").remove();
                     }else{
                         $('#myModal').modal('show');
                         var dataArray=data.split("?*$*?");

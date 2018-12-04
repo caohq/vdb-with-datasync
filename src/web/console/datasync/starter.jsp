@@ -4,7 +4,7 @@
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Insert title here</title>
+    <title>数据交汇</title>
     <script type="text/javascript" src="/console/shared/js/jquery-3.2.1.min.js " ></script>
     <script src="/console/shared/bootstrap-3.3.7/js/bootstrap.js"></script>
     <script src="/console/datasync/js/dragdiv.js"></script>

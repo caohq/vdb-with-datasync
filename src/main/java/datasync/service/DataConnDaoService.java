@@ -1,17 +1,18 @@
 package datasync.service;
 
-import com.microsoft.sqlserver.jdbc.SQLServerConnection;
+import datasync.connection.MysqlDataConnection;
+import datasync.connection.OracleDataConnection;
 import datasync.connection.SqlServerDataConnection;
-import oracle.jdbc.OracleConnection;
 import vdb.mydb.VdbManager;
 import vdb.mydb.engine.VdbEngine;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.sql.*;
-import java.util.*;
-import datasync.connection.MysqlDataConnection;
-import datasync.connection.OracleDataConnection;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 public class DataConnDaoService {
@@ -159,7 +160,6 @@ public class DataConnDaoService {
        // System.out.println(list2.toString());
         while(rs.next()){
             Map<Object,Object> map2=new HashMap<Object, Object>();
-            System.out.println("1");
             for(int j=1;j<=map.size();j++){
                 map2.put("\""+map.get(j)+"\"","\""+rs.getString((String) map.get(j))+"\"");
             }

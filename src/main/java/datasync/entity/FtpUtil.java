@@ -280,6 +280,7 @@ public class FtpUtil {
             localreadbytes = remoteSize;
             progressMap.put(processId, process);
         }
+        System.out.println(raf);
         byte[] bytes = new byte[1024];
         int c;
         while ((c = raf.read(bytes)) != -1) {
