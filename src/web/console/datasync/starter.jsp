@@ -14,7 +14,7 @@
     <link rel="stylesheet" type="text/css" href="/console/datasync/css/style.min.css" />
     <style>
         .fixed-table-pagination .page-list{
-            display: none !important;
+                                         display: none !important;
         }
         *{margin:0;padding:0;}
         ul,ol,li{list-style: none;margin-bottom: 0px !important;}
