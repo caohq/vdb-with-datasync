@@ -112,14 +112,12 @@
         }
     </style>
 </head>
-<body style="">
+<body>
 <div class="wrapper">
     <img src="images/1.jpg" alt="">
     <div class="login">
         <h1>登&nbsp;&nbsp;&nbsp;&nbsp;录</h1>
         <%--<hr style="width: 27%;margin-left: 37%"/>--%>
-        <form action="" method="post"/>
-        <form action="" method="post">
             <label for="userName">用户名：</label>
             <input type="text" id="userName" class="form-control" name="userName" style="width: 200px;margin: 10px;"/>
             <br />
@@ -128,7 +126,6 @@
             <br />
             &nbsp;&nbsp;&nbsp;&nbsp;<input type="reset"  class="btn" onclick="start()" id="reset" name="reset"/>
             &nbsp;&nbsp;&nbsp;&nbsp;<input type="submit" class="btn" onclick="start()" id="submit" name="submit"/>
-        </form>
     </div>
 
 </div>
@@ -143,18 +140,22 @@
         var password=$("#password")[0].value;
         var checked=true;
         if(username=="" || username==null){
+            checked=false;
             alert("请输入用户名!");
             return;
         }
         if(password=="" || password==null){
+            checked=false;
             alert("请输入密码!");
             return;
         }
         if(username!="root"){
+            checked=false;
             alert("用户不存在!");
             return;
         }
         if(password!="123456"){
+            checked=false;
             alert("密码错误!");
             return;
         }
