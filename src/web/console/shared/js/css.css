@@ -152,7 +152,7 @@ li{ margin:0px; padding:0px; list-style-type:none;}
 .top_left_div{height:80px;
 	width:418px;
 	float:left;
-	background:url(/console/datasync/vdbNewLog/images/top_left_bg.jpg) top left no-repeat;
+	background:url(/console/datasync/images/top_left_bg.jpg) top left no-repeat;
 	/*padding-top:40px;
 	padding-left:86px;*/
 }

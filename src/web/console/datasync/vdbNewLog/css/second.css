@@ -20,7 +20,7 @@ li{ margin:0px; padding:0px; list-style-type:none;}
 	height:40px;
 	width:353px;
 	float:left;
-	background:url(../images/top_left_bg.jpg) top left no-repeat;
+	background:url(/console/datasync/images/top_left_bg.jpg) top left no-repeat;
 	padding-top:40px;
 	padding-left:86px;
 }

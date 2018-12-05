@@ -46,8 +46,10 @@
     <div class="top_left_div" id="top_left_div" style="padding-left: 86px !important;"></div>
     <ul class="top_mod">
         <li>
-            <%--<a href="/j_spring_security_check?j_username=root&j_password=1&j_uri=%2Fconsole%2F">数据配置</a>--%>
-            <a href="/console/catalog/index.jsp">数据管理</a>
+            <a href="/console/catalog/index.jsp">数据配置</a>
+        </li>
+        <li>
+            <a href="/console/editor/">数据管理</a>
         </li>
         <li><a href="/console/datasync/starter.jsp">数据汇交</a></li>
         <%--<li><a href="#">数据汇交</a></li>--%>

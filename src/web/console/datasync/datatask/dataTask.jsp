@@ -191,7 +191,6 @@
 
     //为操作添加按钮
     function operateFormatter(value, row, index) {//赋予的参数
-        debugger
         return [
             // '<button class="btn btn-default details btn-xs" value="'+row.id+'" onclick="detail(value)">导出</button>&nbsp;',
             // '<button class="btn btn-default details btn-xs" value="'+row.dataTaskId+'" onclick="exportDataTask(this)">导出</button>&nbsp;',

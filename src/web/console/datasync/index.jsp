@@ -67,6 +67,7 @@
             background-image: none;
             border: 1px solid transparent;
             border-radius: 4px;
+            float: right;
         }
 
         .btn:hover,
@@ -114,18 +115,22 @@
 </head>
 <body>
 <div class="wrapper">
-    <img src="images/1.jpg" alt="">
-    <div class="login">
-        <h1>登&nbsp;&nbsp;&nbsp;&nbsp;录</h1>
-        <%--<hr style="width: 27%;margin-left: 37%"/>--%>
+    <img src="images/Log04_bg.jpg" alt="">
+    <div class="login" >
+        <div style="width:289px;margin: 20px auto 0px">
+            <%--<hr style="width: 27%;margin-left: 37%"/>--%>
             <label for="userName">用户名：</label>
             <input type="text" id="userName" class="form-control" name="userName" style="width: 200px;margin: 10px;"/>
             <br />
             <label for="password">密&nbsp;&nbsp;&nbsp;码：</label>
             <input type="password" id="password" class="form-control" name="password" style="width: 200px;margin: 10px;" />
             <br />
-            &nbsp;&nbsp;&nbsp;&nbsp;<input type="reset"  class="btn" onclick="start()" id="reset" name="reset"/>
-            &nbsp;&nbsp;&nbsp;&nbsp;<input type="submit" class="btn" onclick="start()" id="submit" name="submit"/>
+            <div style="padding:10px 10px 0 0;overflow: hidden">
+                <input type="submit" class="btn" onclick="start()" id="submit" value="登录"/>
+            </div>
+        </div>
+
+
     </div>
 
 </div>
@@ -178,6 +183,10 @@
         }
     };
 
+    function reset(){
+        $("#userName")[0].value="";
+        $("#password")[0].value="";
+    }
 </script>
 </body>
 </html>

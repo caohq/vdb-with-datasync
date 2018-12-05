@@ -156,7 +156,7 @@
             success:function (dataSession) {
                 var dataSessiobArray=dataSession.replace(/\[|]/g,'').split(',');
                 $("#selectId").append("<option style='width: 300px;display: none;'>请选择...</option>");
-                for(var i=0;i<dataSessiobArray.length;i++){
+                for(var i=1;i<dataSessiobArray.length;i++){
                     $("#selectId").append("<option style=width: 300px; value='"+ dataSessiobArray[i].replace(/[\r\n]/g,"")+"'>"+ dataSessiobArray[i].substr(0, dataSessiobArray[i].indexOf('$'))+"</option>");
                 }
             },
@@ -399,9 +399,9 @@
         if(sql!=null && sql!=""){//有sql
             if(createNewTableName==null || createNewTableName==""){
                 alert("请输入新建表名！");
+                checked=false;
+                return;
             }
-            checked=false;
-            return;
         }
         if((sql==null || sql=="")&&(checkedValue==null || checkedValue=="")){
             checked=false;

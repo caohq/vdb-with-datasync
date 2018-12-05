@@ -1,7 +1,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<title>数据管理</title>
+<title>数据配置</title>
 
 <link href="/console/shared/js/css.css" rel="stylesheet" type="text/css" />
 <link rel="STYLESHEET" type="text/css" href="/console/shared/plugins/dhtmlx/grid/dhtmlxgrid.css"/>
@@ -55,19 +55,19 @@ $response.setDateHeader("Expires", 0)
         	<div class="title_left_title_div">$domain.title</div>
         </div>
         <div class="top_right_div"><img src="/console/shared/images/top_right_bg.jpg" width="350"  height="80" border="0" usemap="#Map" />
-          <map name="Map" id="Map"> <area shape="rect" coords="196,19,335,46" href="/console/shared/logout.jsp" /> </map>
+          <map name="Map" id="Map"> <area shape="rect" coords="196,19,335,46" href="/console/datasync/index.jsp" /> </map>
         </div>
 	</div>
 	<div  id="parentId" style="position: relative; top: 0px; left: 0px; width: 100%; auto:flow;"></div>
 	<div id="footTopDiv" class="foot_top"></div>
 	<div id="footDiv" class="foot_div">
-	  	$requestLocale.message("vdb.copyright")
+		Powered By 中国科学院计算机网络信息中心·科学数据中心 2018年12月
 	</div>
 	
 	<!--左侧树的DIV-->
 	<div id="treeDiv">
 		<div id="treeTitle" class="left_title_bg_div">
-			<div class="left_title_div">数据管理</div>
+			<div class="left_title_div">数据配置</div>
 		</div>
 		<div id="tree"></div>
 	</div>

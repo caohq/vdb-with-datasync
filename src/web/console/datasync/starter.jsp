@@ -4,7 +4,7 @@
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>数据交汇</title>
+    <title>数据汇交</title>
     <script type="text/javascript" src="/console/shared/js/jquery-3.2.1.min.js " ></script>
     <script src="/console/shared/bootstrap-3.3.7/js/bootstrap.js"></script>
     <script src="/console/datasync/js/dragdiv.js"></script>
@@ -29,7 +29,18 @@
         #wrap label.lab1{background: #438AEB;}
         #wrap label.lab2{}
         a {
-            color: #161617 !important;
+            color: #161617;
+            text-decoration: none;
+        }
+        a:hover{
+            text-decoration: none;
+
+        }
+        a:link{
+            text-decoration: none;
+        }
+        a:active{
+            text-decoration: none;
         }
         .left_title_bg_div {
             height: 46px;
@@ -78,13 +89,15 @@
                 <div id="treeTitle" class="left_title_bg_div">
                     <div class="left_title_div">数据汇交</div>
                 </div>
-                <div style="width: 180px;height:90%;float:left;display: block;margin-left: 14px;margin-top: 20px;vertical-align:middle;">
-                    <div style="background-color: #438AEB;height: 30px;text-align: center ;margin-top: 2px;width: 80%;" >
+                <div style="width: 96%;margin-top: 20px;">
+                    <div style="background-color: #438AEB;height: 30px;display: inline-block;
+                    text-align: center ;margin-top: 2px;width: 80%;" >
                         <a onclick="goToPage('datatask/dataTask.jsp')" href="javascript:void(0)" style="font-size:20px;text-align:center;display:block;">
                             数据任务
                         </a>
                     </div>
-                    <div style="background-color: #438AEB;height: 30px;text-align: center ;margin-top: 2px; width: 80%;" >
+                    <div style="background-color: #438AEB;height: 30px;display: inline-block;
+                    text-align: center ;margin-top: 2px; width: 80%;" >
                         <a onclick="goToPage('settingtask/settingTask.jsp')" href="javascript:void(0)" style="font-size:20px;text-align:center;display:block;">
                             设置任务
                         </a>
