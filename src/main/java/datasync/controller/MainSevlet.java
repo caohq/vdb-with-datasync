@@ -34,6 +34,9 @@ public class MainSevlet extends HttpServlet{
     private Logger logger = LoggerFactory.getLogger(MainSevlet.class);
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+
+       HttpSession session=req.getSession();
+
         //获取请求路径
         String path = req.getServletPath();
         if("/login.do".equals(path)) {

@@ -12,6 +12,7 @@ public class DataTaskService {
         return new DataTaskDao().insertDatatask(datatask,connData,dataSourceName);
     }
 
+    //获取任务列表
     public List<DataTask> getDataTaskList(Map<Object,Object> params){
         return new DataTaskDao().getDataTaskList(params);
     }

@@ -152,7 +152,7 @@
                 field: 'dataTaskType',
                 title: '数据来源类型'
             }, {
-                field: 'dataSourceId',
+                field: 'dataSrc.dataSourceName',
                 title: '数据源'
             }, {
                 field: 'createTime',
@@ -285,6 +285,8 @@
                     async: "false",
                     success: function (data) {
                         toastr["success"]("删除成功");
+                        searchDataBySql();
+
                     },
                     error: function () {
                         console.log("请求失败")

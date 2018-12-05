@@ -18,16 +18,8 @@ public class DataTask {
     private String creator;
     private String status;
     private String LogPath;
-    private String DataSourceName;
     private DataSrc dataSrc;
 
-    public String getDataSourceName() {
-        return DataSourceName;
-    }
-
-    public void setDataSourceName(String dataSourceName) {
-        DataSourceName = dataSourceName;
-    }
     public String getDataTaskId() {
         return dataTaskId;
     }

@@ -156,7 +156,7 @@
             success:function (dataSession) {
                 var dataSessiobArray=dataSession.replace(/\[|]/g,'').split(',');
                 $("#selectId").append("<option style='width: 300px;display: none;'>请选择...</option>");
-                for(var i=1;i<dataSessiobArray.length;i++){
+                for(var i=0;i<dataSessiobArray.length;i++){
                     $("#selectId").append("<option style=width: 300px; value='"+ dataSessiobArray[i].replace(/[\r\n]/g,"")+"'>"+ dataSessiobArray[i].substr(0, dataSessiobArray[i].indexOf('$'))+"</option>");
                 }
             },

@@ -121,7 +121,7 @@ public class DataConnDaoService {
         String vdbEntryStr="";
         for (int i=0;i<vdbLength;i++){
             Repository repository=vdbEngine.getDomain().getDataSets()[i].getRepository();
-            if(repository!=null){
+            if(repository!=null && ("mysql".equals(String.valueOf(repository.getProductName())) || "oracle".equals(String.valueOf(repository.getProductName())))){
                 String title=String.valueOf(vdbEngine.getDomain().getDataSets()[i].getTitle()).replaceAll("null","");
                 String host=String.valueOf(repository.get("host")).replaceAll("null","");
                 String port=String.valueOf(repository.get("port")).replaceAll("null","");
