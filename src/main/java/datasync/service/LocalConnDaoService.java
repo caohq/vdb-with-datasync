@@ -31,7 +31,10 @@ public class LocalConnDaoService {
             Repository repository=vdbEngine.getDomain().getDataSets()[i].getRepository();
                 String uri=vdbEngine.getDomain().getDataSets()[i].getUri();
                 String title=vdbEngine.getDomain().getDataSets()[i].getTitle();
-                list.add(title+"?*"+uri);
+                List<FileRepository> fileRepository=rs.getAllRepositories(uri);
+                if(fileRepository.size()>1){
+                    list.add(title+"?*"+uri);
+                }
         }
         return list;
     }

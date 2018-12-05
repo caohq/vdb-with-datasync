@@ -54,6 +54,7 @@ public class MainSevlet extends HttpServlet{
                 e.printStackTrace();
             }
         }else if("/searchBdDirList.do".equals(path)){
+            //查询本地数据源列表
             searchBdDirList(req, res);
         }else if("/searchBdDirListPath.do".equals(path)){
             searchBdDirListPath(req, res);
