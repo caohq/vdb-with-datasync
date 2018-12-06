@@ -24,7 +24,7 @@
 <body style="overflow: hidden;margin: 0;">
 <div>
   <div  style="height: 100%;width: 100%;">
-     <img src="/console/datasync/vdbNewLog/images/Log03_bg02.jpg" style="width: 100%;height: 100%;">
+      <img src="/console/datasync/vdbNewLog/images/Log03_bg02.jpg" style="width: 100%;height: 100%;">
       <div class="login_in_div">
          <h1>登&nbsp;&nbsp;&nbsp;&nbsp;录</h1>
          <hr style="width: 60%"/>
