@@ -145,7 +145,7 @@
         var password=$("#password")[0].value;
         var checked=true;
         if(username=="" || username==null){
-            checked=false;
+            checked=false;reso
             alert("请输入用户名!");
             return;
         }
