@@ -1,5 +1,6 @@
 package datasync.service;
 
+import vdb.metacat.Repository;
 import vdb.mydb.VdbManager;
 import vdb.mydb.engine.VdbEngine;
 import vdb.mydb.filestat.impl.LocalRepository;
@@ -27,9 +28,13 @@ public class LocalConnDaoService {
         VdbEngine vdbEngine=vdbManager.getInstance();
         int vdbLength=VdbManager.getInstance().getDomain().getDataSets().length;
         for (int i=0;i<vdbLength;i++){
-            String uri=vdbEngine.getDomain().getDataSets()[i].getRepository().getDataSet().getUri();
-            String title=vdbEngine.getDomain().getDataSets()[i].getRepository().getDataSet().getTitle();
-            list.add(title+"?*"+uri);
+            Repository repository=vdbEngine.getDomain().getDataSets()[i].getRepository();
+                String uri=vdbEngine.getDomain().getDataSets()[i].getUri();
+                String title=vdbEngine.getDomain().getDataSets()[i].getTitle();
+                List<FileRepository> fileRepository=rs.getAllRepositories(uri);
+                if(fileRepository.size()>1){
+                    list.add(title+"?*"+uri);
+                }
         }
         return list;
     }

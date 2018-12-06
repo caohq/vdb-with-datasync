@@ -7,7 +7,7 @@
     http://www.springframework.org/schema/security
     http://www.springframework.org/schema/security/spring-security-2.0.4.xsd">
 
-	<http auto-config="true" access-denied-page="/console/shared/login.vpage?error=2" session-fixation-protection = "none">
+	<http auto-config="true" access-denied-page="/console/datasync/index.jsp?error=2" session-fixation-protection = "none">
 		<intercept-url pattern="/console/*/WEB-INF/**" access="ROLE_SUPERMAN" />
 		<intercept-url pattern="/console/*/images/**" filters="none" />
 		<intercept-url pattern="/console/shared/**" filters="none" />
@@ -20,8 +20,8 @@
 		<intercept-url pattern="/console/editor/**" access="ROLE_ADMIN,ROLE_DATA_MANAGER" />
 		<intercept-url pattern="/**" filters="none" />
 		<anonymous granted-authority="ROLE_ANONYMOUS" />
-		<form-login login-page="/console/shared/login.vpage" authentication-failure-url="/console/shared/login.vpage?error=3" />
-		<logout logout-success-url="/console/shared/login.vpage" />
+		<form-login login-page="/console/datasync/index.jsp" authentication-failure-url="/console/datasync/index.jsp?error=3" />
+		<logout logout-success-url="/console/datasync/index.jsp" />
 	</http>
 
 	<!--dao方式设置用户权限-->

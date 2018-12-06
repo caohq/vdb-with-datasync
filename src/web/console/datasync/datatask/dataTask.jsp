@@ -152,7 +152,7 @@
                 field: 'dataTaskType',
                 title: '数据来源类型'
             }, {
-                field: 'dataSourceId',
+                field: 'dataSrc.dataSourceName',
                 title: '数据源'
             }, {
                 field: 'createTime',
@@ -197,8 +197,9 @@
             '<button class="btn btn-default details btn-xs" value="'+row.dataTaskId+'" onclick="ftpUpload(value)"><a>上传</a></button>&nbsp;',
             '<button class="btn btn-default details btn-xs" value="'+row.dataTaskId+'" onclick="viewDtails(value)"><a>查看</a></button>&nbsp;',
             '<button class="btn btn-default delete btn-xs" onclick="deleteThis(this)" data-id="'+row.dataTaskId+'"><a>删除</a></button>&nbsp;',
-            '<button class="btn btn-default delete btn-xs" onclick="" data-id="'+row.dataTaskId+'"><a href="/console/datasync/logFile/数据任务日志.txt"\n' +
-            '   download="上传日志.txt">日志</a></button>'
+            '<button class="btn btn-default delete btn-xs" onclick="" data-id="'+row.dataTaskId+'">'+
+              '<a href="/console/datasync/logFile/'+row.dataTaskType+'SubmitLog.txt" download="'+row.dataTaskName+'Log.txt">日志</a>'+
+            '</button>'
         ].join('');
     }
 
@@ -284,6 +285,8 @@
                     async: "false",
                     success: function (data) {
                         toastr["success"]("删除成功");
+                        searchDataBySql();
+
                     },
                     error: function () {
                         console.log("请求失败")

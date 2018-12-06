@@ -1,5 +1,6 @@
 package datasync.mapper;
 
+import datasync.entity.DataSrc;
 import datasync.entity.DataTask;
 import org.springframework.jdbc.core.RowMapper;
 
@@ -9,7 +10,7 @@ import java.sql.SQLException;
 /**
  * Created by xiajl on 2018/9/30 .
  */
-public class DataTaskMapper implements RowMapper {
+public class DataTaskMapperDsName implements RowMapper {
     @Override
     public Object mapRow(ResultSet resultSet, int i) throws SQLException {
         DataTask dataTask = new DataTask();
@@ -27,7 +28,9 @@ public class DataTaskMapper implements RowMapper {
         dataTask.setStatus(resultSet.getString("Status"));
         dataTask.setSubjectCode(resultSet.getString("SubjectCode"));
         dataTask.setLogPath(resultSet.getString("LogPath"));
-//        dataTask.setDataSourceName(resultSet.getString("DataSourceName"));
+        DataSrc dataSrc=new DataSrc();
+        dataSrc.setDataSourceName(resultSet.getString("DataSourceName"));
+        dataTask.setDataSrc(dataSrc);
         return dataTask;
     }
 }

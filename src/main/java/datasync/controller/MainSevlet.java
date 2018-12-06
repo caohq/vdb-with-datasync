@@ -34,6 +34,9 @@ public class MainSevlet extends HttpServlet{
     private Logger logger = LoggerFactory.getLogger(MainSevlet.class);
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+
+       HttpSession session=req.getSession();
+
         //获取请求路径
         String path = req.getServletPath();
         if("/login.do".equals(path)) {
@@ -51,6 +54,7 @@ public class MainSevlet extends HttpServlet{
                 e.printStackTrace();
             }
         }else if("/searchBdDirList.do".equals(path)){
+            //查询本地数据源列表
             searchBdDirList(req, res);
         }else if("/searchBdDirListPath.do".equals(path)){
             searchBdDirListPath(req, res);
@@ -218,10 +222,11 @@ public class MainSevlet extends HttpServlet{
         JSONObject jsonObject = new JSONObject();
         DataTask datatask = new DataTask();
         HttpSession session=res.getSession();
-        String datataskId=String.valueOf(UUID.randomUUID());
+        String datataskId=res.getParameter("dataTaskName");//获取任务名称--id
         String connDataValue=res.getParameter("connDataValue");
         String [] connDataValueArray=connDataValue.split("\\$");
         String dataSourceName=res.getParameter("connDataName");
+       // String dataTaskName=res.getParameter("dataTaskName");//获取任务名称--id
         int dataSourceId= (int) System.currentTimeMillis();
 //        datatask.setDataSourceId(5);
         datatask.setDataTaskId(datataskId);
@@ -273,25 +278,26 @@ public class MainSevlet extends HttpServlet{
 
     //新建任务--本地文件上传任务
     public  JSONObject submitFileData(HttpServletRequest req, HttpServletResponse res) throws SQLException, IOException {
-        PrintWriter out = res.getWriter();
+   //     PrintWriter out = res.getWriter();
         JSONObject jsonObject = new JSONObject();
         DataTask datatask = new DataTask();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+    //    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         Date date=new Date();
         int dataSourceId= (int) System.currentTimeMillis();
         HttpSession session=req.getSession();
         String  connDataName=req.getParameter("connDataName");//本地连接名称
         String connDataValue=req.getParameter("connDataValue");//数据源名称
         String  getCheckedFile=req.getParameter("getCheckedFile");//文件路径
-        String  getLocalTaskName=req.getParameter("getLocalTaskName");//获取任务名称
-        String datataskId=String.valueOf(UUID.randomUUID());
+//        String  getLocalTaskName=req.getParameter("getLocalTaskName");//获取任务名称
+        String getLocalTaskName=req.getParameter("dataTaskName");//任務id
+        String datataskId=req.getParameter("dataTaskName");//任務id
         datatask.setCreateTime(date);
         datatask.setDataSourceId(dataSourceId);//数据源名称
         datatask.setDataTaskName(getLocalTaskName);//任务名
         datatask.setFilePath(getCheckedFile);
         datatask.setDataTaskType("file");
         datatask.setStatus("0");
-        datatask.setDataTaskId(datataskId);
+        datatask.setDataTaskId(req.getParameter("dataTaskName"));
         datatask.setCreator(session.getAttribute("SPRING_SECURITY_LAST_USERNAME")==null?"": (String) session.getAttribute("SPRING_SECURITY_LAST_USERNAME"));
 
         List<String> filepaths =new LinkedList<String>();

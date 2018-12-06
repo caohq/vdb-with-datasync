@@ -22,7 +22,7 @@
           <tr align="left">
             <td width="10" align="left"><img src="$pageroot/images/top_03.png"></td>
             <td width="29" align="center"><img src="$pageroot/images/top_01.gif" width="17" height="12"></td>
-            <td width="36" align="left"><a href="/console/shared/login.vpage" style="font-size:12px;">登录</a></td>
+            <td width="36" align="left"><a href="/console/datasync/index.jsp" style="font-size:12px;">登录</a></td>
             <td width="10"><img src="$pageroot/images/top_03.png"></td>
             <td width="29" align="center"><img src="$pageroot/images/top_02.gif" width="18" height="13"></td>
             <td width="36"><a href="#" class="wenz8l" style="font-size:12px;">注册</a></td>

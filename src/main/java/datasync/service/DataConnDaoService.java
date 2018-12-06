@@ -1,17 +1,19 @@
 package datasync.service;
 
-import com.microsoft.sqlserver.jdbc.SQLServerConnection;
+import datasync.connection.MysqlDataConnection;
+import datasync.connection.OracleDataConnection;
 import datasync.connection.SqlServerDataConnection;
-import oracle.jdbc.OracleConnection;
+import vdb.metacat.Repository;
 import vdb.mydb.VdbManager;
 import vdb.mydb.engine.VdbEngine;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.sql.*;
-import java.util.*;
-import datasync.connection.MysqlDataConnection;
-import datasync.connection.OracleDataConnection;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 public class DataConnDaoService {
@@ -116,16 +118,22 @@ public class DataConnDaoService {
 //        RepositoryManager rm = new RepositoryManager(); // rm.setRepositories();
 //        RepositoriesService rs=new RepositoriesService();//getAllRepositories
 //        List<FileRepository> fileRepository=rs.getAllRepositories("localhost.gem");
+        String vdbEntryStr="";
         for (int i=0;i<vdbLength;i++){
-            String title=vdbEngine.getDomain().getDataSets()[i].getTitle();
-            String host=vdbEngine.getDomain().getDataSets()[i].getRepository().get("host");
-            String port=vdbEngine.getDomain().getDataSets()[i].getRepository().get("port");
-            String username=vdbEngine.getDomain().getDataSets()[i].getRepository().get("username");
-            String password=vdbEngine.getDomain().getDataSets()[i].getRepository().get("userPass");
-            String productName=vdbEngine.getDomain().getDataSets()[i].getRepository().get("productName");//数据库type
-            String databaseName=vdbEngine.getDomain().getDataSets()[i].getRepository().get("databaseName");//数据库实例oracle/数据库名称mysql
-            String dataStr=title+"$"+host+"$"+port+"$"+username+"$"+password+"$"+productName+"$"+databaseName;//以$隔断数据库信息
-            list.add(dataStr);
+            Repository repository=vdbEngine.getDomain().getDataSets()[i].getRepository();
+            if(repository!=null && ("mysql".equals(String.valueOf(repository.getProductName())) || "oracle".equals(String.valueOf(repository.getProductName())))){
+                String title=String.valueOf(vdbEngine.getDomain().getDataSets()[i].getTitle()).replaceAll("null","");
+                String host=String.valueOf(repository.get("host")).replaceAll("null","");
+                String port=String.valueOf(repository.get("port")).replaceAll("null","");
+                String username=String.valueOf(repository.get("username")).replaceAll("null","");
+                String password=String.valueOf(repository.get("userPass")).replaceAll("null","");
+                String productName=String.valueOf(repository.get("productName")).replaceAll("null","");//数据库type
+                String databaseName=String.valueOf(repository.get("databaseName")).replaceAll("null","");//数据库实例oracle/数据库名称mysql
+                String dataStr=title+"$"+host+"$"+port+"$"+username+"$"+password+"$"+productName+"$"+databaseName;//以$隔断数据库信息
+                list.add(dataStr);
+            }else{
+
+            }
         }
         return list;
 
@@ -159,7 +167,6 @@ public class DataConnDaoService {
        // System.out.println(list2.toString());
         while(rs.next()){
             Map<Object,Object> map2=new HashMap<Object, Object>();
-            System.out.println("1");
             for(int j=1;j<=map.size();j++){
                 map2.put("\""+map.get(j)+"\"","\""+rs.getString((String) map.get(j))+"\"");
             }

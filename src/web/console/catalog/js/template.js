@@ -173,7 +173,7 @@ window.onresize = function(){
 }
 
 function start(){
-	var div = '<ul class="top_mod"><li><a href="/console/catalog/index.jsp">数据管理</a></li><li><a href="/console/datasync/starter.jsp">数据汇交</a></li></ul>'
+	var div = '<ul class="top_mod"><li><a href="/console/catalog/index.jsp">数据配置</a></li><li><a href="/console/editor/index.jsp">数据管理</a></li><li><a href="/console/datasync/starter.jsp">数据汇交</a></li></ul>'
     $("#topDiv").append(div);
 
 }

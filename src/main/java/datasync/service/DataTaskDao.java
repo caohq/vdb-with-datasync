@@ -1,8 +1,10 @@
 package datasync.service;
 
 import datasync.connection.SqlLiteDataConnection;
+import datasync.entity.DataSrc;
 import datasync.entity.DataTask;
-import datasync.mapper.DataTaskMapper;
+import datasync.mapper.DataSrcMapper;
+import datasync.mapper.DataTaskMapperDsName;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
@@ -57,7 +59,7 @@ public class DataTaskDao {
     //查询任务列表
     public List<DataTask> getDataTaskList(Map<Object,Object> params){
         StringBuffer sql = new StringBuffer();
-        sql.append("select * from t_datatask t where 1=1 ");
+        sql.append("select ds.DataSourceName,* from  t_datatask t  LEFT JOIN t_datasource ds ON ds.DataSourceId=t.DataSourceId where 1=1 ");
         //String sql = "select * from t_datatask order  by  DataTaskId desc ";
         if(StringUtils.isNotEmpty((String) params.get("SearchDataTaskName"))) {//任务标识
             sql.append("  and t.dataTaskName like  '%"+params.get("SearchDataTaskName")+"%'");
@@ -75,7 +77,8 @@ public class DataTaskDao {
         sql.append(" order  by   CreateTime desc");
         SqlLiteDataConnection sqlLiteDataConnection=new SqlLiteDataConnection();
         JdbcTemplate jdbcTemplate=sqlLiteDataConnection.makeJdbcTemplate();
-        List<DataTask> DataTaskList = jdbcTemplate.query(sql+"", new DataTaskMapper());
+        List<DataTask> DataTaskList = jdbcTemplate.query(sql+"", new DataTaskMapperDsName());
+       // DataSrc dataSrc=getDataSourceById(DataTaskList);
 
         return DataTaskList;
     }
@@ -83,10 +86,10 @@ public class DataTaskDao {
     //根据id获取任务对象
     public DataTask getDataTaskInfById(String taskId){
         DataTask dataTask=new DataTask();
-        String sql = "select * from t_datatask where dataTaskId = ?";
+        String sql = "select ds.DataSourceName,* from  t_datatask t  LEFT JOIN t_datasource ds ON ds.DataSourceId=t.DataSourceId  where dataTaskId = ?";
         SqlLiteDataConnection sqlLiteDataConnection=new SqlLiteDataConnection();
         JdbcTemplate jdbcTemplate=sqlLiteDataConnection.makeJdbcTemplate();
-        List<DataTask> list = jdbcTemplate.query(sql, new Object[]{taskId}, new DataTaskMapper());
+        List<DataTask> list = jdbcTemplate.query(sql, new Object[]{taskId}, new DataTaskMapperDsName());
         return list.size() > 0 ? list.get(0) : null;
     }
 
@@ -134,5 +137,13 @@ public class DataTaskDao {
         JdbcTemplate jdbcTemplate=sqlLiteDataConnection.makeJdbcTemplate();
         int result = jdbcTemplate.update(sql);//query(sql, new Object[]{taskId}, new DataTaskMapper());
         return result;
+    }
+
+    public DataSrc getDataSourceById(String dataSourceId){
+        String sql="select * from t_datasource where t_datasource.DataSourceId=?";
+        SqlLiteDataConnection sqlLiteDataConnection=new SqlLiteDataConnection();
+        JdbcTemplate jdbcTemplate=sqlLiteDataConnection.makeJdbcTemplate();
+        List<DataSrc> list = jdbcTemplate.query(sql, new Object[]{dataSourceId}, new DataSrcMapper());
+        return list.size() > 0 ? list.get(0) : null;
     }
 }
