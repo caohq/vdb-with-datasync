@@ -29,7 +29,7 @@
         #wrap label.lab1{background: #438AEB;}
         #wrap label.lab2{}
         a {
-            color: #161617;
+            color: #ffffff;
             text-decoration: none;
         }
         a:hover{
@@ -107,7 +107,7 @@
             <label class="lab1" id='lab1'></label>
             <li class="li2" style="height: 100%;">
                 <div  style="float: left;width: 100%;height: 100%;min-height: 300px;overflow:hidden;margin-left: 6px;" >
-                    <div class="right_top_div" style="width: 100%;height: 5%;">
+                    <div class="right_top_div" style="width: 100%;">
                         <div class="right_top_left_div">
                             <img src="/console/shared/images/ico_01.gif" height="14" width="20" style="vertical-align: bottom !important;"> <font style="color:#ffffff;font-size:12px">&nbsp;您的当前位置：</font>
                             <font style="color:#fffd4d;font-size:12px"><strong>首页 -&gt; 数据汇交</strong></font>
