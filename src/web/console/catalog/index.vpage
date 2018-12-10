@@ -55,7 +55,7 @@ $response.setDateHeader("Expires", 0)
         	<div class="title_left_title_div">$domain.title</div>
         </div>
         <div class="top_right_div"><img src="/console/shared/images/top_right_bg.jpg" width="350"  height="80" border="0" usemap="#Map" />
-          <map name="Map" id="Map"> <area shape="rect" coords="196,19,335,46" href="/console/datasync/index.jsp" /> </map>
+          <map name="Map" id="Map"> <area shape="rect" coords="196,19,335,46" href="/console/shared/logout.jsp" /> </map>
         </div>
 	</div>
 	<div  id="parentId" style="position: relative; top: 0px; left: 0px; width: 100%; auto:flow;"></div>

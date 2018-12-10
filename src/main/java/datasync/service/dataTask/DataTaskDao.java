@@ -1,4 +1,4 @@
-package datasync.service;
+package datasync.service.dataTask;
 
 import datasync.connection.SqlLiteDataConnection;
 import datasync.entity.DataSrc;

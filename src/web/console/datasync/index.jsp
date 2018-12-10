@@ -123,9 +123,11 @@
             <%--<hr style="width: 27%;margin-left: 37%"/>--%>
             <label for="userName">用户名：</label>
             <input type="text" id="userName" class="form-control" name="userName" style="width: 200px;margin: 10px;"/>
+                <span id="checkedUserName" style="color: red;"></span>
             <br />
             <label for="password">密&nbsp;&nbsp;&nbsp;码：</label>
             <input type="password" id="password" class="form-control" name="password" style="width: 200px;margin: 10px;" />
+                <span id="checkedUserPassword" style="color: red;"></span>
             <br />
             <div style="padding:10px 10px 0 0;overflow: hidden">
                 <input type="submit" class="btn" onclick="start()" id="submit" value="登录"/>
@@ -140,7 +142,6 @@
         // window.location.href="/console/datasync/starter.jsp";
        // document.location.href="/j_spring_security_check?j_username=root&j_password=1&j_uri=%2Fcatalog%2F";
       //  window,location.href="/console/datasync/starter.jsp";
-
         var username=$("#userName")[0].value;
         var password=$("#password")[0].value;
         var checked=true;
@@ -154,27 +155,27 @@
             alert("请输入密码!");
             return;
         }
-        if(username!="root"){
-            checked=false;
-            alert("用户不存在!");
-            return;
-        }
-        if(password!="123456"){
-            checked=false;
-            alert("密码错误!");
-            return;
-        }
+
         if(checked){
             $.ajax({
                 type:"POST",
-                url:"/j_spring_security_check",
+                url:"/login",
+                async:false,
                 data:{
-                    j_username:"root",
-                    j_password:"1",
-                    j_uri:"%2Fcatalog%2F"
+                    j_username:username,
+                    j_password:password
                 },
-                success:function () {
-                    window,location.href="/console/datasync/starter.jsp";
+                success:function (data) {
+                    $("#checkedUserName").html("");
+                    $("#checkedUserPassword").html("");//清空错误信息！
+                    debugger
+                    if(data.replace(/[\r\n]/g,"")=="登录成功！"){
+                       vdbLogin(username,password);
+                    }else if(data.replace(/[\r\n]/g,"")=="账号不存在！"){
+                       $("#checkedUserName").html("账号不存在！");
+                    }else if(data.replace(/[\r\n]/g,"")=="密码错误！"){
+                       $("#checkedUserPassword").html("密码错误！");
+                    }
                 },
                 error:function () {
                     console.log("请求失败")
@@ -182,6 +183,28 @@
             })
         }
     };
+
+    function vdbLogin(username,password){//密码验证通过后调用vdb登录接口
+        $.ajax({
+            type:"POST",
+            url:"/j_spring_security_check",
+            async:false,
+            data:{
+                j_username:username,
+                j_password:password,
+                j_uri:"%2Fcatalog%2F"
+            },
+            success:function (data) {
+
+                window,location.href="/console/datasync/starter.jsp";
+            },
+            error:function () {
+                console.log("请求失败")
+            }
+        })
+
+    }
+
 
     function reset(){
         $("#userName")[0].value="";

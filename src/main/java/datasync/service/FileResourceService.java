@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.google.common.io.Files;
 import datasync.entity.DataSrc;
 import datasync.entity.ZipUtils;
+import datasync.service.login.ConfigPropertyService;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,8 +23,8 @@ import java.util.regex.Matcher;
 /**
  * @program: DataSync
  * @description: DataTask Service
- * @author: shibaoping
- * @create: 2018-10-09 16:29
+ * @author:
+ * @create:
  **/
 
 @Service

@@ -1,4 +1,4 @@
-package datasync.service;
+package datasync.service.settingTask;
 
 import datasync.connection.MysqlDataConnection;
 import datasync.connection.OracleDataConnection;
@@ -7,6 +7,9 @@ import datasync.entity.DataSrc;
 import datasync.entity.DataTask;
 import datasync.mapper.DataSrcMapper;
 import datasync.mapper.DataTaskMapper;
+import datasync.service.FileResourceService;
+import datasync.service.login.LoginService;
+import datasync.utils.ConfigUtil;
 import datasync.utils.DDL2SQLUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -126,7 +129,7 @@ public class UploadTaskService {
                 continue;
             }
 
-            sqlSb.append(DDL2SQLUtils.generateDDLFromTable(connection, null, null, tableName));
+            sqlSb.append(DDL2SQLUtils.generateDDLFromTable(connection, null, null, tableName.trim()));
             dataSb.append(DDL2SQLUtils.generateInsertSqlFromTable(connection, null, null, tableName));
             dataSb.append("\n");
         }
@@ -192,7 +195,9 @@ public class UploadTaskService {
 
     //对导出sql文件进行zip打包
     public boolean packTaskData(List<String> fileList,String datataskId,String path) {
-        String fileName = "sdc001"+"_"+datataskId+"_sql";
+        String configFilePath = LoginService.class.getClassLoader().getResource("../../WEB-INF/config.properties").getFile();
+        String subjectCode= ConfigUtil.getConfigItem(configFilePath, "SubjectCode");
+        String fileName = subjectCode+"_"+datataskId+"_sql";
         FileResourceService fileResourceService=new FileResourceService();
         fileResourceService.packDataResource(fileName,fileList,path);
         return true;

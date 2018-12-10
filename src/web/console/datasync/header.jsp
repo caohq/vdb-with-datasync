@@ -55,7 +55,7 @@
         <%--<li><a href="#">数据汇交</a></li>--%>
     </ul>
     <div class="top_right_div"><img src="/console/datasync/vdbNewLog/images/top_right_bg.jpg" width="350"  height="80" border="0" usemap="#Map" />
-        <map name="Map" id="Map"> <area shape="rect" coords="196,19,335,46" href="/console/datasync/index.jsp" /> </map>
+        <map name="Map" id="Map"> <area shape="rect" coords="196,19,335,46" href="/console/shared/logout.jsp" /> </map>
     </div>
 </div>
 
