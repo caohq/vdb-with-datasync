@@ -19,8 +19,8 @@ import java.util.*;
 /**
  * @program: DataSync
  * @description: relation dao
- * @author: shibaoping
- * @create: 2018-10-09 15:31
+ * @author: caohq
+ * @create: 2018-10-29 15:31
  **/
 
 

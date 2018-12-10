@@ -14,7 +14,7 @@
     <link rel="stylesheet" type="text/css" href="/console/datasync/css/style.min.css" />
     <style>
         .fixed-table-pagination .page-list{
-                                         display: none !important;
+            display: none !important;
         }
         *{margin:0;padding:0;}
         ul,ol,li{list-style: none;margin-bottom: 0px !important;}
@@ -91,6 +91,12 @@
                 </div>
                 <div style="width: 96%;margin-top: 20px;">
                     <div style="background-color: #438AEB;height: 30px;display: inline-block;
+                    text-align: center ;margin-top: 2px; width: 80%;" >
+                        <a onclick="goToPage('dataNode/dataNodeInf.jsp')" href="javascript:void(0)" style="font-size:20px;text-align:center;display:block;">
+                            专业库信息
+                        </a>
+                    </div>
+                    <div style="background-color: #438AEB;height: 30px;display: inline-block;
                     text-align: center ;margin-top: 2px;width: 80%;" >
                         <a onclick="goToPage('datatask/dataTask.jsp')" href="javascript:void(0)" style="font-size:20px;text-align:center;display:block;">
                             数据任务
@@ -102,6 +108,7 @@
                             设置任务
                         </a>
                     </div>
+
                 </div>
             </li>
             <label class="lab1" id='lab1'></label>
@@ -113,7 +120,7 @@
                             <font style="color:#fffd4d;font-size:12px"><strong>首页 -&gt; 数据汇交</strong></font>
                         </div>
                     </div>
-                    <iframe src="datatask/dataTask.jsp" width="100%" style="border:none;height: 85%;" id="iframe"></iframe>
+                    <iframe src="dataNode/dataNodeInf.jsp" width="100%" style="border:none;height: 85%;" id="iframe"></iframe>
                 </div>
             </li>
         </ul>
@@ -123,7 +130,10 @@
 <script type="text/javascript" src="/console/shared/bootstrap-3.3.7/js/bootstrap-table.js"></script>
 
 <script type="text/javascript">
-
+    //var param="datatask/dataTask.jsp.jsp";
+    // $(document).ready(function(){
+    //     document.getElementById("iframe").src="dataNode/dataNodeInf.jsp";
+    // });
     // 切换iframe页面
     function goToPage(param){
         document.getElementById("iframe").src=param;

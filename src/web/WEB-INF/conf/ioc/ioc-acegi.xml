@@ -21,7 +21,7 @@
 		<intercept-url pattern="/**" filters="none" />
 		<anonymous granted-authority="ROLE_ANONYMOUS" />
 		<form-login login-page="/console/datasync/index.jsp" authentication-failure-url="/console/datasync/index.jsp?error=3" />
-		<logout logout-success-url="/console/datasync/index.jsp" />
+		<logout logout-success-url="/console/datasync/starter.jsp" />
 	</http>
 
 	<!--dao方式设置用户权限-->

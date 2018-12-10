@@ -45,7 +45,7 @@
              /*line-height: 0px !important;*/
         /*}*/
         .fixed-table-container{
-            height: 404px !important;
+            /*height: 435px !important;*/
         }
         .sr-only {
             position: relative !important;
@@ -85,7 +85,7 @@
             </form>
         </div>
         <div class="table_div">
-            <table id="dataTaskTableID" class="table table-bordered" style="text-align: center;">
+            <table id="dataTaskTableID" class="table table-bordered" style="text-align: center;data-striped:true;">
 
             </table>
         </div>
@@ -130,7 +130,7 @@
             sortOrder: "asc",
             pageNumber: 1,
             pageSize: 10,                       //每页的记录行数（*）
-            //pageList: [ 25, 50, 100],
+           // pageList: [ 25, 50, 100],
             minimumCountColumns: 5,
             search:false,
             showRefresh:false,
@@ -138,7 +138,7 @@
             locale: "zh-CN",
             searchOnEnterKey:true,
             detailView: false,
-           // height:380,
+            height:$(window).height() - 60,
             columns:[ {
                 field: 'dataTaskId',
                 title: 'id'
@@ -185,7 +185,9 @@
         $('#dataTaskTableID').bootstrapTable('load', dataList);
         $('#dataTaskTableID').bootstrapTable('hideColumn', 'dataTaskId');
         $('#dataTaskTableID').bootstrapTable('hideColumn', 'dataSo');
-       // $("#dataTaskTableID").bootstrapTable('resetView');
+        $('#dataTaskTableID').bootstrapTable('resetView');
+
+        // $("#dataTaskTableID").bootstrapTable('resetView');
     };
 
 

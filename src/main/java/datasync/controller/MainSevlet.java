@@ -3,6 +3,7 @@ package datasync.controller;
 import datasync.entity.DataTask;
 import datasync.entity.FtpUtil;
 import datasync.service.*;
+import datasync.utils.ConfigUtil;
 import net.sf.json.JSONObject;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -40,6 +41,7 @@ public class MainSevlet extends HttpServlet{
         //获取请求路径
         String path = req.getServletPath();
         if("/login.do".equals(path)) {
+
 
         }else if ("/searchDataList.do".equals(path)){
             //获取数据库列表
@@ -217,6 +219,8 @@ public class MainSevlet extends HttpServlet{
 
    //新建数据库任务
     public JSONObject submitSqlData(HttpServletRequest res, HttpServletResponse req) throws SQLException, IOException {
+        String configFilePath = LoginService.class.getClassLoader().getResource("../../WEB-INF/config.properties").getFile();
+        String subjectCode= ConfigUtil.getConfigItem(configFilePath, "SubjectCode");
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         Date date=new Date();
         JSONObject jsonObject = new JSONObject();
@@ -244,7 +248,7 @@ public class MainSevlet extends HttpServlet{
         int flag = new DataTaskService().insertDatatask(datatask,connDataValue,dataSourceName);
 
         String zipFilePath=uploadTask(res, req,datataskId);//打包
-        String fileName = "sdc001"+"_"+datataskId+"_sql.zip";
+        String fileName = subjectCode +"_"+datataskId+"_sql.zip";
         datatask.setSqlFilePath((zipFilePath+fileName).replace(File.separator,"%_%"));
         //datatask.setSqlFilePath(fileName);
         int flag1= new DataTaskService().updateSqlFilePathById(datatask);
@@ -278,6 +282,8 @@ public class MainSevlet extends HttpServlet{
 
     //新建任务--本地文件上传任务
     public  JSONObject submitFileData(HttpServletRequest req, HttpServletResponse res) throws SQLException, IOException {
+        String configFilePath = LoginService.class.getClassLoader().getResource("../../WEB-INF/config.properties").getFile();
+        String subjectCode= ConfigUtil.getConfigItem(configFilePath, "SubjectCode");
    //     PrintWriter out = res.getWriter();
         JSONObject jsonObject = new JSONObject();
         DataTask datatask = new DataTask();
@@ -305,7 +311,7 @@ public class MainSevlet extends HttpServlet{
           for (String str:filepathArray){
               ((LinkedList<String>) filepaths).add(str);
           }
-        String fileName = "sdc001"+"_"+datataskId;
+        String fileName = subjectCode+"_"+datataskId;
         FileResourceService fileResourceService=new FileResourceService();
         fileResourceService.packDataResource(fileName,filepaths,req.getSession().getServletContext().getRealPath("/"));
         String zipFile =req.getSession().getServletContext().getRealPath("/") + "zipFile" + File.separator + fileName + ".zip";
@@ -319,25 +325,10 @@ public class MainSevlet extends HttpServlet{
 
     public  int ftpLocalUpload(HttpServletRequest req, HttpServletResponse res) throws IOException {
 
-        //
-//        PrintWriter out = res.getWriter();
-//        com.alibaba.fastjson.JSONObject jsonObject=new com.alibaba.fastjson.JSONObject();
-//        String taskId=req.getParameter("taskId");
-//        int dataTaskId=1;
-//        String processId="";
-//        String host = "10.0.86.77";
-//        String userName = "ftpUserssdd";
-//        String password = "ftpPasswordssdd";
-//        String port = "21";
-//        String remoteFilepath = "/";
-//        String subjectCode = "ssdd";
-//        String portalUrl ="10.0.86.77/portal";
-//        FtpUtil ftpUtil = new FtpUtil();
-//        DataTask dataTask = new DataTaskService().getDataTaskInfById(taskId);
         String processId="1";
         String taskId=req.getParameter("taskId");
         DataTask dataTask = new DataTaskService().getDataTaskInfById(taskId);
-        String fileName = dataTask.getDataTaskName()+"log.txt";//文件名及类型
+        String fileName = dataTask.getDataTaskName ()+"log.txt";//文件名及类型
         String path = "/logs/";
         FileWriter fw = null;
         File file = new File(path, fileName);
@@ -367,8 +358,9 @@ public class MainSevlet extends HttpServlet{
                 pw.println(fileAttrName+ "\n");
             }
         }
-      //  String configFilePath = LoginService.class.getClassLoader().getResource("config.properties").getFile();
-        String subjectCode = "ssdd";
+         String configFilePath = LoginService.class.getClassLoader().getResource("../../WEB-INF/config.properties").getFile();
+        String subjectCode= ConfigUtil.getConfigItem(configFilePath, "SubjectCode");
+//        String subjectCode = "ssdd";
         String host = "10.0.86.77";
         String userName = "ftpUserssdd";
         String password = "ftpPasswordssdd";
