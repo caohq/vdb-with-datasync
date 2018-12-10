@@ -149,7 +149,7 @@
         var password=$("#password")[0].value;
         var checked=true;
         if(username=="" || username==null){
-            checked=false;reso
+            checked=false;
             alert("请输入用户名!");
             return;
         }
