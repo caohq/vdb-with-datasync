@@ -147,7 +147,10 @@ public class UploadTaskService {
         }
         System.out.println("export sqlString - sqlString = " + sqlStrings + ", sqlTableNames = " + sqlTableNames);
 
-        //要求sqlString的个数和sqlTableName的个数一致，如果不一致，就不导出sqlString的数据
+        /*
+         * 要求sqlString的个数和sqlTableName的个数一致，如果不一致，就不导出sqlString的数据
+         *
+         */
         int sqlStringNum = sqlStrings.split(";").length;
         int sqlTableNameNum = sqlTableNames.split(";").length;
         int len = 0;
