@@ -169,11 +169,11 @@
                     $("#checkedUserName").html("");
                     $("#checkedUserPassword").html("");//清空错误信息！
                     debugger
-                    if(data.replace(/[\r\n]/g,"")=="登录成功！"){
+                    if(data.replace(/[\r\n]/g,"")=="202"){
                        vdbLogin(username,password);
-                    }else if(data.replace(/[\r\n]/g,"")=="账号不存在！"){
+                    }else if(data.replace(/[\r\n]/g,"")=="201"){
                        $("#checkedUserName").html("账号不存在！");
-                    }else if(data.replace(/[\r\n]/g,"")=="密码错误！"){
+                    }else if(data.replace(/[\r\n]/g,"")=="203"){
                        $("#checkedUserPassword").html("密码错误！");
                     }
                 },

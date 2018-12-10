@@ -21,18 +21,18 @@ public class LoginServlet extends HttpServlet {
         VdbSecurityManager vsm = VdbManager.getInstance().getSecurityManager();
         String userName = request.getParameter("j_username");
         if(vsm.getUser(userName)==null){//优先判断账号是否存在！
-            out.println("账号不存在！");
+            out.println("201");//账号不存在
             return;
         }
         String password= request.getParameter("j_password")+"{"+userName+"}";
         String passwordMd5=md5.getMD5(password);//将账号密码转化为vdb存储密码串，加密
         String derbyPassword=vsm.getUser(userName).getPassword();//获取vdb中存储的加密密码
         if(!derbyPassword.equals(passwordMd5)){
-            out.println("密码错误！");
+            out.println("203");//密码错误
             return;
         }
 
-        out.println("登录成功！");
+        out.println("202");//登录成功
 
         String password1=request.getParameter("j_password");
 //        int loginStatus = 0; // log success or not， 0 ：success, 1: failed, notice : username or password is wrong
