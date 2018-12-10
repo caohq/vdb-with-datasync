@@ -1,4 +1,4 @@
-package datasync.service;
+package datasync.service.settingTask;
 
 import datasync.connection.MysqlDataConnection;
 import datasync.connection.OracleDataConnection;
@@ -7,6 +7,8 @@ import datasync.entity.DataSrc;
 import datasync.entity.DataTask;
 import datasync.mapper.DataSrcMapper;
 import datasync.mapper.DataTaskMapper;
+import datasync.service.FileResourceService;
+import datasync.service.login.LoginService;
 import datasync.utils.ConfigUtil;
 import datasync.utils.DDL2SQLUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -127,7 +129,7 @@ public class UploadTaskService {
                 continue;
             }
 
-            sqlSb.append(DDL2SQLUtils.generateDDLFromTable(connection, null, null, tableName));
+            sqlSb.append(DDL2SQLUtils.generateDDLFromTable(connection, null, null, tableName.trim()));
             dataSb.append(DDL2SQLUtils.generateInsertSqlFromTable(connection, null, null, tableName));
             dataSb.append("\n");
         }

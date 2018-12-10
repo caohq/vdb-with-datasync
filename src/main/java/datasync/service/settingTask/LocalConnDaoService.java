@@ -1,4 +1,4 @@
-package datasync.service;
+package datasync.service.settingTask;
 
 import vdb.metacat.Repository;
 import vdb.mydb.VdbManager;

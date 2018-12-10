@@ -1,6 +1,6 @@
 package datasync.controller;
 
-import datasync.service.LoginService;
+import datasync.service.login.LoginService;
 import datasync.utils.MD5;
 import vdb.mydb.VdbManager;
 import vdb.mydb.security.VdbSecurityManager;

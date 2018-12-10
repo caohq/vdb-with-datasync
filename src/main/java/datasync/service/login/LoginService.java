@@ -1,5 +1,5 @@
 
-package datasync.service;
+package datasync.service.login;
 
 import com.alibaba.fastjson.JSON;
 import datasync.utils.ConfigUtil;
@@ -10,8 +10,6 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 
 public class LoginService
 {

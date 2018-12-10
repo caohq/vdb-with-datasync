@@ -1,4 +1,4 @@
-package datasync.service;
+package datasync.service.login;
 
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.support.PropertiesLoaderUtils;

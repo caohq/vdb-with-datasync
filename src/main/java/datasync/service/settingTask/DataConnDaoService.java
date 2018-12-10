@@ -1,4 +1,4 @@
-package datasync.service;
+package datasync.service.settingTask;
 
 import datasync.connection.MysqlDataConnection;
 import datasync.connection.OracleDataConnection;
