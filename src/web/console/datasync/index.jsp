@@ -113,7 +113,9 @@
         }
     </style>
 </head>
+
 <body>
+
 <div class="wrapper">
     <img src="images/Log04_bg.jpg" alt="">
     <div class="login" >
@@ -131,11 +133,9 @@
                 <input type="submit" class="btn" onclick="start()" id="submit" value="登录"/>
             </div>
         </div>
-
-
     </div>
-
 </div>
+
 <script type="text/javascript">
 
     function start(){
@@ -146,7 +146,7 @@
         var password=$("#password")[0].value;
         var checked=true;
         if(username=="" || username==null){
-            checked=false;
+            checked=false;reso
             alert("请输入用户名!");
             return;
         }
