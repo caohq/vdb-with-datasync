@@ -111,10 +111,6 @@ public class MainSevlet extends HttpServlet{
      */
     public String uploadTask(HttpServletRequest req, HttpServletResponse res,String dataTaskId) throws IOException {
         PrintWriter out = res.getWriter();
-//      getWriter  String dataTaskId = req.getParameter("dataTaskId");
-
-      //  System.out.println("enterring uploadTask - dataTaskId = " + dataTaskId);
-
         UploadTaskService uploadTaskService = new UploadTaskService();
         String zipFilePath = uploadTaskService.exportDataTask(req, dataTaskId);
         if (zipFilePath!=null || zipFilePath!="")
@@ -139,12 +135,9 @@ public class MainSevlet extends HttpServlet{
         }
         return zipFilePath;
 
-        /*uploadTaskService.packTaskData(dataTaskId);
-        uploadTaskService.uploadTaskData(dataTaskId);
-        uploadTaskService.importTaskData(dataTaskId);*/
     }
 
-    //查询数据库名称列表
+    //设置任务---数据库---查询数据库名称列表
     public List<Object> searchDataList(HttpServletRequest req, HttpServletResponse res) throws IOException {//获取数据库LIST
         PrintWriter out = res.getWriter();
         DataConnDaoService dataConnDaoService=new DataConnDaoService();
@@ -153,7 +146,7 @@ public class MainSevlet extends HttpServlet{
         return list;
     }
 
-    //获取本地数据源列表
+    //获取任务---本地上传--获取本地数据源列表
     public List<Object> searchBdDirList(HttpServletRequest req, HttpServletResponse res) throws IOException {
         LocalConnDaoService localConnDaoService=new LocalConnDaoService();
         List<Object> list=localConnDaoService.searchBdDirListImp(req, res);
@@ -162,7 +155,7 @@ public class MainSevlet extends HttpServlet{
         return list;
     }
 
-    //获取本地数据源数据路径（路径/文件）
+    //设置任务---本地上传---获取本地数据源数据路径（路径/文件）
     public List<Object> searchBdDirListPath(HttpServletRequest req, HttpServletResponse res) throws IOException {
         LocalConnDaoService localConnDaoService=new LocalConnDaoService();
         JSONObject jsonObject = new JSONObject();
@@ -173,7 +166,7 @@ public class MainSevlet extends HttpServlet{
         return list;
     }
 
-    //根据数据库查询表名称
+    //设置任务---根据数据库查询表名称
     public String  searchTables(HttpServletRequest request, HttpServletResponse response) throws SQLException, ClassNotFoundException, IOException {
         PrintWriter out = response.getWriter();
         DataConnDaoService dataConnDaoService=new DataConnDaoService();
@@ -197,7 +190,7 @@ public class MainSevlet extends HttpServlet{
         return "success!";
     }
 
-    //根据sql查询预览结果
+    //设置任务中---根据sql查询预览结果
     public List<Map<Object,Object>> searchDataBySql(HttpServletRequest req, HttpServletResponse res) throws SQLException, ClassNotFoundException, IOException {
         PrintWriter out = res.getWriter();
         Map<Object,Object> columnsMap=new HashMap<Object, Object>();
@@ -257,10 +250,7 @@ public class MainSevlet extends HttpServlet{
         datatask.setSqlFilePath((zipFilePath+fileName).replace(File.separator,"%_%"));
         //datatask.setSqlFilePath(fileName);
         int flag1= new DataTaskService().updateSqlFilePathById(datatask);
-
-
         jsonObject.put("result",flag);
-
         if(flag < 0){
             return  jsonObject;
         }
@@ -327,7 +317,7 @@ public class MainSevlet extends HttpServlet{
         return jsonObject;
     }
 
-
+    //上传文件到FTP
     public  int ftpLocalUpload(HttpServletRequest req, HttpServletResponse res) throws IOException {
 
         String processId="1";
@@ -538,7 +528,6 @@ public class MainSevlet extends HttpServlet{
         out.println(jsonObject);
         return  jsonObject;
     }
-
 
     //通过id删除task
     public int deleteTaskById(HttpServletRequest req, HttpServletResponse res) throws IOException {

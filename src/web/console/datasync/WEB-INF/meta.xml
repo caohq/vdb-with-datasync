@@ -7,6 +7,7 @@
 		<property name="order" value="1000"/>
 		<property name="dependsOn">
 			<list>
+				<value>catalog</value>
 			</list>
 		</property>
 		<property name="description" value="vdbÐÂ½¨²âÊÔÄ£¿é£¡"/>

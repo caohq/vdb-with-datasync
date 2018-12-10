@@ -37,7 +37,7 @@ $request.setAttribute("pictype", "top")
                                             <tr align="left">
                                                 <td width="10" align="left"><img height="23" width="2" src="/themes/nature/res/images/shy_00.gif" alt="" /></td>
                                                 <td width="29" align="center"><img height="12" width="17" src="/themes/nature/res/images/shy_15.gif" alt="" /></td>
-                                                <td width="36" align="left"><a href="/console/datasync/index.jsp" style="color: white;" class="wenz8l">登录</a></td>
+                                                <td width="36" align="left"><a href="/console/index.jsp" style="color: white;" class="wenz8l">登录</a></td>
                                                 <td width="10"><img height="23" width="2" src="/themes/nature/res/images/shy_00.gif" alt="" /></td>
                                                 <td width="29" align="center"><img height="13" width="18" src="/themes/nature/res/images/shy_16.gif" alt="" /></td>
                                                 <td width="36"><a href="#" style="color: white;" class="wenz8l">注册</a></td>
