@@ -198,7 +198,6 @@
                 j_uri:"%2Fcatalog%2F"
             },
             success:function (data) {
-
                 window,location.href="/console/datasync/starter.jsp";
             },
             error:function () {

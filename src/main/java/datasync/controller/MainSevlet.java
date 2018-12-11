@@ -98,6 +98,8 @@ public class MainSevlet extends HttpServlet{
         } else if ("/exportTaskData.do".equals(path))
         {
             //uploadTask(req, res, data);
+        }else if("/ftpUploadProcess.do".equals(path)){//实时加载上传进度
+            ftpUploadProcess(req,res);
         }
         else{
             //错误路径
@@ -319,10 +321,10 @@ public class MainSevlet extends HttpServlet{
 
     //上传文件到FTP
     public  int ftpLocalUpload(HttpServletRequest req, HttpServletResponse res) throws IOException {
-
-        String processId="1";
+        PrintWriter out=res.getWriter();
         String taskId=req.getParameter("taskId");
         DataTask dataTask = new DataTaskService().getDataTaskInfById(taskId);
+        String processId=dataTask.getDataTaskId();
         String fileName = dataTask.getDataTaskName ()+"log.txt";//文件名及类型
         String path = "/logs/";
         FileWriter fw = null;
@@ -356,12 +358,12 @@ public class MainSevlet extends HttpServlet{
          String configFilePath = LoginService.class.getClassLoader().getResource("../../WEB-INF/config.properties").getFile();
         String subjectCode= ConfigUtil.getConfigItem(configFilePath, "SubjectCode");
 //        String subjectCode = "ssdd";
-        String host = "10.0.86.77";
-        String userName = "ftpUserssdd";
-        String password = "ftpPasswordssdd";
-        String port = "21";
+        String host = ConfigUtil.getConfigItem(configFilePath, "FtpHost");// "10.0.86.77";
+        String userName = ConfigUtil.getConfigItem(configFilePath, "FtpUser");//"ftpUserssdd";
+        String password = ConfigUtil.getConfigItem(configFilePath, "FtpPassword");//"ftpPasswordssdd";
+        String port = ConfigUtil.getConfigItem(configFilePath, "FrpPort");//"21";
         String ftpRootPath = "/";
-        String portalUrl ="10.0.86.77/portal";
+        String portalUrl =ConfigUtil.getConfigItem(configFilePath, "PortalUrl");//"10.0.86.77/portal";
         FtpUtil ftpUtil = new FtpUtil();
         pw.println("数据任务名称为：" + dataTask.getDataTaskName() +"\n");
         try {
@@ -492,6 +494,7 @@ public class MainSevlet extends HttpServlet{
                     }
                 }
             }else{
+                out.println(0);
                 return 0;
             }
         } catch (IOException e) {
@@ -499,6 +502,7 @@ public class MainSevlet extends HttpServlet{
             dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");//可以方便地修改日期格式
             current = dateFormat.format(now);
             pw.println(current+":"+"连接FTP出错:"+e+ "\n");
+            out.println("连接FTP出错：" + e.getMessage());
             System.out.println("连接FTP出错：" + e.getMessage());
             return 0;
         }finally {
@@ -514,6 +518,7 @@ public class MainSevlet extends HttpServlet{
                 e.printStackTrace();
             }
         }
+        out.println(1);
         return 1;
 
     }
@@ -536,6 +541,15 @@ public class MainSevlet extends HttpServlet{
         int result = new DataTaskService().deleteTaskById(taskId);
         out.println(result);
         return result;
+    }
+
+    //获取上传进度
+    public Long ftpUploadProcess(HttpServletRequest req, HttpServletResponse res) throws IOException {
+        PrintWriter out=res.getWriter();
+        FtpUtil ftpUtil =new FtpUtil();
+        Long process =  ftpUtil.getFtpUploadProcess(req.getParameter("processId"));
+        out.println(process);
+        return process;
     }
 
 }

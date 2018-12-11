@@ -205,14 +205,7 @@ public class FtpUtil {
             //对远程目录的处理
             String remoteFileName = fileName.replace("%_%",File.separator);
             System.out.println("-------------remoteFileName"+remoteFileName);
-            if (remoteFilepath.contains("/")) {
-//                remoteFileName = remoteFilepath.substring(remoteFilepath.lastIndexOf("/") + 1);
-                //创建服务器远程目录结构，创建失败直接返回
-                ftpClient.changeWorkingDirectory(remoteFilepath);
-                if (CreateDirecroty(remoteFilepath, ftpClient) == UploadStatus.Create_Directory_Fail) {
-                    return UploadStatus.Create_Directory_Fail;
-                }
-            }
+
 
             //检查远程是否存在文件
             FTPFile[] files = ftpClient.listFiles(new String(remoteFileName.getBytes("GBK"), "iso-8859-1"));
@@ -227,12 +220,12 @@ public class FtpUtil {
                 }
 
                 //尝试移动文件内读取指针,实现断点续传
-                resultmap = uploadFile(fileTotalSize, finishedSize,processId, remoteFileName, f, ftpClient, remoteSize);
-                result = (UploadStatus)(resultmap.get("status"));
-                finishedSize = (Long)(resultmap.get("finishedSize"));
+//                resultmap = uploadFile(fileTotalSize, finishedSize,processId, remoteFileName, f, ftpClient, remoteSize);
+//                result = (UploadStatus)(resultmap.get("status"));
+//                finishedSize = (Long)(resultmap.get("finishedSize"));
 
                 //如果断点续传没有成功，则删除服务器上文件，重新上传
-                if (result == UploadStatus.Upload_From_Break_Failed) {
+                if (true){//(result == UploadStatus.Upload_From_Break_Failed) {
                     if (!ftpClient.deleteFile(remoteFileName)) {
                         return UploadStatus.Delete_Remote_Faild;
                     }
@@ -241,6 +234,14 @@ public class FtpUtil {
                     finishedSize = (Long)(resultmap.get("finishedSize"));
                 }
             } else {
+                if (remoteFilepath.contains("/")) {
+//                remoteFileName = remoteFilepath.substring(remoteFilepath.lastIndexOf("/") + 1);
+                    //创建服务器远程目录结构，创建失败直接返回
+                    ftpClient.changeWorkingDirectory(remoteFilepath);
+                    if (CreateDirecroty(remoteFilepath, ftpClient) == UploadStatus.Create_Directory_Fail) {
+                        return UploadStatus.Create_Directory_Fail;
+                    }
+                }
                 resultmap = uploadFile(fileTotalSize, finishedSize, processId, remoteFileName, new File(newlocalFilepath), ftpClient, 0);
                 result = (UploadStatus)(resultmap.get("status"));
                 finishedSize = (Long)(resultmap.get("finishedSize"));

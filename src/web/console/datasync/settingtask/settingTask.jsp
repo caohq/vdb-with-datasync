@@ -395,7 +395,6 @@
         var sql=$('#sqlInputBox').val();//获取sql语句
         var createNewTableName=$('#createNewTableName').val();//获取新建表名
         var checkedValue=getChecedValue();
-        debugger
         if(sql!=null && sql!=""){//有sql
             if(createNewTableName==null || createNewTableName==""){
                 alert("请输入新建表名！");
@@ -425,7 +424,6 @@
             var connDataName = $("#selectBdDirID  option:selected")[0].text;//获取数据源
             var connDataValue = $("#selectBdDirID  option:selected")[0].value;//获取数据源value
             var getLocalTaskName=$("#localFileName").val();//获取本地新建任务名称
-            debugger
             $.ajax({
                 type:"POST",
                 url:"/submitFileData.do",
