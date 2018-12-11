@@ -326,7 +326,8 @@ public class MainSevlet extends HttpServlet{
         DataTask dataTask = new DataTaskService().getDataTaskInfById(taskId);
         String processId=dataTask.getDataTaskId();
         String fileName = dataTask.getDataTaskName ()+"log.txt";//文件名及类型
-        String path = "/logs/";
+        String path=req.getRealPath("/")+"console/datasync/logFile/";
+//        String path = "/logs/";
         FileWriter fw = null;
         File file = new File(path, fileName);
         if(!file.exists()){

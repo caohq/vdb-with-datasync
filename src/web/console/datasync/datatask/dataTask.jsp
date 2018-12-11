@@ -201,7 +201,7 @@
             '<button class="btn btn-default details btn-xs" value="'+row.dataTaskId+'" onclick="viewDtails(value)"><a>查看</a></button>&nbsp;',
             '<button class="btn btn-default delete btn-xs" onclick="deleteThis(this)" data-id="'+row.dataTaskId+'"><a>删除</a></button>&nbsp;',
             '<button class="btn btn-default delete btn-xs" onclick="" data-id="'+row.dataTaskId+'">'+
-              '<a href="/console/datasync/logFile/'+row.dataTaskType+'SubmitLog.txt" download="'+row.dataTaskName+'Log.txt">日志</a>'+
+              '<a href="/console/datasync/logFile/'+row.dataTaskId+'log.txt" download="'+row.dataTaskName+'Log.txt">日志</a>'+
             '</button>'
         ].join('');
     }
