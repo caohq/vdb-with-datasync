@@ -7,7 +7,7 @@
     http://www.springframework.org/schema/security
     http://www.springframework.org/schema/security/spring-security-2.0.4.xsd">
 
-	<http auto-config="true" access-denied-page="/console/datasync/index.jsp?error=2" session-fixation-protection = "none">
+	<http auto-config="true" access-denied-page="/console/index.jsp?error=2" session-fixation-protection = "none">
 		<intercept-url pattern="/console/*/WEB-INF/**" access="ROLE_SUPERMAN" />
 		<intercept-url pattern="/console/*/images/**" filters="none" />
 		<intercept-url pattern="/console/shared/**" filters="none" />
@@ -16,11 +16,13 @@
 		<intercept-url pattern="/console/report/**" access="ROLE_ADMIN" />
 		<intercept-url pattern="/console/security/**" access="ROLE_ADMIN" />
 		<intercept-url pattern="/console/services/**" access="ROLE_ADMIN,ROLE_SERVICE" />
+		<!--<intercept-url pattern="/console/servicesTest/**" access="ROLE_ADMIN,ROLE_SERVICE" />-->
 		<intercept-url pattern="/console/webpub/**" access="ROLE_ADMIN" />
 		<intercept-url pattern="/console/editor/**" access="ROLE_ADMIN,ROLE_DATA_MANAGER" />
+		<intercept-url pattern="/console/datasync/**" access="ROLE_ADMIN,ROLE_DATA_MANAGER" />
 		<intercept-url pattern="/**" filters="none" />
 		<anonymous granted-authority="ROLE_ANONYMOUS" />
-		<form-login login-page="/console/datasync/index.jsp" authentication-failure-url="/console/datasync/index.jsp?error=3" />
+		<form-login login-page="/console/index.jsp" authentication-failure-url="/console/index.jsp?error=3" />
 		<logout logout-success-url="/console/datasync/starter.jsp" />
 	</http>
 

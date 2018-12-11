@@ -121,6 +121,7 @@
         })
     };
 
+    //装载bootstracptable
     function loadDataTaskList(dataList){//加载任务列表
         $('#dataTaskTableID').bootstrapTable('destroy');
         $('#dataTaskTableID').bootstrapTable({
@@ -196,37 +197,14 @@
         return [
             // '<button class="btn btn-default details btn-xs" value="'+row.id+'" onclick="detail(value)">导出</button>&nbsp;',
             // '<button class="btn btn-default details btn-xs" value="'+row.dataTaskId+'" onclick="exportDataTask(this)">导出</button>&nbsp;',
-            '<button class="btn btn-default details btn-xs" value="'+row.dataTaskId+'" onclick="ftpUpload(value)"><a>上传</a></button>&nbsp;',
+            '<button class="btn btn-default details btn-xs" value="'+row.dataTaskId+','+row.status+'" onclick="ftpUpload(value)"><a>上传</a></button>&nbsp;',
             '<button class="btn btn-default details btn-xs" value="'+row.dataTaskId+'" onclick="viewDtails(value)"><a>查看</a></button>&nbsp;',
             '<button class="btn btn-default delete btn-xs" onclick="deleteThis(this)" data-id="'+row.dataTaskId+'"><a>删除</a></button>&nbsp;',
             '<button class="btn btn-default delete btn-xs" onclick="" data-id="'+row.dataTaskId+'">'+
-              '<a href="/console/datasync/logFile/'+row.dataTaskType+'SubmitLog.txt" download="'+row.dataTaskName+'Log.txt">日志</a>'+
+              '<a href="/console/datasync/logFile/'+row.dataTaskId+'log.txt" download="'+row.dataTaskName+'Log.txt">日志</a>'+
             '</button>'
         ].join('');
     }
-
-    //
-    function exportDataTask(btn)
-    {
-        $.ajax({
-        type:"POST",
-        url:"/exportTaskData.do",
-        data:{dataTaskId: $(btn).attr("value")},
-        success: function(data){
-            if (data.trim() == "success") {
-                alert("数据任务导出请求成功 - 请求返回消息:" + data + "\n导出成功");
-            }
-            else
-            {
-                alert("数据任务导出请求成功 - 请求返回消息:" + data + "\n导出失败");
-            }
-        },
-        error: function (data) {
-            alert("数据任务导出请求失败 - " + data);
-        }
-    });
-    }
-
 
     //创建任务按钮-调用父类方法
     function relCreateTask(params){
@@ -235,22 +213,49 @@
     }
 
     //导出-上传按钮
-    function ftpUpload(taskId){
-        $("#"+taskId+"")[0].style.width="70%";
-        $("#"+taskId+"Text")[0].textContent="上传中...";
+    function ftpUpload(value){
+        var array=value.split(',');
+        var taskId;//taskId
+        var status;//status--状态
+        if(array.length>=2){
+            taskId=array[0];//taskId
+            status=array[1];//status--状态
+        }
+        if(status==1){//已经上传的文件
+            bootbox.confirm("<span style='font-size: 16px'>确认需要重新上传吗?</span>",function (r) {
+                if (r) {
+                    startFtpUpload(taskId);
+                } else {
+                    return;
+                }
+            })
+        }else{
+            startFtpUpload(taskId);
+        }
+    };
+
+    function startFtpUpload(taskId) {//执行上传ftp
+        $("#"+taskId+"")[0].style.width="0%";
+        $("#"+taskId+"Text")[0].textContent="0%";
+        var souceID = taskId;
+        var keyID = souceID + new Date().getTime();
         $.ajax({
             type:"POST",
             url:"/ftpLocalUpload.do",
             data:{taskId:taskId},
-            async:"false",
             success:function(data){
-                searchDataBySql();
+                if(data=="" || data==1){
+                    searchDataBySql();
+                }else {
+                    alert(data);
+                }
             },
             error:function () {
                 console.log("请求失败")
             }
         })
-    };
+        getProcess(keyID,souceID);//获取上传进度
+    }
 
     //查看详情按钮
     function viewDtails(value){
@@ -313,10 +318,10 @@
             return process;
         }else{
             var process = "<div class=\"progress progress-striped active\" >\n" +
-                "\t<div id=\"progressBar\" class=\"progress-bar progress-bar-success\" role=\"progressbar\"\n" +
+                "\t<div id=\""+row.dataTaskId+"\" class=\"progress-bar progress-bar-success\" role=\"progressbar\"\n" +
                 "\t\t aria-valuenow=\"60\" aria-valuemin=\"0\" aria-valuemax=\"100\"\n" +
                 "\t\t style=\"width: 100%;\">\n" +
-                 "\t\t<span class=\"sr-only\">100%</span>\n" +
+                "\t\t<span class=\"sr-only\" id='"+row.dataTaskId+"Text'>100%</span>\n" +
                 "\t</div>\n" +
                 "</div>";
             return process;
@@ -325,17 +330,34 @@
 
     //下载日志
     function loadLog(el){
-      //  window.open("/console/datasync/logFile/数据任务日志.txt?download");
-    //    window.location.href="/console/datasync/logFile/数据任务日志.txt?download";
 
-        var a;
+        // var a;
+        // a =window.open("/console/datasync/logFile/数据任务日志.txt","_blank", "width=0, height=0,status=0");
+        // a.document.execCommand("SaveAs");
+    }
 
-        a =window.open("/console/datasync/logFile/数据任务日志.txt","_blank", "width=0, height=0,status=0");
+    //获取上传进度
+    function getProcess(keyID,souceID) {
+        var setout= setInterval(function () {
+            $.ajax({
+                url:"/ftpUploadProcess.do",
+                type:"POST",
+                async:true,
+                data:{
+                    processId:souceID
+                },
+                success:function (dataReult) {
+                    var data=dataReult.replace(/[\r\n]/g,"");
+                    if(data >= 100){
+                        clearInterval(setout);
+                        return;
+                    }
 
-        a.document.execCommand("SaveAs");
-
-        // //a.close();
-
+                     $("#"+souceID+"")[0].style.width=data+"%";
+                     $("#"+souceID+"Text")[0].textContent=data+"%";
+                }
+            })
+        },1000)
 
     }
 

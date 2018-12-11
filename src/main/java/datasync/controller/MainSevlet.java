@@ -104,6 +104,8 @@ public class MainSevlet extends HttpServlet{
         } else if ("/exportTaskData.do".equals(path))
         {
             //uploadTask(req, res, data);
+        }else if("/ftpUploadProcess.do".equals(path)){//实时加载上传进度
+            ftpUploadProcess(req,res);
         }
         else{
             //错误路径
@@ -217,10 +219,6 @@ public class MainSevlet extends HttpServlet{
      */
     public String uploadTask(HttpServletRequest req, HttpServletResponse res,String dataTaskId) throws IOException {
         PrintWriter out = res.getWriter();
-//      getWriter  String dataTaskId = req.getParameter("dataTaskId");
-
-      //  System.out.println("enterring uploadTask - dataTaskId = " + dataTaskId);
-
         UploadTaskService uploadTaskService = new UploadTaskService();
         String zipFilePath = uploadTaskService.exportDataTask(req, dataTaskId);
         if (zipFilePath!=null || zipFilePath!="")
@@ -245,12 +243,9 @@ public class MainSevlet extends HttpServlet{
         }
         return zipFilePath;
 
-        /*uploadTaskService.packTaskData(dataTaskId);
-        uploadTaskService.uploadTaskData(dataTaskId);
-        uploadTaskService.importTaskData(dataTaskId);*/
     }
 
-    //查询数据库名称列表
+    //设置任务---数据库---查询数据库名称列表
     public List<Object> searchDataList(HttpServletRequest req, HttpServletResponse res) throws IOException {//获取数据库LIST
         PrintWriter out = res.getWriter();
         DataConnDaoService dataConnDaoService=new DataConnDaoService();
@@ -259,7 +254,7 @@ public class MainSevlet extends HttpServlet{
         return list;
     }
 
-    //获取本地数据源列表
+    //获取任务---本地上传--获取本地数据源列表
     public List<Object> searchBdDirList(HttpServletRequest req, HttpServletResponse res) throws IOException {
         LocalConnDaoService localConnDaoService=new LocalConnDaoService();
         List<Object> list=localConnDaoService.searchBdDirListImp(req, res);
@@ -268,7 +263,7 @@ public class MainSevlet extends HttpServlet{
         return list;
     }
 
-    //获取本地数据源数据路径（路径/文件）
+    //设置任务---本地上传---获取本地数据源数据路径（路径/文件）
     public List<Object> searchBdDirListPath(HttpServletRequest req, HttpServletResponse res) throws IOException {
         LocalConnDaoService localConnDaoService=new LocalConnDaoService();
         JSONObject jsonObject = new JSONObject();
@@ -279,7 +274,7 @@ public class MainSevlet extends HttpServlet{
         return list;
     }
 
-    //根据数据库查询表名称
+    //设置任务---根据数据库查询表名称
     public String  searchTables(HttpServletRequest request, HttpServletResponse response) throws SQLException, ClassNotFoundException, IOException {
         PrintWriter out = response.getWriter();
         DataConnDaoService dataConnDaoService=new DataConnDaoService();
@@ -303,7 +298,7 @@ public class MainSevlet extends HttpServlet{
         return "success!";
     }
 
-    //根据sql查询预览结果
+    //设置任务中---根据sql查询预览结果
     public List<Map<Object,Object>> searchDataBySql(HttpServletRequest req, HttpServletResponse res) throws SQLException, ClassNotFoundException, IOException {
         PrintWriter out = res.getWriter();
         Map<Object,Object> columnsMap=new HashMap<Object, Object>();
@@ -363,10 +358,7 @@ public class MainSevlet extends HttpServlet{
         datatask.setSqlFilePath((zipFilePath+fileName).replace(File.separator,"%_%"));
         //datatask.setSqlFilePath(fileName);
         int flag1= new DataTaskService().updateSqlFilePathById(datatask);
-
-
         jsonObject.put("result",flag);
-
         if(flag < 0){
             return  jsonObject;
         }
@@ -433,14 +425,15 @@ public class MainSevlet extends HttpServlet{
         return jsonObject;
     }
 
-
+    //上传文件到FTP
     public  int ftpLocalUpload(HttpServletRequest req, HttpServletResponse res) throws IOException {
-
-        String processId="1";
+        PrintWriter out=res.getWriter();
         String taskId=req.getParameter("taskId");
         DataTask dataTask = new DataTaskService().getDataTaskInfById(taskId);
+        String processId=dataTask.getDataTaskId();
         String fileName = dataTask.getDataTaskName ()+"log.txt";//文件名及类型
-        String path = "/logs/";
+        String path=req.getRealPath("/")+"console/datasync/logFile/";
+//        String path = "/logs/";
         FileWriter fw = null;
         File file = new File(path, fileName);
         if(!file.exists()){
@@ -472,12 +465,12 @@ public class MainSevlet extends HttpServlet{
          String configFilePath = LoginService.class.getClassLoader().getResource("../../WEB-INF/config.properties").getFile();
         String subjectCode= ConfigUtil.getConfigItem(configFilePath, "SubjectCode");
 //        String subjectCode = "ssdd";
-        String host = "10.0.86.77";
-        String userName = "ftpUserssdd";
-        String password = "ftpPasswordssdd";
-        String port = "21";
+        String host = ConfigUtil.getConfigItem(configFilePath, "FtpHost");// "10.0.86.77";
+        String userName = ConfigUtil.getConfigItem(configFilePath, "FtpUser");//"ftpUserssdd";
+        String password = ConfigUtil.getConfigItem(configFilePath, "FtpPassword");//"ftpPasswordssdd";
+        String port = ConfigUtil.getConfigItem(configFilePath, "FrpPort");//"21";
         String ftpRootPath = "/";
-        String portalUrl ="10.0.86.77/portal";
+        String portalUrl =ConfigUtil.getConfigItem(configFilePath, "PortalUrl");//"10.0.86.77/portal";
         FtpUtil ftpUtil = new FtpUtil();
         pw.println("数据任务名称为：" + dataTask.getDataTaskName() +"\n");
         try {
@@ -608,6 +601,7 @@ public class MainSevlet extends HttpServlet{
                     }
                 }
             }else{
+                out.println(0);
                 return 0;
             }
         } catch (IOException e) {
@@ -615,6 +609,7 @@ public class MainSevlet extends HttpServlet{
             dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");//可以方便地修改日期格式
             current = dateFormat.format(now);
             pw.println(current+":"+"连接FTP出错:"+e+ "\n");
+            out.println("连接FTP出错：" + e.getMessage());
             System.out.println("连接FTP出错：" + e.getMessage());
             return 0;
         }finally {
@@ -630,6 +625,7 @@ public class MainSevlet extends HttpServlet{
                 e.printStackTrace();
             }
         }
+        out.println(1);
         return 1;
 
     }
@@ -645,7 +641,6 @@ public class MainSevlet extends HttpServlet{
         return  jsonObject;
     }
 
-
     //通过id删除task
     public int deleteTaskById(HttpServletRequest req, HttpServletResponse res) throws IOException {
         PrintWriter out = res.getWriter();
@@ -653,6 +648,15 @@ public class MainSevlet extends HttpServlet{
         int result = new DataTaskService().deleteTaskById(taskId);
         out.println(result);
         return result;
+    }
+
+    //获取上传进度
+    public Long ftpUploadProcess(HttpServletRequest req, HttpServletResponse res) throws IOException {
+        PrintWriter out=res.getWriter();
+        FtpUtil ftpUtil =new FtpUtil();
+        Long process =  ftpUtil.getFtpUploadProcess(req.getParameter("processId"));
+        out.println(process);
+        return process;
     }
 
 }

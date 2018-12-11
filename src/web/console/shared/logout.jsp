@@ -3,5 +3,5 @@
 	session.invalidate();
 %>
 <script language='javascript'>
-	top.location.href="/console/datasync/index.jsp"
+	top.location.href="/console/index.jsp"
 </script>
