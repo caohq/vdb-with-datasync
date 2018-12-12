@@ -174,9 +174,9 @@ public class UploadTaskService {
                 continue;
             }
 
-            if (StringUtils.isNotEmpty(sqlStrings) && StringUtils.isNotEmpty(sqlTableName)) {
-                sqlSb.append(DDL2SQLUtils.generateDDLFromSql(connection, sqlStrings, sqlTableName));
-                dataSb.append(DDL2SQLUtils.generateInsertSqlFromSQL(connection, sqlStrings, sqlTableName));
+            if (StringUtils.isNotEmpty(sqlString) && StringUtils.isNotEmpty(sqlTableName)) {
+                sqlSb.append(DDL2SQLUtils.generateDDLFromSql(connection, sqlString, sqlTableName));
+                dataSb.append(DDL2SQLUtils.generateInsertSqlFromSQL(connection, sqlString, sqlTableName));
             }
         }
         //导出表结构

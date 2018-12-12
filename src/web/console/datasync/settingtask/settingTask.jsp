@@ -13,11 +13,13 @@
     <script type="text/javascript" src="/console/shared/js/jquery-3.2.1.min.js " ></script>
     <script src="/console/shared/bootstrap-3.3.7/js/bootstrap.js"></script>
     <script src="/console/datasync/js/layer/layer.js"></script>
+    <script src="/console/shared/bootstrap-toastr/toastr.js"></script>
     <link rel="stylesheet" type="text/css" href="/console/shared/bootstrap-3.3.7/css/bootstrap.css">
     <link rel="stylesheet" type="text/css" href="/console/shared/bootstrap-3.3.7/css/bootstrap-table.min.css">
     <link rel="stylesheet" type="text/css" href="/console/datasync/css/createTask.css" />
     <link rel="stylesheet" type="text/css" href="/console/datasync/css/style.min.css" />
     <link rel="stylesheet" type="text/css" href="/console/datasync/js/layer/layer.css" />
+    <link rel="stylesheet" type="text/css" href="/console/shared/bootstrap-toastr/toastr.css" />
     <style>
         .fixed-table-pagination .page-list{
             display: none !important;
@@ -80,9 +82,9 @@
             </div>
             <div style="width: 100%;height: 40px;margin-top: 20px; " id="sqlSearchDiv">
                 <label>sql查询</label>
-                <input id="sqlInputBox" class="form-control sqlStatements" style="width: 300px;display: inline !important;" type="text"/>
-                <input id="createNewTableName" class="form-control sqlStatements" style="width: 100px;display: inline !important;" type="text" placeholder="请输入表名"/>
-                <button type="button" class="btn blue preview" onclick="showPreviewModal()" >预览</button>
+                <input id="sqlInputBox0" class="form-control sqlStatements" style="width: 300px;display: inline !important;" type="text"/>
+                <input id="createNewTableName0" class="form-control sqlStatements" style="width: 100px;display: inline !important;" type="text" placeholder="请输入表名"/>
+                <button type="button" class="btn blue preview" onclick="showPreviewModal(sqlInputBox0)" >预览</button>
                 <button type="button" class="btn green" onclick="addSqlInput()"><span class="glyphicon glyphicon-plus"></span>sql查询</button>
                 <button type="button" class="btn green" onclick="submitSqlData()">提交</button>
             </div>
@@ -113,6 +115,9 @@
 <script type="text/javascript" src="/console/shared/bootstrap-3.3.7/js/bootstrap-table.js"></script>
 <script type="text/javascript">
     $.ajaxSettings.async = false;
+    var idNum=0;
+    var sqlArray= "";
+    var sqlTableArray= "";
     start();
     loadBdDataList();
     // $(function(){
@@ -294,13 +299,14 @@
     });
 
     //预览按钮
-    function showPreviewModal(){
+    function showPreviewModal(sqlId){
+
         var connData = $("#selectId option:selected")[0].value;//获取数据库参数
         if(connData=="请选择..." || connData==null){
             alert("请选择数据库！");
             return;
         }
-        var sql=document.getElementById("sqlInputBox").value;//获取输入框中的sql语句
+        var sql=document.getElementById(sqlId.id).value;//获取输入框中的sql语句
         if(sql=="" || sql==null){
             alert("请输入sql！");
             return;
@@ -339,9 +345,10 @@
             var dataTaskName = ""+dateDef.getFullYear()+month+dateDef.getDate()+dateDef.getHours()+dateDef.getMinutes()+dateDef.getSeconds();
             var connDataName = $("#selectId option:selected")[0].text;//获取数据源
             var connDataValue = $("#selectId option:selected")[0].value;//获取数据源value
-            var sql=$('#sqlInputBox').val();//获取sql语句
-            var createNewTableName=$('#createNewTableName').val();//获取新建表名
+            var sql=sqlArray;//获取sql语句
+            var createNewTableName=sqlTableArray;//获取新建表名
             var checkedValue=getChecedValue();
+            debugger
             $.ajax({
                 type:"POST",
                 url:"/submitSqlData.do",
@@ -400,19 +407,36 @@
     //数据源（数据库）任务新建检测
     function checkTaskData() {
         var checked=true;
-        var sql=$('#sqlInputBox').val();//获取sql语句
-        var createNewTableName=$('#createNewTableName').val();//获取新建表名
         var checkedValue=getChecedValue();
-        if(sql!=null && sql!=""){//有sql
-            if(createNewTableName==null || createNewTableName==""){
-                alert("请输入新建表名！");
-                checked=false;
-                return;
-            }
-        }
-        if((sql==null || sql=="")&&(checkedValue==null || checkedValue=="")){
+        for(var i=0;i<=idNum;i++){//sql非空校驗
+            $('#sqlInputBox'+i+'')[0].style.borderColor="";
+            $('#createNewTableName'+i+'')[0].style.borderColor="";
+            if(($('#createNewTableName'+i+'').val()=="" || $('#createNewTableName'+i+'').val()==null)&&($('#sqlInputBox'+i+'').val()=="" || $('#sqlInputBox'+i+'').val()==null)){
+
+            }else{
+                if($('#sqlInputBox'+i+'').val()=="" || $('#sqlInputBox'+i+'').val()==null){
+                    $('#sqlInputBox'+i+'')[0].style.borderColor="red";
+                    toastr["error"]("请输入sql语句！");//alert("请输入新建表名！");
+                    return;
+                  }else{
+                    sqlArray=sqlArray+$('#sqlInputBox'+i+'').val()+";";
+                }
+
+                if($('#createNewTableName'+i+'').val()=="" || $('#createNewTableName'+i+'').val()==null){
+                    $('#createNewTableName'+i+'')[0].style.borderColor="red";
+                    toastr["error"]("请输入新建表名！");//alert("请输入新建表名！");
+                    return;
+                }else{
+                    sqlTableArray=sqlTableArray+$('#createNewTableName'+i+'').val()+";";
+                 }
+             }
+
+
+      }
+
+        if((sqlArray=="" || sqlTableArray=="")&&(checkedValue==null || checkedValue=="")){
             checked=false;
-            alert("请至少输入sql语句或选择表资源！");
+            toastr["error"]("请至少输入sql语句或选择表资源");//alert("请至少输入sql语句或选择表资源！");
             return;
         }
         return checked;
@@ -462,7 +486,6 @@
         return;
     }
 
-
     //检测任务名称
     $("#localFileName").bind("input propertychange",function(){
         //你要触发的函数内容
@@ -475,13 +498,21 @@
 
     //添加sql语句
     function addSqlInput(){
-        $("#sjk").append("<div style=\"width: 100%;height: 40px;margin-top: 20px;margin-bottom: 20px; \" id=\"sqlSearchDiv\">\n" +
+        idNum=idNum+1;
+        var divId="sqlSearchDiv"+idNum;
+        var divSqlId="sqlInputBox"+idNum+"";
+        $("#sjk").append("<div style=\"width: 100%;height: 40px;margin-top: 20px;margin-bottom: 20px; \" id=\""+divId+"\">\n" +
             " <label>sql查询</label>\n" +
-            " <input id=\"sqlInputBox\" class=\"form-control sqlStatements\" style=\"width: 300px;display: inline !important;\" type=\"text\"/>\n" +
-            " <input id=\"createNewTableName\" class=\"form-control sqlStatements\" style=\"width: 100px;display: inline !important;\" type=\"text\" placeholder=\"请输入表名\"/>\n" +
-            " <button type=\"button\" class=\"btn blue preview\" onclick=\"showPreviewModal()\" >预览</button>\n" +
-            " <button type=\"button\" class=\"btn blue preview\" onclick=\"showPreviewModal()\" >删除</button>\n" +
+            " <input id=\""+divSqlId+"\" class=\"form-control sqlStatements\" style=\"width: 300px;display: inline !important;\" type=\"text\"/>\n" +
+            " <input id=\"createNewTableName"+idNum+"\"  class=\"form-control sqlStatements\" style=\"width: 100px;display: inline !important;\" type=\"text\" placeholder=\"请输入表名\"/>\n" +
+            " <button type=\"button\" class=\"btn blue preview\" onclick=\"showPreviewModal("+divSqlId+")\" >预览</button>\n" +
+            " <button type=\"button\" class=\"btn blue preview\" onclick=\"deleteSqlSearchDiv("+divId+")\" >删除</button>\n" +
             " </div>");
+    }
+
+    //删除新增的sql语句输入框
+    function deleteSqlSearchDiv(idDom){
+        idDom.remove();
     }
 
 </script>

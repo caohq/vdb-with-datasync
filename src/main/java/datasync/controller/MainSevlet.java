@@ -1,10 +1,10 @@
 package datasync.controller;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import datasync.entity.DataTask;
 import datasync.entity.FtpUtil;
-import datasync.service.*;
+import datasync.service.FileResourceService;
+import datasync.service.dataNodeInf.AchieveFtpConfigInf;
 import datasync.service.dataTask.DataTaskService;
 import datasync.service.login.LoginService;
 import datasync.service.settingTask.DataConnDaoService;
@@ -106,6 +106,8 @@ public class MainSevlet extends HttpServlet{
             //uploadTask(req, res, data);
         }else if("/ftpUploadProcess.do".equals(path)){//实时加载上传进度
             ftpUploadProcess(req,res);
+        }else if("/achieveDataNodeInf.do".equals(path)){
+            achieveDataNodeInf(req,res);
         }
         else{
             //错误路径
@@ -468,7 +470,7 @@ public class MainSevlet extends HttpServlet{
                 pw.println(fileAttrName+ "\n");
             }
         }
-         String configFilePath = LoginService.class.getClassLoader().getResource("../../WEB-INF/config.properties").getFile();
+        String configFilePath = LoginService.class.getClassLoader().getResource("../../WEB-INF/config.properties").getFile();
         String subjectCode= ConfigUtil.getConfigItem(configFilePath, "SubjectCode");
 //        String subjectCode = "ssdd";
         String host = ConfigUtil.getConfigItem(configFilePath, "FtpHost");// "10.0.86.77";
@@ -663,6 +665,32 @@ public class MainSevlet extends HttpServlet{
         Long process =  ftpUtil.getFtpUploadProcess(req.getParameter("processId"));
         out.println(process);
         return process;
+    }
+
+    //获取节点信息
+    public void achieveDataNodeInf(HttpServletRequest req, HttpServletResponse res) throws IOException {
+        HttpSession session=req.getSession();
+        PrintWriter out=res.getWriter();
+        AchieveFtpConfigInf achieveFtpConfigInf=new AchieveFtpConfigInf();
+        List<String> list=new ArrayList<String>();
+        JSONObject jsonObject=new JSONObject();
+        String subjectName=achieveFtpConfigInf.getConfigInf("SubjectName");//专业库名称
+        String subjectCode=achieveFtpConfigInf.getConfigInf("SubjectCode");//专业库代码
+        String userName= (String) session.getAttribute("SPRING_SECURITY_LAST_USERNAME");//当前登录用户
+        String brief=achieveFtpConfigInf.getConfigInf("Brief");//描述
+        if(subjectName==null){
+            subjectName="";
+        }
+        if(brief==null){
+            brief="";
+        }
+        System.out.println();
+        list.add(new String(subjectName.getBytes("ISO-8859-1"),"gbk"));
+        list.add(subjectCode);
+        list.add(userName);
+        list.add(new String(brief.getBytes("ISO-8859-1"),"gbk"));
+        jsonObject.put("DataNodeInf",list);
+        out.println(jsonObject);
     }
 
 }

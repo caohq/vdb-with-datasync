@@ -160,7 +160,7 @@
                 title: '创建时间',
                 formatter: function (value, row, index) {
                 //——修改——获取日期列的值进行转换
-                    return new Date(value.time).toLocaleDateString().replace(/\//g, "-")+" "+new Date(value.time).toLocaleTimeString().replace(/\//g, "-");
+                    return new Date(value).toLocaleDateString().replace(/\//g, "-")+"   "+new Date(value).toLocaleTimeString().replace(/\//g, "-");
                 }
             }, {
                 field: 'status',
