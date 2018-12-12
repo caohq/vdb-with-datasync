@@ -12,10 +12,12 @@
     <title>Insert title here</title>
     <script type="text/javascript" src="/console/shared/js/jquery-3.2.1.min.js " ></script>
     <script src="/console/shared/bootstrap-3.3.7/js/bootstrap.js"></script>
+    <script src="/console/datasync/js/layer/layer.js"></script>
     <link rel="stylesheet" type="text/css" href="/console/shared/bootstrap-3.3.7/css/bootstrap.css">
     <link rel="stylesheet" type="text/css" href="/console/shared/bootstrap-3.3.7/css/bootstrap-table.min.css">
     <link rel="stylesheet" type="text/css" href="/console/datasync/css/createTask.css" />
     <link rel="stylesheet" type="text/css" href="/console/datasync/css/style.min.css" />
+    <link rel="stylesheet" type="text/css" href="/console/datasync/js/layer/layer.css" />
     <style>
         .fixed-table-pagination .page-list{
             display: none !important;
@@ -30,6 +32,25 @@
         TABLE {
             font-size: 10.5pt;
         }
+
+        #loading {    /*弹出层样式*/
+            z-index: 100000;
+            position: fixed;
+            width: 380px;
+            height: 100px;
+            left: 46%;
+            top: 50%;
+            margin-left: -145px;
+            margin-top: -45px;
+            background-color: #ccc;
+            border: 5px solid #eee;
+            box-shadow: 7px 7px 10px #999;
+            font-size: 20px;
+            line-height: 100px;
+            text-align: center;
+            color: #333;
+        }
+
     </style>
 </head>
 <body style="overflow: auto; ">
@@ -79,55 +100,6 @@
         </div>
     </div>
 
-    <div class="modal fade" id="createLocalFileModal" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="createFileTitle">请输入任务名称</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <form>
-                        <div class="form-group">
-                            <label for="localFileName" class="col-form-label">任务名</label>
-                            <input type="text" autofocus class="form-control" id="localFileName">
-                            <span id="checkedLocalFileName" style="color: red;"></span>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" id="createLocalFileSureBut">确认创建</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="modal fade" id="createFileMModal" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="createLocalFileTitle">请输入任务名称</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <form>
-                        <div class="form-group">
-                            <label for="fileName" class="col-form-label">任务名</label>
-                            <input type="text" autofocus class="form-control" id="fileName">
-                            <span id="checkedFileName" style="color: red;"></span>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" id="createFileSureBut">确认创建</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <input type="hidden" id="sql"/>
     <input type="hidden" id="connData"/>
     <input type="hidden" id="dataTaskName"/>
@@ -149,6 +121,7 @@
         document.getElementById("bdSubmitButton").style.display="none";//隐藏“选择表资源标签”
         document.getElementById("sqlSearchDiv").style.display="none";//隐藏“选择表资源标签”
         document.getElementById("bdsc").style.display="none";//隐藏“选择表资源标签”
+
         $.ajax({
             type:"POST",
             url:"/searchDataList.do",
@@ -184,10 +157,9 @@
                 $('#tablesDiv').empty();//清空div
                 document.getElementById("tableLabel").style.display="block";//显示“选择表资源标签”
                 document.getElementById("sqlSearchDiv").style.display="block";//显示“选择表资源标签”
-                var json = data.substr(1,data.length-4);
-                var dataArray=json.split(",");
-                for(var i=0;i<dataArray.length;i++){
-                    $("#tablesDiv").append("<div style='width: 200px;float:left;'><input type='checkbox' value='"+dataArray[i]+"'>"+dataArray[i]+"</input></div>");
+                var obj=JSON.parse(data).tableList;
+                for(var i=0;i<obj.length;i++){
+                    $("#tablesDiv").append("<div style='width: 200px;float:left;'><input type='checkbox' value='"+obj[i]+"'>"+obj[i]+"</input></div>");
                 }
             },
             error:function () {
@@ -294,7 +266,7 @@
             fatherBody.append("<div id='backdropId' class='modal-backdrop fade in'></div>");
     };
 
-    // 修改弹出框的title, 显示弹框
+    // 数据库任务提交
     function submitSqlData(title){
 
         var checked= checkTaskData();
@@ -319,6 +291,13 @@
                     connDataValue:connDataValue,
                     dataTaskName:dataTaskName
                 },
+                beforeSend:function(data){
+                    index = layer.load(1, {
+                        shade: [0.5,'#fff'] //0.1透明度的白色背景
+
+                    });
+
+                },
                 success:function (dataSession) {
                     parent.goToPage("datatask/dataTask.jsp");
                 },
@@ -329,40 +308,6 @@
         }else
             return;
     }
-
-    // 关闭弹框， 获取输入值，然后执行逻辑
-    // $("#createFileSureBut").click(function (){
-    //     var connDataName = $("#selectId option:selected")[0].text;//获取数据源
-    //     var connDataValue = $("#selectId option:selected")[0].value;//获取数据源value
-    //     var taskName = $("#fileName").val();//获取弹出框内任务名称
-    //     var sql=$('#sqlInputBox').val();//获取sql语句
-    //     var createNewTableName=$('#createNewTableName').val();//获取新建表名
-    //     var checkedValue=getChecedValue();
-    //     // var dataSourceType=$("[name='ways']")
-    //     if(taskName==null || taskName==""){
-    //        $('#checkedFileName').html("请输入任务名称！");
-    //         return;
-    //     }
-    //     $("#createFileMModal").modal("hide");//隐藏弹出框
-    //     $.ajax({
-    //         type:"POST",
-    //         url:"/submitSqlData.do",
-    //         data:{
-    //             connDataName:connDataName,
-    //             taskName:taskName,
-    //             sql:sql,
-    //             createNewTableName:createNewTableName,
-    //             checkedValue:checkedValue,
-    //             connDataValue:connDataValue
-    //         },
-    //         success:function (dataSession) {
-    //             parent.goToPage("datatask/dataTask.jsp");
-    //         },
-    //         error:function () {
-    //             console.log("请求失败")
-    //         }
-    //     })
-    // });
 
     //检测任务名称
     $("#fileName").bind("input propertychange",function(){
@@ -420,13 +365,14 @@
             var dateDef = new Date();
             var month=dateDef.getMonth()+1;
             var dataTaskName = ""+dateDef.getFullYear()+month+dateDef.getDate()+dateDef.getHours()+dateDef.getMinutes()+dateDef.getSeconds();
-            $("#dataTaskName").val(dataTaskName)
+            $("#dataTaskName").val(dataTaskName);
             var connDataName = $("#selectBdDirID  option:selected")[0].text;//获取数据源
             var connDataValue = $("#selectBdDirID  option:selected")[0].value;//获取数据源value
             var getLocalTaskName=$("#localFileName").val();//获取本地新建任务名称
             $.ajax({
                 type:"POST",
                 url:"/submitFileData.do",
+                async:true,
                 data:{
                     connDataName:connDataName,
                     getCheckedFile:getCheckedFile,
@@ -434,9 +380,16 @@
                     connDataValue:connDataValue,
                     dataTaskName:dataTaskName
                 },
+                beforeSend:function(data){
+                    index = layer.load(1, {
+                        shade: [0.5,'#fff'] //0.1透明度的白色背景
+
+                    });
+
+                },
                 success:function (dataSession) {
-                    $("#createLocalFileModal").modal("hide");//隐藏弹出框
-                    parent.goToPage("datatask/dataTask.jsp");
+                   // $("#createLocalFileModal").modal("hide");//隐藏弹出框
+                   parent.goToPage("datatask/dataTask.jsp");
                 },
                 error:function () {
                     console.log("请求失败")
@@ -446,35 +399,6 @@
         return;
     }
 
-    // 关闭弹框， 获取输入值，然后执行逻辑--本地
-    // $("#createLocalFileSureBut").click(function (){
-    //     var connDataName = $("#selectBdDirID  option:selected")[0].text;//获取数据源
-    //     var connDataValue = $("#selectBdDirID  option:selected")[0].value;//获取数据源value
-    //     var getCheckedFile=getChecedValue();//获取选中的文件
-    //     var getLocalTaskName=$("#localFileName").val();//获取本地新建任务名称
-    //     if(getLocalTaskName==null || getLocalTaskName==""){
-    //         $('#checkedLocalFileName').html("请输入任务名称！");
-    //         return;
-    //     }
-    //     $.ajax({
-    //         type:"POST",
-    //         url:"/submitFileData.do",
-    //         data:{
-    //             connDataName:connDataName,
-    //             getCheckedFile:getCheckedFile,
-    //             getLocalTaskName:getLocalTaskName,
-    //             connDataValue:connDataValue
-    //         },
-    //         success:function (dataSession) {
-    //             $("#createLocalFileModal").modal("hide");//隐藏弹出框
-    //             parent.goToPage("datatask/dataTask.jsp");
-    //
-    //         },
-    //         error:function () {
-    //             console.log("请求失败")
-    //         }
-    //     })
-    // });
 
     //检测任务名称
     $("#localFileName").bind("input propertychange",function(){

@@ -177,13 +177,19 @@ public class MainSevlet extends HttpServlet{
         try {
             if ("mysql".equals(dataType)){
                 list=dataConnDaoService.getMysqlTablesNameList(request.getParameter("connData"));
-                out.println(list);
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("tableList",list);
+                out.println(jsonObject);
             }else  if ("oracle".equals(dataType)){
                 list=dataConnDaoService.getOracleTablesNameList(request.getParameter("connData"));
-                out.println(list);
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("tableList",list);
+                out.println(jsonObject);
             }else if("sqlServer".equals(dataType)){
                 list=dataConnDaoService.getSqlServerTablesNameList(request.getParameter("connData"));
-                out.println(list);
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("tableList",list);
+                out.println(jsonObject);
             }
         } catch (SQLException e) {
             out.println("数据库连接异常！");

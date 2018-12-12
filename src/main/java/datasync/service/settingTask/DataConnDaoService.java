@@ -81,7 +81,7 @@ public class DataConnDaoService {
                     && (rs.getString(4).equalsIgnoreCase("TABLE") )) {//|| rs.getString(4).equalsIgnoreCase("VIEW")
                 String tableName = rs.getString(3).toLowerCase();
                 list.add(tableName);
-                System.out.print(tableName + "\t");
+                System.out.print(" "+tableName);
             }
         }
         return list;
