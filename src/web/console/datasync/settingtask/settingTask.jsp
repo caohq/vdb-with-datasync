@@ -52,6 +52,9 @@
         }
 
     </style>
+
+    <link type="text/css" rel="stylesheet" href="/console/shared/jstree/dist/themes/default/style.css" />
+    <script type="text/javascript" src="/console/shared/jstree/dist/jstree.js"></script>
 </head>
 <body style="overflow: auto; ">
 
@@ -67,6 +70,7 @@
 
     <!--数据库-->
     <div style="width:64%;margin-top:20px;float:left;margin-left: 100px;">
+
         <div id="sjk" class="form-group" style="width: 100%;height: 100%;margin-left: 76px;">
             <label for="aaa" >数据库列表:</label>
             <select id="selectId" class="form-control selectpicker" style="width: 200px;display: inline !important;"></select>
@@ -108,7 +112,7 @@
 
 <script type="text/javascript" src="/console/shared/bootstrap-3.3.7/js/bootstrap-table.js"></script>
 <script type="text/javascript">
-    $.ajaxSettings.async=false;
+    $.ajaxSettings.async = false;
     start();
     loadBdDataList();
     // $(function(){
@@ -202,7 +206,7 @@
     };
 
     //查询本地数据源文件列表
-    $("#selectBdDirID").on("change",function () {
+    /*$("#selectBdDirID").on("change",function () {
         var dirListData = $("#selectBdDirID option:selected")[0].value;//获取数据库参数
         $.ajax({
             type:"POST",
@@ -217,15 +221,74 @@
                 document.getElementById("bdSubmitButton").style.display="block";//显示“选择表资源标签”
                 var obj=JSON.parse(data).list;
                 for (var i=0;i<obj.length;i++){
-                  for (var prop in obj[i]) {
-                      if (obj[i].hasOwnProperty(prop)) {
-                          $("#bdDirDiv").append("<div style='width: 300px;float:left;'><input type='checkbox' value='"+prop+"'>"+obj[i][prop]+"</input></div>");
-                      }
-                  }
+                    for (var prop in obj[i]) {
+                        if (obj[i].hasOwnProperty(prop)) {
+                            $("#bdDirDiv").append("<div style='width: 300px;float:left;'><input type='checkbox' value='"+prop+"'>"+obj[i][prop]+"</input></div>");
+                        }
+                    }
                 }
             },
             error:function () {
-                console.log("请求失败")
+                console.log("请求失败");
+            }
+        })
+    });*/
+
+    //列出本地数据源中的文件树
+    $("#selectBdDirID").on("change", function () {
+        console.log("进入到selectBdDirID的change事件处理函数中了");
+        var localDataSource = $("#selectBdDirID option:selected")[0].value;//获取数据库参数
+        $.ajax({
+            type:"POST",
+            url:"/getTreeOfDirList.do",
+            data:{
+                localDataSource: localDataSource
+            },
+            dataType: "text",
+            success: function (data) {
+                console.log(data);
+                $('#bdDirDiv').empty();
+                $("#bdTableLabel").css("display", "block");//显示“选择资源”标签
+                $("#bdSubmitButton").css("display", "block"); //显示“提交”按钮
+
+                var coreData = JSON.parse(data);
+                console.log(coreData);
+
+                $("#bdDirDiv").jstree(
+                    {
+                        "core": coreData,
+                        "plugins": ["checkbox"]
+                    }
+                );
+
+              /* $("#bdDirDiv").jstree(
+                   {
+                       "core": {
+                           "data" : [
+                               {
+                                   'text' : 'SubjectImages',
+                                   'icon' : 'jstree-folder',
+                                   'children' :
+                                       [
+                                           { 'text' : 'img5.jpg', 'icon' : 'jstree-file'},
+                                           { 'text' : 'img7.png', 'icon' : 'jstree-file'},
+                                           { 'text' : 'subdir1', 'icon' : 'jstree-folder',
+                                               'children' :
+                                                   [
+                                                       { 'text' : 'img1.jpg', 'icon' : 'jstree-file'}
+                                                   ]
+                                           }
+                                       ]
+                               }
+                           ]
+
+                       },
+                       "plugins": ["checkbox"]
+                   }
+               );*/
+            },
+            error: function (data) {
+                console.log("获得本地目录中的文件树失败")
             }
         })
     });

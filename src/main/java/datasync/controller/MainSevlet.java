@@ -1,5 +1,7 @@
 package datasync.controller;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import datasync.entity.DataTask;
 import datasync.entity.FtpUtil;
 import datasync.service.*;
@@ -9,7 +11,6 @@ import datasync.service.settingTask.DataConnDaoService;
 import datasync.service.settingTask.LocalConnDaoService;
 import datasync.service.settingTask.UploadTaskService;
 import datasync.utils.ConfigUtil;
-import net.sf.json.JSONObject;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -20,6 +21,9 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import vdb.mydb.filestat.impl.LocalRepository;
+import vdb.mydb.filestat.impl.RepositoriesService;
+import vdb.mydb.repo.FileRepository;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -63,8 +67,10 @@ public class MainSevlet extends HttpServlet{
         }else if("/searchBdDirList.do".equals(path)){
             //查询本地数据源列表
             searchBdDirList(req, res);
-        }else if("/searchBdDirListPath.do".equals(path)){
+        }else if("/searchBdDirListPath.do".equals(path)) {
             searchBdDirListPath(req, res);
+        }else if("/getTreeOfDirList.do".equals(path)) {
+            getTreeOfDirList(req, res);
         }else if("/searchDataBySql.do".equals(path)){
             try {
                 searchDataBySql(req,res);
@@ -105,6 +111,106 @@ public class MainSevlet extends HttpServlet{
             //错误路径
             throw new RuntimeException("查无此页");
         }
+    }
+
+    /**
+     * 根据前端传过来的本地数据源获取它的文件列表
+     * @param request
+     * @param response
+     * @return
+     * @throws IOException
+     */
+    /**
+     [
+         {
+            "text" : "Root node",
+            "icon" : "jstree-file"
+            "children" :
+             [
+                 { "text" : "Child node 1",
+                 "icon" : "jstree-folder"
+                 },
+                 { "text" : "Child node 2",
+                 "icon" : "jstree-file"
+                 }
+             ]
+         },
+         {
+            "text": "root node2",
+            "icon": "jstree-file"
+         }
+     }
+     ]
+     */
+    public String getTreeOfDirList(HttpServletRequest request, HttpServletResponse response)
+    {
+        String localDataSource = request.getParameter("localDataSource");
+        RepositoriesService repositoriesService=new RepositoriesService();//getAllRepositories
+        List<FileRepository> localFileRepositories = repositoriesService.getAllRepositories(localDataSource);
+
+        String data = "[";
+        if (1 != localFileRepositories.size())
+        {
+            for(int j = 0;j < localFileRepositories.size() - 1; j++)
+            {
+                String localFilePath = ((LocalRepository)(localFileRepositories.get(j))).getPath();
+                File localFile = new File(localFilePath);
+                String localFileTreeData = "";
+                localFileTreeData = getLocalFileTreeData(localFile);
+                data += localFileTreeData;
+            }
+        }
+        data += "]";
+        data = "{\"data\":" + data + "}";
+
+        try {
+            response.getWriter().println(data);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+
+
+
+        System.out.println(data);
+
+        return data;
+    }
+
+    private String getLocalFileTreeData(File localFile)
+    {
+        String retStr = "";
+        if (!localFile.exists()) {
+            retStr = "";
+        }
+
+        if (localFile.isFile())
+        {
+            retStr = "{ \"text\" : \"" + localFile.getName() + "\"," +
+                    " \"icon\" : \"jstree-file\"}";
+        }
+
+        if (localFile.isDirectory())
+        {
+            retStr =  "{ \"text\" : \"" + localFile.getName() + "\"," +
+                    " \"icon\" : \"jstree-folder\"," +
+                    " \"children\" : [";
+            File[] subFiles = localFile.listFiles();
+            for (int i = 0; i < subFiles.length; i++)
+            {
+                if (i < subFiles.length - 1) {
+                    retStr += getLocalFileTreeData(subFiles[i]) + ",";
+                }
+                else
+                {
+                    retStr += getLocalFileTreeData(subFiles[i]);
+                }
+            }
+            retStr += "]}";
+        }
+
+        return retStr;
     }
 
     /*
