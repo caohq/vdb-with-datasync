@@ -389,7 +389,7 @@
         var checked = $("input:checked"); //获取所有被选中的标签元素
         for (i = 0; i < checked.length; i++) { //将所有被选中的标签元素的值保存成一个字符串，以逗号隔开
             if (i < checked.length - 1 && $("input:checked")[i].type=='checkbox')
-                values += checked[i].value + ',';
+                values += checked[i].value + ';';
             else if($("input:checked")[i].type=='checkbox'){
                 values += checked[i].value;
             }
