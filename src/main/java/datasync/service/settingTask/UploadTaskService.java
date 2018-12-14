@@ -123,7 +123,7 @@ public class UploadTaskService {
         StringBuilder sqlSb = new StringBuilder();
         StringBuilder dataSb = new StringBuilder();
         for (String tableName : tableNames.split(";"))
-        {
+            {
             if (tableName == null || tableName.trim().equals(""))
             {
                 continue;

@@ -274,13 +274,13 @@
             },
             dataType: "text",
             success: function (data) {
-                console.log(data);
+                //console.log(data);
                 $('#bdDirDiv').empty();
                 $("#bdTableLabel").css("display", "block");//显示“选择资源”标签
                 $("#bdSubmitButton").css("display", "block"); //显示“提交”按钮
 
                 var coreData = JSON.parse(data);
-                console.log(coreData);
+                //console.log(coreData);
 
                 $("#bdDirDiv").jstree(
                     {
@@ -288,32 +288,6 @@
                         "plugins": ["checkbox"]
                     }
                 );
-
-              /* $("#bdDirDiv").jstree(
-                   {
-                       "core": {
-                           "data" : [
-                               {
-                                   'text' : 'SubjectImages',
-                                   'icon' : 'jstree-folder',
-                                   'children' :
-                                       [
-                                           { 'text' : 'img5.jpg', 'icon' : 'jstree-file'},
-                                           { 'text' : 'img7.png', 'icon' : 'jstree-file'},
-                                           { 'text' : 'subdir1', 'icon' : 'jstree-folder',
-                                               'children' :
-                                                   [
-                                                       { 'text' : 'img1.jpg', 'icon' : 'jstree-file'}
-                                                   ]
-                                           }
-                                       ]
-                               }
-                           ]
-
-                       },
-                       "plugins": ["checkbox"]
-                   }
-               );*/
             },
             error: function (data) {
                 console.log("获得本地目录中的文件树失败")
@@ -438,14 +412,34 @@
     })
 
     //获取界面中所有被选中的radio
+    function getChecedValueInLocalTree() {
+
+        var pathsOfCheckedFiles = '';
+        var localFileTree =  $('#bdDirDiv').jstree();//获取所有被选中的标签元素
+        var checkedNodes = localFileTree.get_checked(true);
+        for (var i = 0; i < checkedNodes.length - 1; i++)
+        {
+            pathsOfCheckedFiles += localFileTree.get_path(checkedNodes[i], "/", false) + ",";
+        }
+        pathsOfCheckedFiles += localFileTree.get_path(checkedNodes[checkedNodes.length - 1], "/", false);
+
+        console.log("pathsOfCheckedFiles = " + pathsOfCheckedFiles);
+
+        return pathsOfCheckedFiles;
+    }
+
     function getChecedValue() {
         var i = 0;
         var values = '';
         var checked = $("input:checked"); //获取所有被选中的标签元素
-        for (i = 0; i < checked.length; i++) { //将所有被选中的标签元素的值保存成一个字符串，以逗号隔开
+        for (i = 0; i < checked.length; i++)
+        { //将所有被选中的标签元素的值保存成一个字符串，以逗号隔开
             if (i < checked.length - 1 && $("input:checked")[i].type=='checkbox')
+            {
                 values += checked[i].value + ',';
-            else if($("input:checked")[i].type=='checkbox'){
+            }
+            else if($("input:checked")[i].type=='checkbox')
+            {
                 values += checked[i].value;
             }
         }
@@ -475,11 +469,17 @@
 
     //本地文件任务提交
     function submitLocalFileData(){
-        var getCheckedFile=getChecedValue();//获取选中的文件
-        if(getCheckedFile=="" || getCheckedFile ==null){
+        var checkedFiles = getChecedValueInLocalTree();//获取选中的文件
+
+        console.log("checkedFiles = " + checkedFiles);
+
+        if(checkedFiles == "" || checkedFiles == null)
+        {
             alert("请选择文件！");
             return;
-        }else{
+        }
+        else
+        {
             var dateDef = new Date();
             var month=dateDef.getMonth()+1;
             var dataTaskName = ""+dateDef.getFullYear()+month+dateDef.getDate()+dateDef.getHours()+dateDef.getMinutes()+dateDef.getSeconds();
@@ -487,25 +487,28 @@
             var connDataName = $("#selectBdDirID  option:selected")[0].text;//获取数据源
             var connDataValue = $("#selectBdDirID  option:selected")[0].value;//获取数据源value
             var getLocalTaskName=$("#localFileName").val();//获取本地新建任务名称
-            $.ajax({
+            $.ajax(
+            {
                 type:"POST",
                 url:"/submitFileData.do",
                 data:{
                     connDataName:connDataName,
-                    getCheckedFile:getCheckedFile,
+                    getCheckedFile:checkedFiles,
                     getLocalTaskName:getLocalTaskName,
                     connDataValue:connDataValue,
                     dataTaskName:dataTaskName
                 },
-                success:function (dataSession) {
+                dataType: "json",
+                success: function(dataSession) {
                     $("#createLocalFileModal").modal("hide");//隐藏弹出框
                     parent.goToPage("datatask/dataTask.jsp");
                 },
-                error:function () {
+                error: function() {
                     console.log("请求失败")
                 }
             })
         }
+
         return;
     }
 
