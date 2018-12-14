@@ -459,10 +459,47 @@
 
     //本地文件任务提交
     function submitLocalFileData(){
-        var checkedFiles = getChecedValueInLocalTree();//获取选中的文件
+        var getCheckedFile = getChecedValueInLocalTree();//获取选中的文件
 
-        console.log("checkedFiles = " + checkedFiles);
+        console.log("getCheckedFile = " + getCheckedFile);
 
+        if(getCheckedFile=="" || getCheckedFile ==null){
+            alert("请选择文件！");
+            return;
+        }else{
+            var dateDef = new Date();
+            var month=dateDef.getMonth()+1;
+            var dataTaskName = ""+dateDef.getFullYear()+month+dateDef.getDate()+dateDef.getHours()+dateDef.getMinutes()+dateDef.getSeconds();
+            $("#dataTaskName").val(dataTaskName);
+            var connDataName = $("#selectBdDirID  option:selected")[0].text;//获取数据源
+            var connDataValue = $("#selectBdDirID  option:selected")[0].value;//获取数据源value
+            var getLocalTaskName=$("#localFileName").val();//获取本地新建任务名称
+            $.ajax({
+                type:"POST",
+                url:"/submitFileData.do",
+                async:true,
+                data:{
+                    connDataName:connDataName,
+                    getCheckedFile:getCheckedFile,
+                    getLocalTaskName:getLocalTaskName,
+                    connDataValue:connDataValue,
+                    dataTaskName:dataTaskName
+                },
+                beforeSend:function(data){
+                    index = layer.load(1, {
+                        shade: [0.5,'#fff'] //0.1透明度的白色背景
+                    });
+                },
+                success:function (dataSession) {
+                    // $("#createLocalFileModal").modal("hide");//隐藏弹出框
+                    parent.goToPage("datatask/dataTask.jsp");
+                },
+                error:function () {
+                    console.log("请求失败")
+                }
+            })
+        }
+        return;
         /*if(checkedFiles == "" || checkedFiles == null)
         {
             alert("请选择文件！");
