@@ -372,7 +372,6 @@
 
     //获取界面中所有被选中的radio
     function getChecedValueInLocalTree() {
-
         var pathsOfCheckedFiles = '';
         var localFileTree =  $('#bdDirDiv').jstree();//获取所有被选中的标签元素
         var checkedNodes = localFileTree.get_checked(true);
@@ -461,19 +460,19 @@
 
         console.log("checkedFiles = " + checkedFiles);
 
-        if(checkedFiles == "" || checkedFiles == null)
+        /*if(checkedFiles == "" || checkedFiles == null)
         {
             alert("请选择文件！");
             return;
         }
-        else
+        elseetFullYear()+month+dateDef.getDate()+dateDef.getHours()+dateDef.getMinutes()+dateDef.getSeconds();
+        $("#dataTaskName").val(dataTaskName);
+        var connDataName = $("#selectBdDirID  option:selected")[0].text;//获取数据源
+        var connDataValue = $("#selectBdDirID
         {
             var dateDef = new Date();
             var month=dateDef.getMonth()+1;
-            var dataTaskName = ""+dateDef.getFullYear()+month+dateDef.getDate()+dateDef.getHours()+dateDef.getMinutes()+dateDef.getSeconds();
-            $("#dataTaskName").val(dataTaskName);
-            var connDataName = $("#selectBdDirID  option:selected")[0].text;//获取数据源
-            var connDataValue = $("#selectBdDirID  option:selected")[0].value;//获取数据源value
+            var dataTaskName = ""+dateDef.g  option:selected")[0].value;//获取数据源value
             var getLocalTaskName=$("#localFileName").val();//获取本地新建任务名称
             $.ajax(
             {
@@ -503,7 +502,7 @@
             });
         }
 
-        return;
+        return;*/
     }
 
     //检测任务名称
