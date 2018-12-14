@@ -318,9 +318,9 @@
             var dataTaskName = ""+dateDef.getFullYear()+month+dateDef.getDate()+dateDef.getHours()+dateDef.getMinutes()+dateDef.getSeconds();
             var connDataName = $("#selectId option:selected")[0].text;//获取数据源
             var connDataValue = $("#selectId option:selected")[0].value;//获取数据源value
+            var checkedValue=getChecedValue();
             var sql=sqlArray;//获取sql语句
             var createNewTableName=sqlTableArray;//获取新建表名
-            var checkedValue=getChecedValue();
             $.ajax({
                 type:"POST",
                 url:"/submitSqlData.do",

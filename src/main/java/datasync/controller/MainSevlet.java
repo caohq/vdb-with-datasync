@@ -363,7 +363,7 @@ public class MainSevlet extends HttpServlet{
         if(res.getParameter("sql")!="" && res.getParameter("sql")!=null){
             reslut=new DataConnDaoService().checkSql(res.getParameter("sql"),connDataValue);
             PrintWriter out=req.getWriter();
-            if(!"true".equals(reslut)){
+            if(!"success".equals(reslut)){
                 out.println(reslut);
                 return jsonObject;
             }
