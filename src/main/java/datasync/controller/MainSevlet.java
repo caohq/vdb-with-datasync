@@ -206,7 +206,7 @@ public class MainSevlet extends HttpServlet{
             for (int i = 0; i < subFiles.length; i++)
             {
                 if (i < subFiles.length - 1) {
-                    retStr += getSubTreeData(subFiles[i]) + ";";
+                    retStr += getSubTreeData(subFiles[i]) + ",";
                 }
                 else
                 {
