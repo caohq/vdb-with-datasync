@@ -160,7 +160,8 @@
             },
             success:function (data) {
                 if(data.trim()=="数据库连接异常！"){
-                    alert(data);
+                    toastr["error"](data);
+                   // alert(data);
                     return;
                 }
                 $('#tablesDiv').empty();//清空div
@@ -297,14 +298,12 @@
         var dialog = $('#' + id);
         if (dialog.length == 0) {
             dialog = $('<div class="modal fade" role="dialog" id="' + id + '"/>');
-          //  dialog.empty()
             dialog.appendTo(fatherBody);
         }
         dialog.load("/console/datasync/settingtask/sqlPopPreviewWin.html", function() {
             dialog.modal({
                 backdrop: false
             });
-
         });
             fatherBody.append("<div id='backdropId' class='modal-backdrop fade in'></div>");
     };
@@ -322,7 +321,6 @@
             var sql=sqlArray;//获取sql语句
             var createNewTableName=sqlTableArray;//获取新建表名
             var checkedValue=getChecedValue();
-            debugger
             $.ajax({
                 type:"POST",
                 url:"/submitSqlData.do",
@@ -343,7 +341,15 @@
 
                 },
                 success:function (dataSession) {
-                    parent.goToPage("datatask/dataTask.jsp");
+                    if(dataSession.replace(/[\r\n]/g,"")!="true"){
+                        toastr["error"]("sql语句错误，请“预览”调试！");
+                        $("#layui-layer-shade"+index+"").remove();
+                        $("#layui-layer"+index+"").remove();
+                        $('#sqlInputBox'+dataSession.split("？")[0]+'')[0].style.borderColor="red";
+                        return;
+                    }else{
+                       parent.goToPage("datatask/dataTask.jsp");
+                    }
                 },
                 error:function () {
                     console.log("请求失败")
@@ -402,9 +408,12 @@
     function checkTaskData() {
         var checked=true;
         var checkedValue=getChecedValue();
+        sqlArray="";
+        sqlTableArray="";
         for(var i=0;i<=idNum;i++){//sql非空校驗
             $('#sqlInputBox'+i+'')[0].style.borderColor="";
             $('#createNewTableName'+i+'')[0].style.borderColor="";
+            //sql框均为空时--sql语句 表名
             if(($('#createNewTableName'+i+'').val()=="" || $('#createNewTableName'+i+'').val()==null)&&($('#sqlInputBox'+i+'').val()=="" || $('#sqlInputBox'+i+'').val()==null)){
 
             }else{
@@ -424,9 +433,18 @@
                     sqlTableArray=sqlTableArray+$('#createNewTableName'+i+'').val()+";";
                  }
              }
-
-
       }
+         var tableNameArray=sqlTableArray.split(";");
+         for(var i=0;i<tableNameArray.length;i++){
+             for(var j=0;j<=tableNameArray.length;j++){
+                 if((tableNameArray[i]==tableNameArray[j])&&(i!=j)){
+                     toastr["error"]("新建表名不能相同！");
+                     $('#createNewTableName'+i+'')[0].style.borderColor="red";
+                     $('#createNewTableName'+j+'')[0].style.borderColor="red";
+                     return;
+                 }
+             }
+         }
 
         if((sqlArray=="" || sqlTableArray=="")&&(checkedValue==null || checkedValue=="")){
             checked=false;
@@ -499,6 +517,10 @@
 
     //添加sql语句
     function addSqlInput(){
+        if(($('#createNewTableName'+idNum+'').val()=="" || $('#createNewTableName'+idNum+'').val()==null)&&($('#sqlInputBox'+idNum+'').val()=="" || $('#sqlInputBox'+idNum+'').val()==null)){
+            toastr["error"]("请补充已有“sql查询”后再添加新的SQL查询！");
+            return;
+        }
         idNum=idNum+1;
         var divId="sqlSearchDiv"+idNum;
         var divSqlId="sqlInputBox"+idNum+"";
@@ -513,6 +535,7 @@
 
     //删除新增的sql语句输入框
     function deleteSqlSearchDiv(idDom){
+        idNum=idNum-1;
         idDom.remove();
     }
 
