@@ -11,16 +11,16 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
-public class LoginService
+public class GetInfoService
 {
-    public int validateLogin(String userName, String password)
+    /*public int validateLogin(String userName, String password)
     {
         //1、访问中心端验证登录是否成功
         int loginStatus = 0;
 
-        //String temp = LoginService.class.getClassLoader().getResource("../../WE").getFile();
+        //String temp = GetInfoService.class.getClassLoader().getResource("../../WE").getFile();
 
-        String configFilePath = LoginService.class.getClassLoader().getResource("../../WEB-INF/config.properties").getFile();
+        String configFilePath = GetInfoService.class.getClassLoader().getResource("../../WEB-INF/config.properties").getFile();
 
         try {
             String portalUrl = ConfigUtil.getConfigItem(configFilePath, "PortalUrl");
@@ -55,12 +55,14 @@ public class LoginService
        }
 
        return  loginStatus;
-    }
+    }*/
 
-    private boolean getSubjectConfig(String userName) throws Exception
+    public static boolean getSubjectConfig() throws Exception
     {
-        String configFilePath = LoginService.class.getClassLoader().getResource("../../WEB-INF/config.properties").getFile();
-        System.out.println(configFilePath);
+        String configFilePath = GetInfoService.class.getClassLoader().getResource("../../WEB-INF/config.properties").getFile();
+
+        String userName = ConfigUtil.getConfigItem(configFilePath, "Username");
+
         String portalUrl = ConfigUtil.getConfigItem(configFilePath, "PortalUrl");
         String getSubjectApiPath = "/api/getSubjectByUser/" + userName;
 
@@ -147,11 +149,5 @@ public class LoginService
         ConfigUtil.setConfigItem(configFilePath, "Brief", brief);
 
         return true;
-    }
-
-    public static void main(String[] args)
-    {
-        LoginService loginService = new LoginService();
-        loginService.validateLogin("system", "123456");
     }
 }

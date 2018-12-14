@@ -380,7 +380,7 @@
         var checkedNodes = localFileTree.get_checked(true);
         for (var i = 0; i < checkedNodes.length - 1; i++)
         {
-            pathsOfCheckedFiles += localFileTree.get_path(checkedNodes[i], "/", false) + ",";
+            pathsOfCheckedFiles += localFileTree.get_path(checkedNodes[i], "/", false) + ";";
         }
         pathsOfCheckedFiles += localFileTree.get_path(checkedNodes[checkedNodes.length - 1], "/", false);
 
