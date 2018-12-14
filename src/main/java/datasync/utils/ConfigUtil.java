@@ -12,6 +12,8 @@ public class ConfigUtil {
             Properties properties = new Properties();
             properties.load(new FileInputStream(new File(configFilePath)));
             value = properties.getProperty(key);
+           // value=new String(value.getBytes("ISO-8859-1"),"gbk");
+
         } catch (Exception e) {
             e.printStackTrace();
         }
