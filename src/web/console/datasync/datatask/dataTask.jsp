@@ -160,7 +160,7 @@
                 title: '创建时间',
                 formatter: function (value, row, index) {
                 //——修改——获取日期列的值进行转换
-                    return new Date(value.time).toLocaleDateString().replace(/\//g, "-")+" "+new Date(value.time).toLocaleTimeString().replace(/\//g, "-");
+                    return new Date(value).toLocaleDateString().replace(/\//g, "-")+"   "+new Date(value).toLocaleTimeString().replace(/\//g, "-");
                 }
             }, {
                 field: 'status',
@@ -194,16 +194,26 @@
 
     //为操作添加按钮
     function operateFormatter(value, row, index) {//赋予的参数
-        return [
-            // '<button class="btn btn-default details btn-xs" value="'+row.id+'" onclick="detail(value)">导出</button>&nbsp;',
-            // '<button class="btn btn-default details btn-xs" value="'+row.dataTaskId+'" onclick="exportDataTask(this)">导出</button>&nbsp;',
-            '<button class="btn btn-default details btn-xs" value="'+row.dataTaskId+','+row.status+'" onclick="ftpUpload(value)"><a>上传</a></button>&nbsp;',
-            '<button class="btn btn-default details btn-xs" value="'+row.dataTaskId+'" onclick="viewDtails(value)"><a>查看</a></button>&nbsp;',
-            '<button class="btn btn-default delete btn-xs" onclick="deleteThis(this)" data-id="'+row.dataTaskId+'"><a>删除</a></button>&nbsp;',
-            '<button class="btn btn-default delete btn-xs" onclick="" data-id="'+row.dataTaskId+'">'+
-              '<a href="/console/datasync/logFile/'+row.dataTaskId+'log.txt" download="'+row.dataTaskName+'Log.txt">日志</a>'+
-            '</button>'
-        ].join('');
+        if(row.status==0){//未上传
+            return [
+                '<button class="btn btn-default details btn-xs" value="'+row.dataTaskId+'" onclick="editTaskDtails(value)"><a>编辑</a></button>&nbsp;',
+                '<button class="btn btn-default details btn-xs" value="'+row.dataTaskId+','+row.status+'" onclick="ftpUpload(value)"><a>上传</a></button>&nbsp;',
+                '<button class="btn btn-default details btn-xs" value="'+row.dataTaskId+'" onclick="viewDtails(value)"><a>查看</a></button>&nbsp;',
+                '<button class="btn btn-default delete btn-xs" onclick="deleteThis(this)" data-id="'+row.dataTaskId+'"><a>删除</a></button>&nbsp;',
+                '<button class="btn btn-default delete btn-xs" onclick="" data-id="'+row.dataTaskId+'">'+
+                '<a href="/console/datasync/logFile/'+row.dataTaskId+'log.txt" download="'+row.dataTaskName+'Log.txt">日志</a>'+
+                '</button>'
+            ].join('');
+        }else{
+            return [
+                '<button class="btn btn-default details btn-xs" value="'+row.dataTaskId+','+row.status+'" onclick="ftpUpload(value)"><a>上传</a></button>&nbsp;',
+                '<button class="btn btn-default details btn-xs" value="'+row.dataTaskId+'" onclick="viewDtails(value)"><a>查看</a></button>&nbsp;',
+                '<button class="btn btn-default delete btn-xs" onclick="deleteThis(this)" data-id="'+row.dataTaskId+'"><a>删除</a></button>&nbsp;',
+                '<button class="btn btn-default delete btn-xs" onclick="" data-id="'+row.dataTaskId+'">'+
+                  '<a href="/console/datasync/logFile/'+row.dataTaskId+'log.txt" download="'+row.dataTaskName+'Log.txt">日志</a>'+
+                '</button>'
+            ].join('');
+        }
     }
 
     //创建任务按钮-调用父类方法
@@ -328,14 +338,6 @@
         }
     };
 
-    //下载日志
-    function loadLog(el){
-
-        // var a;
-        // a =window.open("/console/datasync/logFile/数据任务日志.txt","_blank", "width=0, height=0,status=0");
-        // a.document.execCommand("SaveAs");
-    }
-
     //获取上传进度
     function getProcess(keyID,souceID) {
         var setout= setInterval(function () {
@@ -358,6 +360,12 @@
                 }
             })
         },1000)
+
+    }
+
+
+    //编辑任务
+    function editTaskDtails(taskId){
 
     }
 

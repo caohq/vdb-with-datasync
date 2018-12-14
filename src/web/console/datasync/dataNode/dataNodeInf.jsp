@@ -31,17 +31,17 @@
 
             <div class="form-group">
                 <label  class="col-sm-3 control-label">专业库名称:</label>
-                <div class="col-sm-8">卷烟有害成分专业库</div>
+                <div class="col-sm-8" name="subjectName"></div>
             </div>
 
             <div class="form-group">
                 <label  class="col-sm-3 control-label">专业库代码 :</label>
-                <div class="col-sm-8">poison</div>
+                <div class="col-sm-8" name="subjectCode"></div>
             </div>
 
             <div class="form-group">
                 <label  class="col-sm-3 control-label">管理员账号:</label>
-                <div class="col-sm-8">hanfang</div>
+                <div class="col-sm-8" name="userName"></div>
             </div>
 
             <div class="form-group">
@@ -51,11 +51,34 @@
 
             <div class="form-group">
                 <label  class="col-sm-3 control-label">描述:</label>
-                <div class="col-sm-8">此专业库主要包含卷烟有害成分的数据。</div>
+                <div class="col-sm-8" name="brief"></div>
             </div>
         </form>
     </div>
 </div>
+
+
+
+<script type="text/javascript">
+
+   $(function(){
+       $.ajax({
+           url:"/achieveDataNodeInf.do",
+           data:{},
+           success:function (dataSession) {
+               var obj=JSON.parse(dataSession);
+               document.getElementsByName("subjectName")[0].textContent=obj.DataNodeInf[0];//专业库名称
+               document.getElementsByName("subjectCode")[0].textContent=obj.DataNodeInf[1];//专业库代码
+               document.getElementsByName("userName")[0].textContent=obj.DataNodeInf[2];//管理员账号
+               document.getElementsByName("brief")[0].textContent=obj.DataNodeInf[3];//描述
+           },
+           error:function () {
+               console.log("请求失败")
+           }
+       })
+   });
+
+</script>
 
 </body>
 
