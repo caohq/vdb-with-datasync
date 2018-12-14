@@ -341,7 +341,8 @@
 
                 },
                 success:function (dataSession) {
-                    if(dataSession.replace(/[\r\n]/g,"")!="true"){
+                    debugger
+                    if(dataSession.replace(/[\r\n]/g,"")!="success"){
                         toastr["error"]("sql语句错误，请“预览”调试！");
                         $("#layui-layer-shade"+index+"").remove();
                         $("#layui-layer"+index+"").remove();
@@ -394,7 +395,7 @@
         { //将所有被选中的标签元素的值保存成一个字符串，以逗号隔开
             if (i < checked.length - 1 && $("input:checked")[i].type=='checkbox')
             {
-                values += checked[i].value + ',';
+                values += checked[i].value + ';';
             }
             else if($("input:checked")[i].type=='checkbox')
             {

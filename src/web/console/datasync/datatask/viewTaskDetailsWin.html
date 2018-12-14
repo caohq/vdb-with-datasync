@@ -133,7 +133,6 @@
                     $("#pre-tableName").html(JSON.parse(data).dataTask.tableName);
                     $("#pre-sqlString").html(JSON.parse(data).dataTask.sqlString);
                     $("#pre-sqlTableNameEn").html(JSON.parse(data).dataTask.sqlTableNameEn);
-                    debugger
                     $("#pre-createTime").html(new Date(JSON.parse(data).dataTask.createTime).toLocaleDateString().replace(/\//g, "-")+" "+new Date(JSON.parse(data).dataTask.createTime).toLocaleTimeString().replace(/\//g, "-"));
                     $("#pre-creator").html(JSON.parse(data).dataTask.creator);
                     $("#pre-status").html(JSON.parse(data).dataTask.status=="0"?"未上传":"上传成功");
