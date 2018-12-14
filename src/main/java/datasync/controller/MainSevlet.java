@@ -400,11 +400,14 @@ public class MainSevlet extends HttpServlet{
         }
         datatask.setCreator(session.getAttribute("SPRING_SECURITY_LAST_USERNAME")==null?"": (String) session.getAttribute("SPRING_SECURITY_LAST_USERNAME"));
         datatask.setStatus("0");
-        String reslut=new DataConnDaoService().checkSql(res.getParameter("sql"),connDataValue);
-        PrintWriter out=req.getWriter();
-        if(!"true".equals(reslut)){
-            out.println(reslut);
-            return jsonObject;
+        String reslut="";
+        if(res.getParameter("sql")!="" && res.getParameter("sql")!=null){
+            reslut=new DataConnDaoService().checkSql(res.getParameter("sql"),connDataValue);
+            PrintWriter out=req.getWriter();
+            if(!"true".equals(reslut)){
+                out.println(reslut);
+                return jsonObject;
+            }
         }
         int flag = new DataTaskService().insertDatatask(datatask,connDataValue,dataSourceName);
 

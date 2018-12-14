@@ -217,7 +217,7 @@ public class DataConnDaoService {
                 return  i+"？sql语句错误！";//用？分割，定位那个sql出现问题
             }
          }
-        return "true";
+        return "success";
     }
 
 
