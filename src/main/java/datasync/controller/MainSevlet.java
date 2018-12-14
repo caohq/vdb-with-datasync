@@ -187,6 +187,45 @@ public class MainSevlet extends HttpServlet{
             retStr = "";
         }
 
+        String localFileAbsolutePath = localFile.getAbsolutePath().replaceAll("\\\\", "/");
+        System.out.println("localFileAbsolutePath = " + localFileAbsolutePath);
+
+        if (localFile.isFile())
+        {
+            retStr = "{ \"text\" : \"" + localFileAbsolutePath + "\"," +
+                    " \"icon\" : \"jstree-file\"}";
+        }
+
+        if (localFile.isDirectory())
+        {
+            retStr =  "{ \"text\" : \"" + localFileAbsolutePath + "\"," +
+                    " \"icon\" : \"jstree-folder\"," +
+                    " \"children\" : [";
+            File[] subFiles = localFile.listFiles();
+
+            for (int i = 0; i < subFiles.length; i++)
+            {
+                if (i < subFiles.length - 1) {
+                    retStr += getSubTreeData(subFiles[i]) + ";";
+                }
+                else
+                {
+                    retStr += getSubTreeData(subFiles[i]);
+                }
+            }
+            retStr += "]}";
+        }
+
+        return retStr;
+    }
+
+    private String getSubTreeData(File localFile)
+    {
+        String retStr = "";
+        if (!localFile.exists()) {
+            retStr = "";
+        }
+
         if (localFile.isFile())
         {
             retStr = "{ \"text\" : \"" + localFile.getName() + "\"," +
@@ -199,14 +238,15 @@ public class MainSevlet extends HttpServlet{
                     " \"icon\" : \"jstree-folder\"," +
                     " \"children\" : [";
             File[] subFiles = localFile.listFiles();
+
             for (int i = 0; i < subFiles.length; i++)
             {
                 if (i < subFiles.length - 1) {
-                    retStr += getLocalFileTreeData(subFiles[i]) + ",";
+                    retStr += getSubTreeData(subFiles[i]) + ",";
                 }
                 else
                 {
-                    retStr += getLocalFileTreeData(subFiles[i]);
+                    retStr += getSubTreeData(subFiles[i]);
                 }
             }
             retStr += "]}";
@@ -214,6 +254,7 @@ public class MainSevlet extends HttpServlet{
 
         return retStr;
     }
+
 
     /*
      * 根据taskId完成task的上传任务, 任务上传包括 导出数据、打包数据、上传数据到中心端，中心端导入数据到存放数据的数据库
