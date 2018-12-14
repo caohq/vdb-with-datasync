@@ -78,7 +78,7 @@
             <select id="selectId" class="form-control selectpicker" style="width: 200px;display: inline !important;"></select>
             <div>
                 <label id="tableLabel" style="margin-top: 10px">&nbsp;&nbsp;选择表资源</label>
-                <div id="tablesDiv" style="margin-left: 40px;height:260px;overflow-y:auto;"></div>
+                <div id="tablesDiv" style="margin-left: 40px;min-height:160px;overflow-y:auto;"></div>
             </div>
             <div style="width: 100%;height: 40px;margin-top: 20px; " id="sqlSearchDiv">
                 <label>sql查询</label>
@@ -97,7 +97,7 @@
                 <select id="selectBdDirID"  class="form-control selectpicker" style="width: 200px;display: inline !important;"></select>
                 <div>
                     <label id="bdTableLabel">&nbsp;&nbsp;请选择资源</label>
-                    <div id="bdDirDiv" style="margin-left: 40px;height:260px;overflow-y:auto;"></div>
+                    <div id="bdDirDiv" style="margin-left: 40px;overflow-y:auto;"></div>
                 </div>
             </div>
             <div style="width: 100%;height: 40px;float: right;">
