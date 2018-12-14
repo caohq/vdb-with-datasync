@@ -244,6 +244,8 @@
     $("#selectBdDirID").on("change", function () {
         console.log("进入到selectBdDirID的change事件处理函数中了");
         var localDataSource = $("#selectBdDirID option:selected")[0].value;//获取数据库参数
+        console.log(localDataSource);
+
         $.ajax({
             type:"POST",
             url:"/getTreeOfDirList.do",
@@ -258,8 +260,9 @@
                 $("#bdSubmitButton").css("display", "block"); //显示“提交”按钮
 
                 var coreData = JSON.parse(data);
-                //console.log(coreData);
+                console.log(coreData);
 
+                $("#bdDirDiv").jstree("destroy");
                 $("#bdDirDiv").jstree(
                     {
                         "core": coreData,
