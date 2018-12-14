@@ -33,8 +33,9 @@ public class LoginServlet extends HttpServlet {
         }
 
         //获得配置信息
+        boolean statusOfGetInfo = false;
         try {
-            GetInfoService.getSubjectConfig();
+            statusOfGetInfo = GetInfoService.getSubjectConfig(); //返回值true， false， true表示同步信息成功，false表示同步信息失败
         }
         catch (Exception e)
         {

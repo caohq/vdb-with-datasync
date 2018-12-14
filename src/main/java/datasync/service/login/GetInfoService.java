@@ -73,6 +73,12 @@ public class GetInfoService
         DefaultHttpClient client = new DefaultHttpClient();
         HttpGet request = new HttpGet(url);
         HttpResponse response = client.execute(request);
+        int statusCode = response.getStatusLine().getStatusCode();
+        if (statusCode != 200)
+        {
+            return false;
+        }
+
         HttpEntity entity = response.getEntity();
         String content = "";
         String line = "";
