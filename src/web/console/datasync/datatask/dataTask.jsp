@@ -27,7 +27,7 @@
         .table_div{
             /*height: 326px;*/
             margin-left: -16px;
-            margin-right: -12px;
+            margin-right: -16px;
         }
         .table th, .table td {
             text-align: center;
@@ -196,13 +196,13 @@
     function operateFormatter(value, row, index) {//赋予的参数
         if(row.status==0){//未上传
             return [
-                '<button class="btn btn-default details btn-xs" value="'+row.dataTaskId+'" onclick="editTaskDtails(value)"><a>编辑</a></button>&nbsp;',
                 '<button class="btn btn-default details btn-xs" value="'+row.dataTaskId+','+row.status+'" onclick="ftpUpload(value)"><a>上传</a></button>&nbsp;',
                 '<button class="btn btn-default details btn-xs" value="'+row.dataTaskId+'" onclick="viewDtails(value)"><a>查看</a></button>&nbsp;',
                 '<button class="btn btn-default delete btn-xs" onclick="deleteThis(this)" data-id="'+row.dataTaskId+'"><a>删除</a></button>&nbsp;',
-                '<button class="btn btn-default delete btn-xs" onclick="" data-id="'+row.dataTaskId+'">'+
-                '<a href="/console/datasync/logFile/'+row.dataTaskId+'log.txt" download="'+row.dataTaskName+'Log.txt">日志</a>'+
-                '</button>'
+                '<button class="btn btn-default details btn-xs" value="'+row.dataTaskId+'" onclick="editTaskDtails(value)"><a>编辑</a></button>&nbsp;',
+                // '<button class="btn btn-default delete btn-xs" onclick="" data-id="'+row.dataTaskId+'">'+
+                //  '<a href="/console/datasync/logFile/'+row.dataTaskId+'log.txt" download="'+row.dataTaskName+'Log.txt">日志</a>'+
+                // '</button>'
             ].join('');
         }else{
             return [

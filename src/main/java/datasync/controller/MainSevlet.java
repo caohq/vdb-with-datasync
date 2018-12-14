@@ -344,9 +344,9 @@ public class MainSevlet extends HttpServlet{
         String connDataValue=res.getParameter("connDataValue");
         String [] connDataValueArray=connDataValue.split("\\$");
         String dataSourceName=res.getParameter("connDataName");
-       // String dataTaskName=res.getParameter("dataTaskName");//获取任务名称--id
+        // String dataTaskName=res.getParameter("dataTaskName");//获取任务名称--id
         int dataSourceId= (int) System.currentTimeMillis();
-//        datatask.setDataSourceId(5);
+        // datatask.setDataSourceId(5);
         datatask.setDataTaskId(datataskId);
         datatask.setDataTaskName(res.getParameter("taskName"));//任务名
         datatask.setTableName(res.getParameter("checkedValue"));//选择表的名称
@@ -359,6 +359,12 @@ public class MainSevlet extends HttpServlet{
         }
         datatask.setCreator(session.getAttribute("SPRING_SECURITY_LAST_USERNAME")==null?"": (String) session.getAttribute("SPRING_SECURITY_LAST_USERNAME"));
         datatask.setStatus("0");
+        String reslut=new DataConnDaoService().checkSql(res.getParameter("sql"),connDataValue);
+        PrintWriter out=req.getWriter();
+        if(!"true".equals(reslut)){
+            out.println(reslut);
+            return jsonObject;
+        }
         int flag = new DataTaskService().insertDatatask(datatask,connDataValue,dataSourceName);
 
         String zipFilePath=uploadTask(res, req,datataskId);//打包

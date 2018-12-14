@@ -179,7 +179,46 @@ public class DataConnDaoService {
 
     }
 
+    public String checkSql(String sql,String connDataValue) {
+        String dataType=judgeDataType(connDataValue);
+        Statement statement = null;
+        Connection conn = null;
+         try {
+             if("mysql".equals(dataType)){
+                     conn=new MysqlDataConnection().makeConn(connDataValue);
+             }
+             if("oracle".equals(dataType)){
+                 conn=new OracleDataConnection().makeConn(connDataValue);
+             }
+             if("sqlServer".equals(dataType)){
+                 conn=new SqlServerDataConnection().makeConn(connDataValue);
+             }
+         } catch (ClassNotFoundException e) {
+             e.printStackTrace();
+             return  "数据库连接失败！";
+          } catch (SQLException e) {
+             e.printStackTrace();
+             return  "数据库连接失败！";
+         }
 
+         String [] sqlArray=sql.split(";");
+
+        try {
+            statement = conn.createStatement();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return "数据库连接错误！";
+        }
+        for (int i=0;i<sqlArray.length;i++){
+            try {
+                ResultSet rs = statement.executeQuery(sqlArray[i]);
+            } catch (SQLException e) {
+                e.printStackTrace();
+                return  i+"？sql语句错误！";//用？分割，定位那个sql出现问题
+            }
+         }
+        return "true";
+    }
 
 
 
