@@ -8,8 +8,10 @@
     <script type="text/javascript" src="/console/shared/js/jquery-3.2.1.min.js " ></script>
     <script src="/console/shared/bootstrap-3.3.7/js/bootstrap.js"></script>
     <script src="/console/datasync/js/dragdiv.js"></script>
+    <script src="/console/datasync/js/layer/layer.js"></script>
     <script src="/console/shared/bootstrap-toastr/toastr.js"></script>
     <link rel="stylesheet" type="text/css" href="/console/shared/bootstrap-toastr/toastr.css" />
+    <link rel="stylesheet" type="text/css" href="/console/datasync/js/layer/layer.css" />
     <link rel="stylesheet" type="text/css" href="/console/shared/bootstrap-3.3.7/css/bootstrap.css">
     <link rel="stylesheet" type="text/css" href="/console/shared/bootstrap-3.3.7/css/bootstrap-table.min.css">
     <link rel="stylesheet" type="text/css" href="/console/datasync/css/createTask.css" />
@@ -138,6 +140,7 @@
     // });
     // 切换iframe页面
     function goToPage(param){
+        debugger
         document.getElementById("iframe").src=param;
         //$("#myIframe").attr("src",param);
     }

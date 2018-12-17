@@ -11,6 +11,8 @@ import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.sql.*;
 import java.util.List;
 import java.util.Map;
@@ -145,5 +147,36 @@ public class DataTaskDao {
         JdbcTemplate jdbcTemplate=sqlLiteDataConnection.makeJdbcTemplate();
         List<DataSrc> list = jdbcTemplate.query(sql, new Object[]{dataSourceId}, new DataSrcMapper());
         return list.size() > 0 ? list.get(0) : null;
+    }
+
+    //根据id修改task信息
+    public String updateSqlDataInfById(HttpServletRequest req, HttpServletResponse res){
+        DataTask dataTask=new DataTask();
+        final String datataskId=req.getParameter("dataTaskId");//获取任务名称--id
+        String connDataValue=req.getParameter("connDataValue");
+        String [] connDataValueArray=connDataValue.split("\\$");
+        final String dataSourceName=req.getParameter("connDataName");
+        final String dataTaskType=connDataValueArray[connDataValueArray.length-2];
+        final String checkedValue=req.getParameter("checkedValue");
+        final String taskSql=req.getParameter("sql");
+        final String sqlTableNameEn=req.getParameter("createNewTableName");
+
+        final String sql = "update  t_datatask set  dataTaskType=?,tableName=?,sqlString=?,sqlTableNameEn=? where dataTaskId=?;";
+        SqlLiteDataConnection sqlLiteDataConnection=new SqlLiteDataConnection();
+        JdbcTemplate jdbcTemplate=sqlLiteDataConnection.makeJdbcTemplate();
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        jdbcTemplate.update(new PreparedStatementCreator() {
+            @Override
+            public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
+                PreparedStatement ps = connection.prepareStatement(sql,Statement.RETURN_GENERATED_KEYS);
+                ps.setString(1,dataTaskType);
+                ps.setString(2,checkedValue);
+                ps.setString(3,taskSql);
+                ps.setString(4,sqlTableNameEn);
+                ps.setString(5,datataskId);
+                return ps;
+            }
+        },keyHolder);
+        return "success";
     }
 }

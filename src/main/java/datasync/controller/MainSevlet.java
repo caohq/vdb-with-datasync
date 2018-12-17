@@ -108,6 +108,8 @@ public class MainSevlet extends HttpServlet{
             ftpUploadProcess(req,res);
         }else if("/achieveDataNodeInf.do".equals(path)){
             achieveDataNodeInf(req,res);
+        }else if("/updateSqlData.do".equals(path)){
+            updateSqlData(req, res);
         }
         else{
             //错误路径
@@ -468,7 +470,7 @@ public class MainSevlet extends HttpServlet{
         datatask.setCreator(session.getAttribute("SPRING_SECURITY_LAST_USERNAME")==null?"": (String) session.getAttribute("SPRING_SECURITY_LAST_USERNAME"));
 
         List<String> filepaths =new LinkedList<String>();
-        String [] filepathArray=getCheckedFile.split(",");
+        String [] filepathArray=getCheckedFile.split(";");
           for (String str:filepathArray){
               ((LinkedList<String>) filepaths).add(str);
           }
@@ -742,6 +744,28 @@ public class MainSevlet extends HttpServlet{
 
         jsonObject.put("DataNodeInf",list);
         out.println(jsonObject);
+    }
+
+
+    //通過id修改task信息
+    public void updateSqlData(HttpServletRequest req, HttpServletResponse res) throws IOException {
+        PrintWriter printWriter=res.getWriter();
+        DataTaskService dataTaskService=new DataTaskService();
+        String result="";
+        String connDataValue=req.getParameter("connDataValue");
+        if(req.getParameter("sql")!="" && req.getParameter("sql")!=null){
+            String reslut1=new DataConnDaoService().checkSql(req.getParameter("sql"),connDataValue);
+            if(!"success".equals(reslut1)){
+                printWriter.println(reslut1);
+            }
+        }
+        try {
+            result=dataTaskService.updateSqlDataInfById(req,res);
+        } catch (Exception e) {
+            printWriter.println("fail!");
+            e.printStackTrace();
+        }
+        printWriter.println(result);
     }
 
 }

@@ -2,6 +2,8 @@ package datasync.service.dataTask;
 
 import datasync.entity.DataTask;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +34,10 @@ public class DataTaskService {
     public int updateSqlFilePathById(DataTask dataTask){
         return new DataTaskDao().updateSqlFilePathById(dataTask);
     }
+
+    public String updateSqlDataInfById(HttpServletRequest req, HttpServletResponse res){
+        return  new DataTaskDao().updateSqlDataInfById(req, res);
+    };
 
 
 }

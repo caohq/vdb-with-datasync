@@ -23,11 +23,11 @@
             <div class="modal-body" style="min-height:500px;max-height:76%;overflow: auto;">
                 <!--数据库-->
                 <div style="width:100%;">
-                    <div id="sjk" class="form-group" style="width: 86%;margin-left: 150px;">
+                    <div id="sjk" class="form-group" style="width: 86%;margin-left: 140px;">
                         <label  >数据库列表:</label>
                         <select id="selectId" class="form-control selectpicker" style="width: 200px;display: inline !important;"></select>
                         <div>
-                            <label id="tableLabel" style="margin-top: 10px">&nbsp;&nbsp;选择表资源</label>
+                            <label id="tableLabel" style="margin-top: 18px">&nbsp;&nbsp;选择表资源</label>
                             <div id="tablesDiv" style="margin-left: 40px;height:260px;overflow-y:auto;"></div>
                         </div>
                         <div style="width: 100%;height: 40px;margin-top: 20px; " id="sqlSearchDiv">
@@ -41,7 +41,7 @@
                     </div>
 
                 <div class="modal-footer">
-                    <button type="button" data-dismiss="modal" class="btn  btn-danger">保存</button>
+                    <button type="button" onclick="submitSqlData()" class="btn  btn-danger">保存</button>
                     <button type="button" data-dismiss="modal" class="btn  btn-danger">取消</button>
                 </div>
             </div>
@@ -63,11 +63,15 @@
 
 <script>
     var idNum=0;
+    var index=0;
     var sqlString="";//JSON.parse(data).dataTask.sqlString;
     var selectdTableNames="";//JSON.parse(data).dataTask.tableName
     var newTableNames="";//JSON.parse(data).dataTask.sqlTableNameEn
     var dataSourceValue="";//JSON.parse(data).dataTask.dataSrc.dataSourceName
     var dataTaskName="";//JSON.parse(data).dataTask.dataTaskName
+    var dataTaskId="";
+    var dataSourceName="";
+    var dataSourceId="";
     $(function(){
         $("#dataModal").modal("show");
         // $("#editorModal").modal("show");
@@ -109,7 +113,10 @@
                  selectdTableNames=JSON.parse(data).dataTask.tableName;//选中的表名称
                  newTableNames=JSON.parse(data).dataTask.sqlTableNameEn;//新建的表名称
                  dataSourceValue=JSON.parse(data).dataTask.dataSrc.databaseType;//数据源value
+                 dataSourceName=JSON.parse(data).dataTask.dataSrc.dataSourceName;//数据源mingheng
+                dataSourceId=JSON.parse(data).dataTask.dataSrc.dataSourceId;//数据源mingheng
                  dataTaskName=JSON.parse(data).dataTask.dataTaskName;//数据源value
+                dataTaskId=JSON.parse(data).dataTask.dataTaskId;
                 $("#taskEditorTitle")[0].textContent="数据任务修改--("+dataTaskName+")";
                 $("select option[value='"+dataSourceValue+"']").attr("selected","selected");//就选中对应的option,
                  loadTablesByDataSource();
@@ -325,6 +332,130 @@
             "        </div><!-- /.modal-content -->\n" +
             "    </div><!-- /.modal -->\n" +
             "</div>");
+    };
+
+    // 数据库任务提交
+    function submitSqlData(title){
+        index=index+1;
+        var checked= checkTaskData();
+        if(checked==true){
+            var dateDef = new Date();
+            var month=dateDef.getMonth()+1;
+            var dataTaskName = ""+dateDef.getFullYear()+month+dateDef.getDate()+dateDef.getHours()+dateDef.getMinutes()+dateDef.getSeconds();
+            var connDataName = $("#selectId option:selected")[0].text;//获取数据源
+            var connDataValue = $("#selectId option:selected")[0].value;//获取数据源value
+            var sql=sqlArray;//获取sql语句
+            var createNewTableName=sqlTableArray;//获取新建表名
+            var checkedValue=getChecedValue();
+            $.ajax({
+                type:"POST",
+                url:"/updateSqlData.do",
+                data:{
+                    connDataName:connDataName,
+                    taskName:dataTaskName,
+                    sql:sql,
+                    createNewTableName:createNewTableName,
+                    checkedValue:checkedValue,
+                    connDataValue:connDataValue,
+                    dataTaskName:dataTaskName,
+                    dataTaskId:dataTaskId,
+                    dataSourceName:dataSourceName,
+                    dataSourceId:dataSourceId
+                },
+                beforeSend:function(data){
+                    index = layer.load(1, {
+                        shade: [0.5,'#fff'] //0.1透明度的白色背景
+                    });
+                },
+                success:function (dataSession) {
+                    if(dataSession.replace(/[\r\n]/g,"")!="success"){
+                        toastr["error"]("sql语句错误，请“预览”调试！");
+                        $("#layui-layer-shade"+index+"").remove();
+                        $("#layui-layer"+index+"").remove();
+                        $('#sqlInputBox'+dataSession.split("？")[0]+'')[0].style.borderColor="red";
+                        return;
+                    }else{
+                        toastr["success"]("保存成功！");
+                        $("#dataModal").modal('hide');
+                        $("#layui-layer-shade"+index+"").remove();
+                        $("#layui-layer"+index+"").remove();
+                        parent.goToPage("datatask/dataTask.jsp");
+                    }
+                },
+                error:function () {
+                    console.log("请求失败")
+                }
+            })
+        }else
+            return;
+    }
+
+    //数据源（数据库）任务新建检测
+    function checkTaskData() {
+        var checked=true;
+        var checkedValue=getChecedValue();
+        sqlArray="";
+        sqlTableArray="";
+        for(var i=0;i<=idNum;i++){//sql非空校驗
+            $('#sqlInputBox'+i+'')[0].style.borderColor="";
+            $('#createNewTableName'+i+'')[0].style.borderColor="";
+            //sql框均为空时--sql语句 表名
+            if(($('#createNewTableName'+i+'').val()=="" || $('#createNewTableName'+i+'').val()==null)&&($('#sqlInputBox'+i+'').val()=="" || $('#sqlInputBox'+i+'').val()==null)){
+
+            }else{
+                if($('#sqlInputBox'+i+'').val()=="" || $('#sqlInputBox'+i+'').val()==null){
+                    $('#sqlInputBox'+i+'')[0].style.borderColor="red";
+                    toastr["error"]("请输入sql语句！");//alert("请输入新建表名！");
+                    return;
+                }else{
+                    sqlArray=sqlArray+$('#sqlInputBox'+i+'').val()+";";
+                }
+
+                if($('#createNewTableName'+i+'').val()=="" || $('#createNewTableName'+i+'').val()==null){
+                    $('#createNewTableName'+i+'')[0].style.borderColor="red";
+                    toastr["error"]("请输入新建表名！");//alert("请输入新建表名！");
+                    return;
+                }else{
+                    sqlTableArray=sqlTableArray+$('#createNewTableName'+i+'').val()+";";
+                }
+            }
+        }
+        var tableNameArray=sqlTableArray.split(";");
+        for(var i=0;i<tableNameArray.length;i++){
+            for(var j=0;j<=tableNameArray.length;j++){
+                if((tableNameArray[i]==tableNameArray[j])&&(i!=j)){
+                    toastr["error"]("新建表名不能相同！");
+                    $('#createNewTableName'+i+'')[0].style.borderColor="red";
+                    $('#createNewTableName'+j+'')[0].style.borderColor="red";
+                    return;
+                }
+            }
+        }
+
+        if((sqlArray=="" || sqlTableArray=="")&&(checkedValue==null || checkedValue=="")){
+            checked=false;
+            toastr["error"]("请至少输入sql语句或选择表资源");//alert("请至少输入sql语句或选择表资源！");
+            return;
+        }
+        return checked;
+    }
+
+    function getChecedValue() {
+        var i = 0;
+        var values = '';
+        var checked = $("input:checked"); //获取所有被选中的标签元素
+        for (i = 0; i < checked.length; i++)
+        { //将所有被选中的标签元素的值保存成一个字符串，以逗号隔开
+            if (i < checked.length - 1 && $("input:checked")[i].type=='checkbox')
+            {
+                values += checked[i].value + ';';
+            }
+            else if($("input:checked")[i].type=='checkbox')
+            {
+                values += checked[i].value;
+            }
+        }
+        return values;
     }
 
 
