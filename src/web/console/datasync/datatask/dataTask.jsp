@@ -366,7 +366,22 @@
 
     //编辑任务
     function editTaskDtails(taskId){
+            $("#taskIdHidden").val(taskId);
+            var fatherBody = $(window.top.document.body);
+            var id = 'pages';
+            var dialog = $('#' + id);
+            if (dialog.length == 0) {
+                dialog = $('<div class="modal fade" role="dialog" id="' + id + '"/>');
+                //  dialog.empty()
+                dialog.appendTo(fatherBody);
+            }
+            dialog.load("/console/datasync/datatask/editorDataTask.html", function() {
+                dialog.modal({
+                    backdrop: false
+                });
 
+            });
+            fatherBody.append("<div id='backdropId' class='modal-backdrop fade in'></div>");
     }
 
 </script>

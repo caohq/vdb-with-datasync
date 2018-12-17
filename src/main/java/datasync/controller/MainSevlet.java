@@ -445,17 +445,17 @@ public class MainSevlet extends HttpServlet{
     public  JSONObject submitFileData(HttpServletRequest req, HttpServletResponse res) throws SQLException, IOException {
         String configFilePath = LoginService.class.getClassLoader().getResource("../../WEB-INF/config.properties").getFile();
         String subjectCode= ConfigUtil.getConfigItem(configFilePath, "SubjectCode");
-   //     PrintWriter out = res.getWriter();
+   //   PrintWriter out = res.getWriter();
         JSONObject jsonObject = new JSONObject();
         DataTask datatask = new DataTask();
-    //    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+    //  SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         Date date=new Date();
         int dataSourceId= (int) System.currentTimeMillis();
         HttpSession session=req.getSession();
         String  connDataName=req.getParameter("connDataName");//本地连接名称
         String connDataValue=req.getParameter("connDataValue");//数据源名称
         String  getCheckedFile=req.getParameter("getCheckedFile");//文件路径
-//        String  getLocalTaskName=req.getParameter("getLocalTaskName");//获取任务名称
+//      String  getLocalTaskName=req.getParameter("getLocalTaskName");//获取任务名称
         String getLocalTaskName=req.getParameter("dataTaskName");//任務id
         String datataskId=req.getParameter("dataTaskName");//任務id
         datatask.setCreateTime(date);
@@ -479,7 +479,7 @@ public class MainSevlet extends HttpServlet{
         DataTaskService dataTaskService=new DataTaskService();
         datatask.setSqlFilePath(zipFile.replace(File.separator,"%_%"));
         //boolean upresult = dataTaskService.update(dt);
-        int flag = new DataTaskService().insertDatatask(datatask,connDataName,connDataValue);
+        int flag = new DataTaskService().insertDatatask(datatask,connDataValue,connDataName);
         return jsonObject;
     }
 

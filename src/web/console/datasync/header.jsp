@@ -18,7 +18,7 @@
         padding-top: 10px;
         color: #FFFFFF;
         position:fixed;
-        bottom:0;
+        bottom:-1;
     }
     .foot_top {
         height: 10px;

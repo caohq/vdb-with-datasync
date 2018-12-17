@@ -30,6 +30,7 @@ public class DataTaskMapperDsName implements RowMapper {
         dataTask.setLogPath(resultSet.getString("LogPath"));
         DataSrc dataSrc=new DataSrc();
         dataSrc.setDataSourceName(resultSet.getString("DataSourceName"));
+        dataSrc.setDatabaseType(resultSet.getString("DataSourceType"));
         dataTask.setDataSrc(dataSrc);
         return dataTask;
     }

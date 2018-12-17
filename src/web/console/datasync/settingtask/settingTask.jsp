@@ -78,7 +78,7 @@
             <select id="selectId" class="form-control selectpicker" style="width: 200px;display: inline !important;"></select>
             <div>
                 <label id="tableLabel" style="margin-top: 10px">&nbsp;&nbsp;选择表资源</label>
-                <div id="tablesDiv" style="margin-left: 40px;min-height:160px;overflow-y:auto;"></div>
+                <div id="tablesDiv" style="margin-left: 40px;height:260px;overflow-y:auto;"></div>
             </div>
             <div style="width: 100%;height: 40px;margin-top: 20px; " id="sqlSearchDiv">
                 <label>sql查询</label>
@@ -97,7 +97,7 @@
                 <select id="selectBdDirID"  class="form-control selectpicker" style="width: 200px;display: inline !important;"></select>
                 <div>
                     <label id="bdTableLabel">&nbsp;&nbsp;请选择资源</label>
-                    <div id="bdDirDiv" style="margin-left: 40px;overflow-y:auto;"></div>
+                    <div id="bdDirDiv" style="margin-left: 40px;height:260px;overflow-y:auto;"></div>
                 </div>
             </div>
             <div style="width: 100%;height: 40px;float: right;">
@@ -244,6 +244,8 @@
     $("#selectBdDirID").on("change", function () {
         console.log("进入到selectBdDirID的change事件处理函数中了");
         var localDataSource = $("#selectBdDirID option:selected")[0].value;//获取数据库参数
+        console.log(localDataSource);
+
         $.ajax({
             type:"POST",
             url:"/getTreeOfDirList.do",
@@ -258,8 +260,9 @@
                 $("#bdSubmitButton").css("display", "block"); //显示“提交”按钮
 
                 var coreData = JSON.parse(data);
-                //console.log(coreData);
+                console.log(coreData);
 
+                $("#bdDirDiv").jstree("destroy");
                 $("#bdDirDiv").jstree(
                     {
                         "core": coreData,
@@ -318,9 +321,9 @@
             var dataTaskName = ""+dateDef.getFullYear()+month+dateDef.getDate()+dateDef.getHours()+dateDef.getMinutes()+dateDef.getSeconds();
             var connDataName = $("#selectId option:selected")[0].text;//获取数据源
             var connDataValue = $("#selectId option:selected")[0].value;//获取数据源value
-            var checkedValue=getChecedValue();
             var sql=sqlArray;//获取sql语句
             var createNewTableName=sqlTableArray;//获取新建表名
+            var checkedValue=getChecedValue();
             $.ajax({
                 type:"POST",
                 url:"/submitSqlData.do",
@@ -341,7 +344,6 @@
 
                 },
                 success:function (dataSession) {
-                    debugger
                     if(dataSession.replace(/[\r\n]/g,"")!="success"){
                         toastr["error"]("sql语句错误，请“预览”调试！");
                         $("#layui-layer-shade"+index+"").remove();
@@ -377,7 +379,7 @@
         var checkedNodes = localFileTree.get_checked(true);
         for (var i = 0; i < checkedNodes.length - 1; i++)
         {
-            pathsOfCheckedFiles += localFileTree.get_path(checkedNodes[i], "/", false) + ",";
+            pathsOfCheckedFiles += localFileTree.get_path(checkedNodes[i], "/", false) + ";";
         }
         pathsOfCheckedFiles += localFileTree.get_path(checkedNodes[checkedNodes.length - 1], "/", false);
 
