@@ -8,7 +8,7 @@ import datasync.entity.DataTask;
 import datasync.mapper.DataSrcMapper;
 import datasync.mapper.DataTaskMapper;
 import datasync.service.FileResourceService;
-import datasync.service.login.LoginService;
+import datasync.service.login.GetInfoService;
 import datasync.utils.ConfigUtil;
 import datasync.utils.DDL2SQLUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -195,7 +195,7 @@ public class UploadTaskService {
 
     //对导出sql文件进行zip打包
     public boolean packTaskData(List<String> fileList,String datataskId,String path) {
-        String configFilePath = LoginService.class.getClassLoader().getResource("../../WEB-INF/config.properties").getFile();
+        String configFilePath = GetInfoService.class.getClassLoader().getResource("../../WEB-INF/config.properties").getFile();
         String subjectCode= ConfigUtil.getConfigItem(configFilePath, "SubjectCode");
         String fileName = subjectCode+"_"+datataskId+"_sql";
         FileResourceService fileResourceService=new FileResourceService();

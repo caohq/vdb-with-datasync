@@ -1,6 +1,6 @@
 package datasync.controller;
 
-import datasync.service.login.LoginService;
+import datasync.service.login.GetInfoService;
 import datasync.utils.MD5;
 import vdb.mydb.VdbManager;
 import vdb.mydb.security.VdbSecurityManager;
@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 public class LoginServlet extends HttpServlet {
-    private LoginService loginService = new LoginService();
+    private GetInfoService loginService = new GetInfoService();
     private MD5 md5=new MD5();
 
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -32,24 +32,17 @@ public class LoginServlet extends HttpServlet {
             return;
         }
 
+        //获得配置信息
+        boolean statusOfGetInfo = false;
+        try {
+            statusOfGetInfo = GetInfoService.getSubjectConfig(); //返回值true， false， true表示同步信息成功，false表示同步信息失败
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();;
+        }
+
         out.println("202");//登录成功
-
-        String password1=request.getParameter("j_password");
-//        int loginStatus = 0; // log success or not， 0 ：success, 1: failed, notice : username or password is wrong
-//        loginStatus = loginService.validateLogin(userName, password1);
-//
-//        String loginNotice = "";
-//
-//        if (loginStatus == 1)
-//        {
-//            loginNotice = "success";
-//        }
-//        else
-//        {
-//            loginNotice = "fail";
-//        }
-
-//        response.getWriter().println(loginNotice);
     }
 }
 

@@ -11,16 +11,16 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
-public class LoginService
+public class GetInfoService
 {
-    public int validateLogin(String userName, String password)
+    /*public int validateLogin(String userName, String password)
     {
         //1、访问中心端验证登录是否成功
         int loginStatus = 0;
 
-        //String temp = LoginService.class.getClassLoader().getResource("../../WE").getFile();
+        //String temp = GetInfoService.class.getClassLoader().getResource("../../WE").getFile();
 
-        String configFilePath = LoginService.class.getClassLoader().getResource("../../WEB-INF/config.properties").getFile();
+        String configFilePath = GetInfoService.class.getClassLoader().getResource("../../WEB-INF/config.properties").getFile();
 
         try {
             String portalUrl = ConfigUtil.getConfigItem(configFilePath, "PortalUrl");
@@ -55,12 +55,14 @@ public class LoginService
        }
 
        return  loginStatus;
-    }
+    }*/
 
-    private boolean getSubjectConfig(String userName) throws Exception
+    public static boolean getSubjectConfig() throws Exception
     {
-        String configFilePath = LoginService.class.getClassLoader().getResource("../../WEB-INF/config.properties").getFile();
-        System.out.println(configFilePath);
+        String configFilePath = GetInfoService.class.getClassLoader().getResource("../../WEB-INF/config.properties").getFile();
+
+        String userName = ConfigUtil.getConfigItem(configFilePath, "Username");
+
         String portalUrl = ConfigUtil.getConfigItem(configFilePath, "PortalUrl");
         String getSubjectApiPath = "/api/getSubjectByUser/" + userName;
 
@@ -69,18 +71,25 @@ public class LoginService
         /*RestTemplate restTemplate = new RestTemplate();
         JSONObject subjectInfo = restTemplate.getForObject(url, JSONObject.class);*/
         DefaultHttpClient client = new DefaultHttpClient();
-        HttpGet request = new HttpGet(url);
-        HttpResponse response = client.execute(request);
-        HttpEntity entity = response.getEntity();
+        HttpResponse response = client.execute(new HttpGet(url));
+        int statusCode = response.getStatusLine().getStatusCode();
+        if (statusCode != 200)
+        {
+            return false;
+        }
+
         String content = "";
         String line = "";
-        BufferedReader reader = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+
+        BufferedReader reader = new BufferedReader(new InputStreamReader(response.getEntity().getContent(), "utf-8"));
         while ((line = reader.readLine()) != null)
         {
             content = content + line;
         }
-        JSONObject subjectInfo = JSON.parseObject(content);
 
+        System.out.println("content = " + content);
+
+        JSONObject subjectInfo = JSON.parseObject(content);
         JSONObject dataMap = (JSONObject) subjectInfo.get("data");
 
         String subjectName = "";
@@ -132,6 +141,7 @@ public class LoginService
         if (dataMap.get("brief") != null)
         {
             brief = dataMap.get("brief").toString();
+            System.out.println("brief" + brief);
         }
 
         ConfigUtil.setConfigItem(configFilePath, "IsInitialized", "true");
@@ -147,11 +157,5 @@ public class LoginService
         ConfigUtil.setConfigItem(configFilePath, "Brief", brief);
 
         return true;
-    }
-
-    public static void main(String[] args)
-    {
-        LoginService loginService = new LoginService();
-        loginService.validateLogin("system", "123456");
     }
 }

@@ -1,8 +1,6 @@
 package datasync.utils;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
+import java.io.*;
 import java.util.Properties;
 
 public class ConfigUtil {
@@ -10,10 +8,8 @@ public class ConfigUtil {
         String value = null;
         try {
             Properties properties = new Properties();
-            properties.load(new FileInputStream(new File(configFilePath)));
+            properties.load(new InputStreamReader(new FileInputStream(configFilePath)));
             value = properties.getProperty(key);
-           // value=new String(value.getBytes("ISO-8859-1"),"gbk");
-
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -24,11 +20,12 @@ public class ConfigUtil {
     public static void setConfigItem(String configFilePath, String key, String value) {
         try {
             Properties properties = new Properties();
-            properties.load(new FileInputStream(new File(configFilePath)));
+
+            properties.load(new FileInputStream(configFilePath));
             properties.setProperty(key, value);
-            FileOutputStream fos = new FileOutputStream(new File(configFilePath));
-            properties.store(fos, "");
-            fos.close();
+
+            properties.store(new FileOutputStream(configFilePath), "");
+
         } catch (Exception e) {
             e.printStackTrace();
         }

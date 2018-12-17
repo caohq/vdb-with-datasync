@@ -6,7 +6,7 @@ import datasync.entity.FtpUtil;
 import datasync.service.FileResourceService;
 import datasync.service.dataNodeInf.AchieveFtpConfigInf;
 import datasync.service.dataTask.DataTaskService;
-import datasync.service.login.LoginService;
+import datasync.service.login.GetInfoService;
 import datasync.service.settingTask.DataConnDaoService;
 import datasync.service.settingTask.LocalConnDaoService;
 import datasync.service.settingTask.UploadTaskService;
@@ -374,7 +374,7 @@ public class MainSevlet extends HttpServlet{
 
    //新建数据库任务
     public JSONObject submitSqlData(HttpServletRequest res, HttpServletResponse req) throws SQLException, IOException {
-        String configFilePath = LoginService.class.getClassLoader().getResource("../../WEB-INF/config.properties").getFile();
+        String configFilePath = GetInfoService.class.getClassLoader().getResource("../../WEB-INF/config.properties").getFile();
         String subjectCode= ConfigUtil.getConfigItem(configFilePath, "SubjectCode");
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         Date date=new Date();
@@ -443,7 +443,7 @@ public class MainSevlet extends HttpServlet{
 
     //新建任务--本地文件上传任务
     public  JSONObject submitFileData(HttpServletRequest req, HttpServletResponse res) throws SQLException, IOException {
-        String configFilePath = LoginService.class.getClassLoader().getResource("../../WEB-INF/config.properties").getFile();
+        String configFilePath = GetInfoService.class.getClassLoader().getResource("../../WEB-INF/config.properties").getFile();
         String subjectCode= ConfigUtil.getConfigItem(configFilePath, "SubjectCode");
    //   PrintWriter out = res.getWriter();
         JSONObject jsonObject = new JSONObject();
@@ -520,7 +520,7 @@ public class MainSevlet extends HttpServlet{
                 pw.println(fileAttrName+ "\n");
             }
         }
-        String configFilePath = LoginService.class.getClassLoader().getResource("../../WEB-INF/config.properties").getFile();
+        String configFilePath = GetInfoService.class.getClassLoader().getResource("../../WEB-INF/config.properties").getFile();
         String subjectCode= ConfigUtil.getConfigItem(configFilePath, "SubjectCode");
 //        String subjectCode = "ssdd";
         String host = ConfigUtil.getConfigItem(configFilePath, "FtpHost");// "10.0.86.77";
@@ -734,11 +734,12 @@ public class MainSevlet extends HttpServlet{
         if(brief==null){
             brief="";
         }
-        System.out.println();
-        list.add(new String(subjectName.getBytes("ISO-8859-1"),"gbk"));
+
+        list.add(subjectName);
         list.add(subjectCode);
         list.add(userName);
-        list.add(new String(brief.getBytes("ISO-8859-1"),"gbk"));
+        list.add(brief);
+
         jsonObject.put("DataNodeInf",list);
         out.println(jsonObject);
     }
