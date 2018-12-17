@@ -71,24 +71,25 @@ public class GetInfoService
         /*RestTemplate restTemplate = new RestTemplate();
         JSONObject subjectInfo = restTemplate.getForObject(url, JSONObject.class);*/
         DefaultHttpClient client = new DefaultHttpClient();
-        HttpGet request = new HttpGet(url);
-        HttpResponse response = client.execute(request);
+        HttpResponse response = client.execute(new HttpGet(url));
         int statusCode = response.getStatusLine().getStatusCode();
         if (statusCode != 200)
         {
             return false;
         }
 
-        HttpEntity entity = response.getEntity();
         String content = "";
         String line = "";
-        BufferedReader reader = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+
+        BufferedReader reader = new BufferedReader(new InputStreamReader(response.getEntity().getContent(), "utf-8"));
         while ((line = reader.readLine()) != null)
         {
             content = content + line;
         }
-        JSONObject subjectInfo = JSON.parseObject(content);
 
+        System.out.println("content = " + content);
+
+        JSONObject subjectInfo = JSON.parseObject(content);
         JSONObject dataMap = (JSONObject) subjectInfo.get("data");
 
         String subjectName = "";
@@ -140,6 +141,7 @@ public class GetInfoService
         if (dataMap.get("brief") != null)
         {
             brief = dataMap.get("brief").toString();
+            System.out.println("brief" + brief);
         }
 
         ConfigUtil.setConfigItem(configFilePath, "IsInitialized", "true");

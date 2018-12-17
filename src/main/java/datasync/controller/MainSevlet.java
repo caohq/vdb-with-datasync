@@ -734,11 +734,12 @@ public class MainSevlet extends HttpServlet{
         if(brief==null){
             brief="";
         }
-        System.out.println();
-        list.add(new String(subjectName.getBytes("ISO-8859-1"),"gbk"));
+
+        list.add(subjectName);
         list.add(subjectCode);
         list.add(userName);
-        list.add(new String(brief.getBytes("ISO-8859-1"),"gbk"));
+        list.add(brief);
+
         jsonObject.put("DataNodeInf",list);
         out.println(jsonObject);
     }

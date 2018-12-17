@@ -10,6 +10,7 @@ public class AchieveFtpConfigInf {
     public String getConfigInf(String key){
         String configFilePath = GetInfoService.class.getClassLoader().getResource(configPath).getFile();
         String result= ConfigUtil.getConfigItem(configFilePath, key);
+
         return result;
     }
 
