@@ -36,7 +36,7 @@
                             <input id="createNewTableName0" class="form-control sqlStatements" style="width: 100px;display: inline !important;" type="text" placeholder="请输入表名"/>
                             <button type="button" class="btn blue preview" onclick="showPreviewModal(sqlInputBox0)" >预览</button>
                             <button type="button" class="btn green" onclick="addSqlInput()"><span class="glyphicon glyphicon-plus"></span>sql查询</button>
-                            <button type="button" class="btn green" onclick="submitSqlData()">提交</button>
+                            <!--<button type="button" class="btn green" onclick="submitSqlData()">提交</button>-->
                         </div>
                     </div>
 
@@ -134,6 +134,7 @@
             type:"POST",
             url:"/searchTables.do",
             cache: false,
+            async:false,
             data:{
                 connData:connData
             },
@@ -193,6 +194,7 @@
             type:"POST",
             url:"/searchTables.do",
             cache: false,
+            async:false,
             data:{
                 connData:connData
             },
@@ -345,6 +347,7 @@
             var connDataName = $("#selectId option:selected")[0].text;//获取数据源
             var connDataValue = $("#selectId option:selected")[0].value;//获取数据源value
             var sql=sqlArray;//获取sql语句
+            debugger
             var createNewTableName=sqlTableArray;//获取新建表名
             var checkedValue=getChecedValue();
             $.ajax({
@@ -359,7 +362,7 @@
                     connDataValue:connDataValue,
                     dataTaskName:dataTaskName,
                     dataTaskId:dataTaskId,
-                    dataSourceName:dataSourceName,
+                    dataSourceName:connDataName,
                     dataSourceId:dataSourceId
                 },
                 beforeSend:function(data){
@@ -368,6 +371,7 @@
                     });
                 },
                 success:function (dataSession) {
+                    debugger
                     if(dataSession.replace(/[\r\n]/g,"")!="success"){
                         toastr["error"]("sql语句错误，请“预览”调试！");
                         $("#layui-layer-shade"+index+"").remove();

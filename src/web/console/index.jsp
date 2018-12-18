@@ -114,7 +114,7 @@
     </style>
 </head>
 
-<body>
+<body onkeydown="keyLogin();">
 
 <div class="wrapper">
     <img src="/console/datasync/images/Log04_bg.jpg" alt="">
@@ -141,10 +141,12 @@
     if (top != window)
         top.location.href = window.location.href;
 
+    function keyLogin(){
+        if (event.keyCode==13)  //回车键的键值为13
+            start();
+    }
+
     function start(){
-        // window.location.href="/console/datasync/starter.jsp";
-       // document.location.href="/j_spring_security_check?j_username=root&j_password=1&j_uri=%2Fcatalog%2F";
-      //  window,location.href="/console/datasync/starter.jsp";
         var username=$("#userName")[0].value;
         var password=$("#password")[0].value;
         var checked=true;
@@ -171,7 +173,6 @@
                 success:function (data) {
                     $("#checkedUserName").html("");
                     $("#checkedUserPassword").html("");//清空错误信息！
-                    debugger
                     if(data.replace(/[\r\n]/g,"")=="202"){
                        vdbLogin(username,password);
                     }else if(data.replace(/[\r\n]/g,"")=="201"){

@@ -140,7 +140,6 @@
     // });
     // 切换iframe页面
     function goToPage(param){
-        debugger
         document.getElementById("iframe").src=param;
         //$("#myIframe").attr("src",param);
     }

@@ -4,6 +4,7 @@ import datasync.entity.DataTask;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
@@ -35,9 +36,18 @@ public class DataTaskService {
         return new DataTaskDao().updateSqlFilePathById(dataTask);
     }
 
-    public String updateSqlDataInfById(HttpServletRequest req, HttpServletResponse res){
+    public String updateSqlDataInfById(HttpServletRequest req, HttpServletResponse res) throws IOException {
         return  new DataTaskDao().updateSqlDataInfById(req, res);
-    };
+    }
+
+    public String uploadTask(HttpServletRequest req, HttpServletResponse res,String dataTaskId) throws IOException {
+        return  new DataTaskDao().uploadTask(req, res,dataTaskId);
+    }
+
+    public int ftpLocalUpload(HttpServletRequest req, HttpServletResponse res) throws IOException {
+        return  new DataTaskDao().ftpLocalUpload(req, res);
+    }
+
 
 
 }
