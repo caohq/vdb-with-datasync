@@ -35,7 +35,7 @@
             </div>
 
             <div class="form-group">
-                <label  class="col-sm-3 control-label">专业库代码 :</label>
+                <label  class="col-sm-3 control-label">专业库代码:</label>
                 <div class="col-sm-8" name="subjectCode"></div>
             </div>
 
