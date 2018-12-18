@@ -113,28 +113,6 @@ public class MainSevlet extends HttpServlet{
      * @return
      * @throws IOException
      */
-    /**
-     [
-         {
-            "text" : "Root node",
-            "icon" : "jstree-file"
-            "children" :
-             [
-                 { "text" : "Child node 1",
-                 "icon" : "jstree-folder"
-                 },
-                 { "text" : "Child node 2",
-                 "icon" : "jstree-file"
-                 }
-             ]
-         },
-         {
-            "text": "root node2",
-            "icon": "jstree-file"
-         }
-     }
-     ]
-     */
     public String getTreeOfDirList(HttpServletRequest request, HttpServletResponse response)
     {
         String localDataSource = request.getParameter("localDataSource");
