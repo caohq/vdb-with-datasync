@@ -347,7 +347,6 @@
             var connDataName = $("#selectId option:selected")[0].text;//获取数据源
             var connDataValue = $("#selectId option:selected")[0].value;//获取数据源value
             var sql=sqlArray;//获取sql语句
-            debugger
             var createNewTableName=sqlTableArray;//获取新建表名
             var checkedValue=getChecedValue();
             $.ajax({
@@ -371,7 +370,6 @@
                     });
                 },
                 success:function (dataSession) {
-                    debugger
                     if(dataSession.replace(/[\r\n]/g,"")!="success"){
                         toastr["error"]("sql语句错误，请“预览”调试！");
                         $("#layui-layer-shade"+index+"").remove();

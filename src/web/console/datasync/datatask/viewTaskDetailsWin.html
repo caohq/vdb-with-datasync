@@ -122,10 +122,14 @@
                 if("file"==JSON.parse(data).dataTask.dataTaskType){
                    $("#file-createTime").html(new Date(JSON.parse(data).dataTask.createTime).toLocaleDateString().replace(/\//g, "-")+" "+new Date(JSON.parse(data).dataTask.createTime).toLocaleTimeString().replace(/\//g, "-"));
                    $("#file-dataSourceName").html(JSON.parse(data).dataTask.dataSrc.dataSourceName);
-                   $("#file-filePath").html(JSON.parse(data).dataTask.filePath.replace(/,/g,"<br/>"));//<br/>
                    $("#file-dataTaskName").html(JSON.parse(data).dataTask.dataTaskName);
                    $("#file-creator").html(JSON.parse(data).dataTask.creator);
                    $("#file-status").html(JSON.parse(data).dataTask.status=="0"?"未上传":"上传成功");
+                   $("#file-filePath").html(JSON.parse(data).dataTask.filePath.replace(/;/g,"<br/>"));//<br/>
+
+                    // console.log(JSON.parse(data).dataTask.filePath);
+                    // var fo=new ActiveXObject(Scripting.FileSystem)
+                    // debugger
                    $("#fileModal").modal("show");
                 }else{
                     $("#pre-dataTaskName").html(JSON.parse(data).dataTask.dataTaskName);

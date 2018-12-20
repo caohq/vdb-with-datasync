@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>任务详情</title>
+    <link type="text/css" rel="stylesheet" href="/console/shared/zTree_v3/css/demo.css" />
+    <link type="text/css" rel="stylesheet" href="/console/shared/zTree_v3/css/zTreeStyle/zTreeStyle.css" />
+    <style>
+        .modal-dialog{
+            top:4% !important;
+            width: 50% !important;
+        }
+
+        ul.ztree {
+            width: 100%;
+            height: 93%;
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- 模态框（Modal） -->
+<div id="dataModal" class="modal fade" tabindex="-1" data-width="400">
+    <div class="modal-dialog" >
+        <div class="modal-content">
+            <div class="modal-header bg-primary">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="taskEditorTitle"></h4>
+            </div>
+            <div class="modal-body" style="min-height:300px;max-height:76%;overflow: auto;">
+                    <!--本地数据源列表-->
+                    <div id="bdsc" style="width: 90%;margin-left: 76px;">
+                        <div style="" class="form-group">
+                            <label>本地数据源列表:</label>
+                            <select id="selectBdDirID"  class="form-control selectpicker" style="width: 200px;display: inline !important;"></select>
+                            <div class="content_wrap" style="width: 89%;">
+                                <label id="bdTableLabel">&nbsp;&nbsp;请选择资源</label>
+                                <div id="ViewBdDirDiv" style="margin-left: 40px;overflow-y:auto;max-height: 450px;min-height: 300px;">
+                                    <ul id="treeDemo" class="ztree"></ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <div class="modal-footer">
+                    <button type="button" onclick="submitLocalFileData()" class="btn  btn-danger">保存</button>
+                    <button type="button" data-dismiss="modal" class="btn  btn-danger">取消</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+
+    var dataTaskId="";
+    var dataSourceId="";
+    var dataSourceType="";
+    var dataTaskFilePath="";
+
+    $.getScript("/console/shared/zTree_v3/js/jquery.ztree.all.js");
+    $(document).ready(function(){
+        $("#dataModal").modal("show");
+        loadBdDataList();
+      }
+    );
+
+    //加载本地数据源列表
+    function loadBdDataList() {
+        $.ajax({
+            type:"POST",
+            url:"/searchBdDirList.do",
+            data:{},
+            success:function (dataSession) {
+                var dataSessiobArray=dataSession.replace(/\[|]/g,'').split(',');
+                //  var dataSessiobArray=dataSession.substr(1,dataSession.length-4).split(',');
+                $("#selectBdDirID").append("<option style='width: 300px;display: none;'>请选择...</option>");
+                for(var i=0;i<dataSessiobArray.length;i++){
+                    var title=dataSessiobArray[i].substr(0, dataSessiobArray[i].indexOf('?*'));
+                    var uri=dataSessiobArray[i].substr(dataSessiobArray[i].indexOf('?*')+2,dataSessiobArray[i].length);
+                    $("#selectBdDirID").append("<option style=width:300px; value='"+uri.replace(/[\r\n]/g,"")+"'>"+title+"</option>");
+                }
+                intData();//初始化
+            },
+            error:function () {
+                console.log("请求失败")
+            }
+        })
+    };
+
+    //查询当前任务的基本信息-初始化
+    function intData(){
+        var taskId=this.document.activeElement.contentDocument.getElementById("taskIdHidden").value;
+        $.ajax({
+            type: "post",
+            url:"/searchTaskDetailById.do",
+            cache: false,
+            async: false,
+            data: {taskId: taskId},
+            success: function(data) {
+                 dataTaskId=JSON.parse(data).dataTask.dataTaskId;
+                 dataSourceId=JSON.parse(data).dataTask.dataSrc.dataSourceId;
+                 dataSourceType=JSON.parse(data).dataTask.dataSrc.databaseType;
+                 dataTaskFilePath=JSON.parse(data).dataTask.filePath;
+                $("#taskEditorTitle")[0].textContent="数据任务修改--("+JSON.parse(data).dataTask.dataTaskName+")";
+                $("select option[value='"+dataSourceType+"']").attr("selected","selected");//就选中对应的option,
+                 loadFileTreesByDataSource();
+            },
+            error: function() {
+                alert("出错了");
+            }
+        });
+    }
+
+    //列出本地数据源中的文件树
+    $("#selectBdDirID").on("change", function () {
+        console.log("进入到selectBdDirID的change事件处理函数中了");
+        var localDataSource = $("#selectBdDirID option:selected")[0].value;//获取数据库参数
+        debugger
+        $.ajax({
+            type:"POST",
+            url:"/getTreeOfDirList.do",
+            data:{
+                localDataSource: localDataSource
+            },
+            dataType: "text",
+            success: function (data) {
+                //console.log(data);
+                $('#bdDirDiv').empty();
+                $("#bdTableLabel").css("display", "block");//显示“选择资源”标签
+                $("#bdSubmitButton").css("display", "block"); //显示“提交”按钮
+
+                var coreData = JSON.parse(data);
+                console.log(coreData);
+                $("#ViewBdDirDiv").jstree("destroy");
+                $("#ViewBdDirDiv").jstree({
+                    "core": coreData,
+                    "plugins": ["checkbox"]
+                });
+            },
+            error: function (data) {
+                console.log("获得本地目录中的文件树失败")
+            }
+        })
+    });
+
+    //关闭modal后隐藏锁定页面的div
+    $("#dataModal").on("hide.bs.modal",function(){
+        $(window.top.document.body)[0].ownerDocument.getElementById("pages").remove();
+        $(window.top.document.body)[0].ownerDocument.getElementById("backdropId").remove();
+    });
+
+    function loadFileTreesByDataSource(){
+        console.log("进入到selectBdDirID的change事件处理函数中了");
+        var localDataSource = $("#selectBdDirID option:selected")[0].value;//获取数据库参数
+
+        $.ajax({
+            type:"POST",
+            url:"/getTreeOfDirList.do",
+            data:{
+                localDataSource: localDataSource,
+                dataTaskFilePath:dataTaskFilePath
+            },
+            dataType: "text",
+            beforeSend:function(data){
+                index = layer.load(1, {
+                    shade: [0.5,'#fff'] //0.1透明度的白色背景
+                });
+            },
+            success: function (data) {
+                console.log(data);
+                $('#bdDirDiv').empty();
+                $("#bdTableLabel").css("display", "block");//显示“选择资源”标签
+                $("#bdSubmitButton").css("display", "block"); //显示“提交”按钮
+                var coreData = eval("["+JSON.parse(data).list.toString()+"]");
+                var dataTaskFilePathArray=dataTaskFilePath.split(";");
+                for(var i=0;i<coreData.length;i++){
+                    for(var j=0;j<dataTaskFilePathArray.length;j++){
+                        if(coreData[i].id==dataTaskFilePathArray[j]){
+                            coreData[i].checked=true;
+                            coreData[i].open=true;
+                        }
+                    }
+                }
+                console.log(coreData);
+                $.getScript("/console/shared/zTree_v3/js/jquery.ztree.all.js",function(){
+                    $.fn.zTree.init($("#treeDemo"), setting, coreData);
+                });
+                $("#layui-layer-shade"+index+"").remove();
+                $("#layui-layer"+index+"").remove();
+            },
+            error: function (data) {
+                console.log("获得本地目录中的文件树失败")
+            }
+        })
+    }
+
+    var setting = {
+        check: {
+            enable: true
+        },
+        data: {
+            simpleData: {
+                enable: true
+            }
+        }
+    };
+
+    //本地文件任务提交
+    function submitLocalFileData(){
+        var getCheckedFile = getChecedValueInLocalTree();//获取选中的文件
+        console.log("getCheckedFile = " + getCheckedFile);
+        if(getCheckedFile=="" || getCheckedFile ==null){
+            toastr["error"]("请选择文件！");
+            // alert("请选择文件！");
+            return;
+        }else{
+            var connDataName = $("#selectBdDirID  option:selected")[0].text;//获取数据源
+            var connDataValue = $("#selectBdDirID  option:selected")[0].value;//获取数据源value
+            $.ajax({
+                type:"POST",
+                url:"/updateLocalTaskData.do",
+                async:true,
+                data:{
+                    connDataName:connDataName,
+                    connDataValue:connDataValue,
+                    getCheckedFile:getCheckedFile,
+                    dataTaskId:dataTaskId,
+                    dataSourceId:dataSourceId
+                },
+                beforeSend:function(data){
+                    index = layer.load(1, {
+                        shade: [0.5,'#fff'] //0.1透明度的白色背景
+                    });
+                },
+                success:function (dataSession) {
+                    if(dataSession.replace(/[\r\n]/g,"")!="success"){
+                        toastr["error"]("任务信息更新失败！");
+                        $("#layui-layer-shade"+index+"").remove();
+                        $("#layui-layer"+index+"").remove();
+                        return;
+                    }else{
+                        toastr["success"]("任务信息更新成功！");
+                        $("#dataModal").modal('hide');
+                        $("#layui-layer-shade"+index+"").remove();
+                        $("#layui-layer"+index+"").remove();
+                        parent.goToPage("datatask/dataTask.jsp");
+                    }
+                },
+                error:function () {
+                    console.log("请求失败")
+                }
+            })
+        }
+        return;
+    }
+
+    //获取界面中所有被选中的radio
+    function getChecedValueInLocalTree() {
+        var pathsOfCheckedFiles = '';
+        var treeObj=$.fn.zTree.getZTreeObj("treeDemo"),
+            nodes=treeObj.getCheckedNodes(true),v="";
+        for(var i=0;i<nodes.length;i++){
+            pathsOfCheckedFiles=pathsOfCheckedFiles+nodes[i].id+";";
+            console.log(pathsOfCheckedFiles);
+        }
+        return pathsOfCheckedFiles;
+    }
+
+</script>
+</body>
+
+</html>

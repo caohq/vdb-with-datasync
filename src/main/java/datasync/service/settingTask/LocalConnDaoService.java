@@ -1,5 +1,14 @@
 package datasync.service.settingTask;
 
+import datasync.connection.SqlLiteDataConnection;
+import datasync.service.FileResourceService;
+import datasync.service.dataTask.DataTaskDao;
+import datasync.service.login.GetInfoService;
+import datasync.utils.ConfigUtil;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.PreparedStatementCreator;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import vdb.metacat.Repository;
 import vdb.mydb.VdbManager;
 import vdb.mydb.engine.VdbEngine;
@@ -11,10 +20,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.*;
 
 public class LocalConnDaoService {
 
@@ -81,4 +91,44 @@ public class LocalConnDaoService {
         }
         return list;
     }
+
+    public  String updateLocalTaskDataById(HttpServletRequest req, HttpServletResponse res) throws IOException {
+        final String connDataName=req.getParameter("connDataName");//数据源名称
+        final String connDataValue=req.getParameter("connDataValue");//数据源code
+        final String getCheckedFile=req.getParameter("getCheckedFile");//文件path
+        final String dataTaskId=req.getParameter("dataTaskId");//taskid
+        final String dataSourceId=req.getParameter("dataSourceId");//数据源id
+
+        final String sql = "update  t_datatask set  filePath=?  where dataTaskId=?;";
+        SqlLiteDataConnection sqlLiteDataConnection=new SqlLiteDataConnection();
+        JdbcTemplate jdbcTemplate=sqlLiteDataConnection.makeJdbcTemplate();
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        jdbcTemplate.update(new PreparedStatementCreator() {
+            @Override
+            public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
+                PreparedStatement ps = connection.prepareStatement(sql,Statement.RETURN_GENERATED_KEYS);
+                ps.setString(1,getCheckedFile);
+                ps.setString(2,dataTaskId);
+                return ps;
+            }
+        },keyHolder);
+        new DataTaskDao().updateDataSourceInfById(dataSourceId,connDataName,connDataValue);
+        FileResourceService fileResourceService=new FileResourceService();
+        String configFilePath = GetInfoService.class.getClassLoader().getResource("../../WEB-INF/config.properties").getFile();
+        String subjectCode= ConfigUtil.getConfigItem(configFilePath, "SubjectCode");
+        //重新打包
+        String fileName = subjectCode+"_"+dataTaskId;
+        List<String> filepaths =new LinkedList<String>();
+        String [] filepathArray=getCheckedFile.split(";");
+        for (String str:filepathArray){
+            ((LinkedList<String>) filepaths).add(str);
+        }
+        fileResourceService.packDataResource(fileName,filepaths,req.getSession().getServletContext().getRealPath("/"));
+        return  "success";
+    }
+
+
+
+
+
 }

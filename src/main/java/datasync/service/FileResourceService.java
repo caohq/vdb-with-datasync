@@ -315,7 +315,11 @@ public class FileResourceService {
                 if (!file.exists()) {
                     continue;
                 }
-                ZipUtils.zipDirectory(file, "", outputStream);
+                if(file.isDirectory()){
+                    continue;
+                }else{
+                    ZipUtils.zipDirectory(file, "", outputStream);
+                }
             }
         } catch (Exception e) {
             logger.error("打包失败", e);

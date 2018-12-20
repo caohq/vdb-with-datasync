@@ -14,12 +14,15 @@
     <script src="/console/shared/bootstrap-3.3.7/js/bootstrap.js"></script>
     <script src="/console/datasync/js/layer/layer.js"></script>
     <script src="/console/shared/bootstrap-toastr/toastr.js"></script>
+    <script src="/console/shared/zTree_v3/js/jquery.ztree.all.js"></script>
     <link rel="stylesheet" type="text/css" href="/console/shared/bootstrap-3.3.7/css/bootstrap.css">
     <link rel="stylesheet" type="text/css" href="/console/shared/bootstrap-3.3.7/css/bootstrap-table.min.css">
     <link rel="stylesheet" type="text/css" href="/console/datasync/css/createTask.css" />
     <link rel="stylesheet" type="text/css" href="/console/datasync/css/style.min.css" />
     <link rel="stylesheet" type="text/css" href="/console/datasync/js/layer/layer.css" />
     <link rel="stylesheet" type="text/css" href="/console/shared/bootstrap-toastr/toastr.css" />
+    <link type="text/css" rel="stylesheet" href="/console/shared/zTree_v3/css/demo.css" />
+    <link type="text/css" rel="stylesheet" href="/console/shared/zTree_v3/css/zTreeStyle/zTreeStyle.css" />
     <style>
         .fixed-table-pagination .page-list{
             display: none !important;
@@ -51,6 +54,14 @@
             line-height: 100px;
             text-align: center;
             color: #333;
+        }
+        ul.ztree {
+            width: 100%;
+            height: 93%;
+        }
+        div.content_wrap {
+            width: 90%;
+            height: 380px;
         }
 
     </style>
@@ -95,9 +106,11 @@
             <div style="" class="form-group">
                 <label for="aaa" >本地数据源列表:</label>
                 <select id="selectBdDirID"  class="form-control selectpicker" style="width: 200px;display: inline !important;"></select>
-                <div>
+                <div class="content_wrap">
                     <label id="bdTableLabel">&nbsp;&nbsp;请选择资源</label>
-                    <div id="bdDirDiv" style="margin-left: 40px;height:260px;overflow-y:auto;"></div>
+                    <div id="bdDirDiv" style="margin-left: 40px;overflow-y:auto;">
+                        <ul id="LocalTreeDemo" class="ztree" ></ul>
+                    </div>
                 </div>
             </div>
             <div style="width: 100%;height: 40px;float: right;">
@@ -127,6 +140,7 @@
     function start() {
         document.getElementById("tableLabel").style.display="none";//隐藏“选择表资源标签”
         document.getElementById("bdTableLabel").style.display="none";//隐藏“选择表资源标签”
+        document.getElementById("bdDirDiv").style.display="none";//隐藏“选择表资源标签”
         document.getElementById("bdSubmitButton").style.display="none";//隐藏“选择表资源标签”
         document.getElementById("sqlSearchDiv").style.display="none";//隐藏“选择表资源标签”
         document.getElementById("bdsc").style.display="none";//隐藏“选择表资源标签”
@@ -211,35 +225,6 @@
         })
     };
 
-    //查询本地数据源文件列表
-    /*$("#selectBdDirID").on("change",function () {
-        var dirListData = $("#selectBdDirID option:selected")[0].value;//获取数据库参数
-        $.ajax({
-            type:"POST",
-            url:"/searchBdDirListPath.do",
-            cache: false,
-            data:{
-                dirListData:dirListData
-            },
-            success:function (data) {
-                $('#bdDirDiv').empty();//清空div
-                document.getElementById("bdTableLabel").style.display="block";//显示“选择表资源标签”
-                document.getElementById("bdSubmitButton").style.display="block";//显示“选择表资源标签”
-                var obj=JSON.parse(data).list;
-                for (var i=0;i<obj.length;i++){
-                    for (var prop in obj[i]) {
-                        if (obj[i].hasOwnProperty(prop)) {
-                            $("#bdDirDiv").append("<div style='width: 300px;float:left;'><input type='checkbox' value='"+prop+"'>"+obj[i][prop]+"</input></div>");
-                        }
-                    }
-                }
-            },
-            error:function () {
-                console.log("请求失败");
-            }
-        })
-    });*/
-
     //列出本地数据源中的文件树
     $("#selectBdDirID").on("change", function () {
         console.log("进入到selectBdDirID的change事件处理函数中了");
@@ -253,22 +238,21 @@
                 localDataSource: localDataSource
             },
             dataType: "text",
+            beforeSend:function(data){
+                index = layer.load(1, {
+                    shade: [0.5,'#fff'] //0.1透明度的白色背景
+                });
+            },
             success: function (data) {
-                //console.log(data);
-                $('#bdDirDiv').empty();
                 $("#bdTableLabel").css("display", "block");//显示“选择资源”标签
+                $("#bdDirDiv").css("display", "block");//显示“选择资源”标签
                 $("#bdSubmitButton").css("display", "block"); //显示“提交”按钮
 
-                var coreData = JSON.parse(data);
+                var coreData = eval("["+JSON.parse(data).list.toString()+"]");
                 console.log(coreData);
-
-                $("#bdDirDiv").jstree("destroy");
-                $("#bdDirDiv").jstree(
-                    {
-                        "core": coreData,
-                        "plugins": ["checkbox"]
-                    }
-                );
+                $.fn.zTree.init($("#LocalTreeDemo"), setting, coreData);
+                $("#layui-layer-shade"+index+"").remove();
+                $("#layui-layer"+index+"").remove();
             },
             error: function (data) {
                 console.log("获得本地目录中的文件树失败")
@@ -281,12 +265,14 @@
 
         var connData = $("#selectId option:selected")[0].value;//获取数据库参数
         if(connData=="请选择..." || connData==null){
-            alert("请选择数据库！");
+            toastr["error"]("请选择数据库！");
+            //alert("请选择数据库！");
             return;
         }
         var sql=document.getElementById(sqlId.id).value;//获取输入框中的sql语句
         if(sql=="" || sql==null){
-            alert("请输入sql！");
+            toastr["error"]("请输入sql！");
+            // alert("请输入sql！");
             return;
         }
         $("#connData").val(connData);
@@ -339,9 +325,7 @@
                 beforeSend:function(data){
                     index = layer.load(1, {
                         shade: [0.5,'#fff'] //0.1透明度的白色背景
-
                     });
-
                 },
                 success:function (dataSession) {
                     if(dataSession.replace(/[\r\n]/g,"")!="success"){
@@ -375,16 +359,12 @@
     //获取界面中所有被选中的radio
     function getChecedValueInLocalTree() {
         var pathsOfCheckedFiles = '';
-        var localFileTree =  $('#bdDirDiv').jstree();//获取所有被选中的标签元素
-        var checkedNodes = localFileTree.get_checked(true);
-        for (var i = 0; i < checkedNodes.length - 1; i++)
-        {
-            pathsOfCheckedFiles += localFileTree.get_path(checkedNodes[i], "/", false) + ";";
+        var treeObj=$.fn.zTree.getZTreeObj("LocalTreeDemo"),
+            nodes=treeObj.getCheckedNodes(true),v="";
+        for(var i=0;i<nodes.length;i++){
+            pathsOfCheckedFiles=pathsOfCheckedFiles+nodes[i].id+";";
+            console.log(pathsOfCheckedFiles);
         }
-        pathsOfCheckedFiles += localFileTree.get_path(checkedNodes[checkedNodes.length - 1], "/", false);
-
-        console.log("pathsOfCheckedFiles = " + pathsOfCheckedFiles);
-
         return pathsOfCheckedFiles;
     }
 
@@ -459,11 +439,10 @@
     //本地文件任务提交
     function submitLocalFileData(){
         var getCheckedFile = getChecedValueInLocalTree();//获取选中的文件
-
         console.log("getCheckedFile = " + getCheckedFile);
-
         if(getCheckedFile=="" || getCheckedFile ==null){
-            alert("请选择文件！");
+            toastr["error"]("请选择文件！");
+            // alert("请选择文件！");
             return;
         }else{
             var dateDef = new Date();
@@ -499,49 +478,6 @@
             })
         }
         return;
-        /*if(checkedFiles == "" || checkedFiles == null)
-        {
-            alert("请选择文件！");
-            return;
-        }
-        elseetFullYear()+month+dateDef.getDate()+dateDef.getHours()+dateDef.getMinutes()+dateDef.getSeconds();
-        $("#dataTaskName").val(dataTaskName);
-        var connDataName = $("#selectBdDirID  option:selected")[0].text;//获取数据源
-        var connDataValue = $("#selectBdDirID
-        {
-            var dateDef = new Date();
-            var month=dateDef.getMonth()+1;
-            var dataTaskName = ""+dateDef.g  option:selected")[0].value;//获取数据源value
-            var getLocalTaskName=$("#localFileName").val();//获取本地新建任务名称
-            $.ajax(
-            {
-                type:"POST",
-                url:"/submitFileData.do",
-                async:true,
-                data:{
-                    connDataName:connDataName,
-                    getCheckedFile:checkedFiles,
-                    getLocalTaskName:getLocalTaskName,
-                    connDataValue:connDataValue,
-                    dataTaskName:dataTaskName
-                },
-                dataType: "json",
-                beforeSend: function(data) {
-                    index = layer.load(1, {
-                        shade: [0.5,'#fff'] //0.1透明度的白色背景
-                    });
-                },
-                success: function(dataSession) {
-                   // $("#createLocalFileModal").modal("hide");//隐藏弹出框
-                   parent.goToPage("datatask/dataTask.jsp");
-                },
-                error: function() {
-                    console.log("请求失败");
-                }
-            });
-        }
-
-        return;*/
     }
 
     //检测任务名称
@@ -577,6 +513,17 @@
         idNum=idNum-1;
         idDom.remove();
     }
+
+    var setting = {
+        check: {
+            enable: true
+        },
+        data: {
+            simpleData: {
+                enable: true
+            }
+        }
+    };
 
 </script>
 

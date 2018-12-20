@@ -9,12 +9,13 @@
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Insert title here</title>
+    <title></title>
     <script type="text/javascript" src="/console/shared/js/jquery-3.2.1.min.js " ></script>
     <script src="/console/shared/bootstrap-3.3.7/js/bootstrap.js"></script>
     <script src="/console/datasync/js/bootbox.min.js"></script>
     <script src="/console/datasync/js/layer/layer.js"></script>
     <script src="/console/shared/bootstrap-toastr/toastr.js"></script>
+
     <link rel="stylesheet" type="text/css" href="/console/shared/bootstrap-3.3.7/css/bootstrap.css">
     <link rel="stylesheet" type="text/css" href="/console/datasync/js/layer/layer.css" />
     <link rel="stylesheet" type="text/css" href="/console/shared/bootstrap-3.3.7/css/bootstrap-table.min.css">
@@ -43,12 +44,6 @@
             margin-bottom: 0px !important;
         }
 
-        /*.fixed-table-container thead th {*/
-             /*line-height: 0px !important;*/
-        /*}*/
-        .fixed-table-container{
-            /*height: 435px !important;*/
-        }
         .sr-only {
             position: relative !important;
         }
@@ -97,6 +92,25 @@
 
 <script type="text/javascript" src="/console/shared/bootstrap-3.3.7/js/bootstrap-table.js"></script>
 <script>
+    //编辑数据库任务
+    function editDataTaskDtails(taskId){
+        $("#taskIdHidden").val(taskId);
+        var fatherBody = $(window.top.document.body);
+        var id = 'pages';
+        var dialog = $('#' + id);
+        if (dialog.length == 0) {
+            dialog = $('<div class="modal fade" role="dialog" id="' + id + '"/>');
+            //  dialog.empty()
+            dialog.appendTo(fatherBody);
+        }
+        dialog.load("/console/datasync/datatask/editorDataTask.html", function() {
+            dialog.modal({
+                backdrop: false
+            });
+
+        });
+        fatherBody.append("<div id='backdropId' class='modal-backdrop fade in'></div>");
+    }
     searchDataBySql();
     //查询任务列表
     function searchDataBySql(){
@@ -197,15 +211,21 @@
     //为操作添加按钮
     function operateFormatter(value, row, index) {//赋予的参数
         if(row.status==0){//未上传
-            return [
-                '<button class="btn btn-default details btn-xs" value="'+row.dataTaskId+','+row.status+'" onclick="ftpUpload(value)"><a>上传</a></button>&nbsp;',
-                '<button class="btn btn-default details btn-xs" value="'+row.dataTaskId+'" onclick="viewDtails(value)"><a>查看</a></button>&nbsp;',
-                '<button class="btn btn-default delete btn-xs" onclick="deleteThis(this)" data-id="'+row.dataTaskId+'"><a>删除</a></button>&nbsp;',
-                '<button class="btn btn-default details btn-xs" value="'+row.dataTaskId+'" onclick="editTaskDtails(value)"><a>编辑</a></button>&nbsp;',
-                // '<button class="btn btn-default delete btn-xs" onclick="" data-id="'+row.dataTaskId+'">'+
-                //  '<a href="/console/datasync/logFile/'+row.dataTaskId+'log.txt" download="'+row.dataTaskName+'Log.txt">日志</a>'+
-                // '</button>'
-            ].join('');
+            if(row.dataTaskType=="file"){
+                return [
+                    '<button class="btn btn-default details btn-xs" value="'+row.dataTaskId+','+row.status+'" onclick="ftpUpload(value)"><a>上传</a></button>&nbsp;',
+                    '<button class="btn btn-default details btn-xs" value="'+row.dataTaskId+'" onclick="viewDtails(value)"><a>查看</a></button>&nbsp;',
+                    '<button class="btn btn-default delete btn-xs" onclick="deleteThis(this)" data-id="'+row.dataTaskId+'"><a>删除</a></button>&nbsp;',
+                    '<button class="btn btn-default details btn-xs" value="'+row.dataTaskId+'" onclick="editFileTaskDtails(value)"><a>编辑</a></button>&nbsp;',
+                ].join('');
+            }else{
+                return [
+                    '<button class="btn btn-default details btn-xs" value="'+row.dataTaskId+','+row.status+'" onclick="ftpUpload(value)"><a>上传</a></button>&nbsp;',
+                    '<button class="btn btn-default details btn-xs" value="'+row.dataTaskId+'" onclick="viewDtails(value)"><a>查看</a></button>&nbsp;',
+                    '<button class="btn btn-default delete btn-xs" onclick="deleteThis(this)" data-id="'+row.dataTaskId+'"><a>删除</a></button>&nbsp;',
+                    '<button class="btn btn-default details btn-xs" value="'+row.dataTaskId+'" onclick="editDataTaskDtails(value)"><a>编辑</a></button>&nbsp;',
+                ].join('');
+            }
         }else{
             return [
                 '<button class="btn btn-default details btn-xs" value="'+row.dataTaskId+','+row.status+'" onclick="ftpUpload(value)"><a>上传</a></button>&nbsp;',
@@ -284,7 +304,6 @@
             dialog.modal({
                 backdrop: false
             });
-
         });
         fatherBody.append("<div id='backdropId' class='modal-backdrop fade in'></div>");
     }
@@ -305,7 +324,6 @@
                     success: function (data) {
                         toastr["success"]("删除成功");
                         searchDataBySql();
-
                     },
                     error: function () {
                         console.log("请求失败")
@@ -356,7 +374,6 @@
                         clearInterval(setout);
                         return;
                     }
-
                      $("#"+souceID+"")[0].style.width=data+"%";
                      $("#"+souceID+"Text")[0].textContent=data+"%";
                 }
@@ -365,28 +382,26 @@
 
     }
 
-
-    //编辑任务
-    function editTaskDtails(taskId){
-            $("#taskIdHidden").val(taskId);
-            var fatherBody = $(window.top.document.body);
-            var id = 'pages';
-            var dialog = $('#' + id);
-            if (dialog.length == 0) {
-                dialog = $('<div class="modal fade" role="dialog" id="' + id + '"/>');
-                //  dialog.empty()
-                dialog.appendTo(fatherBody);
-            }
-            dialog.load("/console/datasync/datatask/editorDataTask.html", function() {
-                dialog.modal({
-                    backdrop: false
-                });
-
+    //编辑本地文件任务
+    function editFileTaskDtails(taskId){
+        $("#taskIdHidden").val(taskId);
+        var fatherBody = $(window.top.document.body);
+        var id = 'pages';
+        var dialog = $('#' + id);
+        if (dialog.length == 0) {
+            dialog = $('<div class="modal fade" role="dialog" id="' + id + '"/>');
+            //  dialog.empty()
+            dialog.appendTo(fatherBody);
+        }
+        dialog.load("/console/datasync/datatask/editorFileTask.html", function() {
+            dialog.modal({
+                backdrop: false
             });
-            fatherBody.append("<div id='backdropId' class='modal-backdrop fade in'></div>");
+
+        });
+        fatherBody.append("<div id='backdropId' class='modal-backdrop fade in'></div>");
     }
 
 </script>
-
 </body>
 </html>

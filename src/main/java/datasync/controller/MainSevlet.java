@@ -38,10 +38,7 @@ public class MainSevlet extends HttpServlet{
 
         //获取请求路径
         String path = req.getServletPath();
-        if("/login.do".equals(path)) {
-
-
-        }else if ("/searchDataList.do".equals(path)){
+        if ("/searchDataList.do".equals(path)){
             //获取数据库列表
             searchDataList(req,res);
         }else if("/searchTables.do".equals(path)){
@@ -90,15 +87,17 @@ public class MainSevlet extends HttpServlet{
             searchTaskDetailById(req,res);
         }else if("/deleteTaskById.do".equals(path)){
             deleteTaskById(req,res);
-        } else if ("/exportTaskData.do".equals(path))
-        {
-            //uploadTask(req, res, data);
-        }else if("/ftpUploadProcess.do".equals(path)){//实时加载上传进度
+        }else if("/ftpUploadProcess.do".equals(path)){
+            //实时加载上传进度
             ftpUploadProcess(req,res);
         }else if("/achieveDataNodeInf.do".equals(path)){
             achieveDataNodeInf(req,res);
         }else if("/updateSqlData.do".equals(path)){
+            //根据id修改数据库task
             updateSqlData(req, res);
+        }else if("/updateLocalTaskData.do".equals(path)){
+            //根据id修改本地task
+            updateLocalTaskData(req, res);
         }
         else{
             //错误路径
@@ -113,38 +112,24 @@ public class MainSevlet extends HttpServlet{
      * @return
      * @throws IOException
      */
-    public String getTreeOfDirList(HttpServletRequest request, HttpServletResponse response)
-    {
+    public String getTreeOfDirList(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        PrintWriter out =response.getWriter();
+        JSONObject jsonObject = new JSONObject();
         String localDataSource = request.getParameter("localDataSource");
         RepositoriesService repositoriesService=new RepositoriesService();//getAllRepositories
         List<FileRepository> localFileRepositories = repositoriesService.getAllRepositories(localDataSource);
-
-        String data = "[";
+        String data="";
+        List<Object> list=new ArrayList<Object>();
         if (1 != localFileRepositories.size())
         {
             for(int j = 0;j < localFileRepositories.size() - 1; j++)
             {
                 String localFilePath = ((LocalRepository)(localFileRepositories.get(j))).getPath();
-                File localFile = new File(localFilePath);
-                String localFileTreeData = "";
-                localFileTreeData = getLocalFileTreeData(localFile);
-                data += localFileTreeData;
+                list=getJobTree(localFilePath);
             }
         }
-        data += "]";
-        data = "{\"data\":" + data + "}";
-
-        try {
-            response.getWriter().println(data);
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-
-
-
-        System.out.println(data);
+        jsonObject.put("list",list);
+        out.println(jsonObject);
 
         return data;
     }
@@ -346,7 +331,6 @@ public class MainSevlet extends HttpServlet{
             }
         }
         int flag = new DataTaskService().insertDatatask(datatask,connDataValue,dataSourceName);
-
         String zipFilePath=new DataTaskService().uploadTask(res, req,datataskId);//打包
         String fileName = subjectCode +"_"+datataskId+"_sql.zip";
         datatask.setSqlFilePath((zipFilePath+fileName).replace(File.separator,"%_%"));
@@ -392,21 +376,21 @@ public class MainSevlet extends HttpServlet{
         HttpSession session=req.getSession();
         String  connDataName=req.getParameter("connDataName");//本地连接名称
         String connDataValue=req.getParameter("connDataValue");//数据源名称
-        String  getCheckedFile=req.getParameter("getCheckedFile");//文件路径
-//      String  getLocalTaskName=req.getParameter("getLocalTaskName");//获取任务名称
+//        String  getCheckedFile=req.getParameter("getCheckedFile");//文件路径
+        String checkedValue=req.getParameter("getCheckedFile");//获取选中文件或者路径
         String getLocalTaskName=req.getParameter("dataTaskName");//任務id
         String datataskId=req.getParameter("dataTaskName");//任務id
         datatask.setCreateTime(date);
         datatask.setDataSourceId(dataSourceId);//数据源名称
         datatask.setDataTaskName(getLocalTaskName);//任务名
-        datatask.setFilePath(getCheckedFile);
+        datatask.setFilePath(checkedValue);
         datatask.setDataTaskType("file");
         datatask.setStatus("0");
         datatask.setDataTaskId(req.getParameter("dataTaskName"));
         datatask.setCreator(session.getAttribute("SPRING_SECURITY_LAST_USERNAME")==null?"": (String) session.getAttribute("SPRING_SECURITY_LAST_USERNAME"));
 
         List<String> filepaths =new LinkedList<String>();
-        String [] filepathArray=getCheckedFile.split(";");
+        String [] filepathArray=checkedValue.split(";");
           for (String str:filepathArray){
               ((LinkedList<String>) filepaths).add(str);
           }
@@ -483,7 +467,6 @@ public class MainSevlet extends HttpServlet{
         out.println(jsonObject);
     }
 
-
     //通過id修改task信息
     public void updateSqlData(HttpServletRequest req, HttpServletResponse res) throws IOException {
         PrintWriter printWriter=res.getWriter();
@@ -504,5 +487,70 @@ public class MainSevlet extends HttpServlet{
         }
         printWriter.println(result);
     }
+
+    //获取--树--数据源
+   public List<Object> getJobTree(String path){
+        List<Object> list=new ArrayList<Object>();//递归获取文件
+        List<Object> fileList=new ArrayList<Object>();//递归获取文件
+        File dirFile = new File(path);//获取文件第一层
+        File[] fs = dirFile.listFiles();
+       list.add("{ id:\""+path.replaceAll("\\\\","/")+"\", pId:0, name:\""+path.replaceAll("\\\\","/")+"\", open:true,checked:false}");
+       for (int i = 0; i < fs.length; i++) {
+           if(fs[i].isFile()){//当对象为文件时
+               boolean checked=false;
+               String pidStr=fs[i].toString().substring(0,fs[i].toString().lastIndexOf("\\"));
+               list.add("{ id:\""+fs[i].toString().replaceAll("\\\\","/")+"\", pId:\""+pidStr.replaceAll("\\\\","/")+"\", name:\""+fs[i].getName()+"\", open:true,checked:\""+checked+"\"}");
+               System.out.println();
+           }else if(fs[i].isDirectory()){//当对象为路径时
+               boolean checked=false;
+               String pidStr=fs[i].toString().substring(0,fs[i].toString().lastIndexOf("\\"));
+               list.add("{ id:\""+fs[i].toString().replaceAll("\\\\","/")+"\", pId:\""+pidStr.replaceAll("\\\\","/")+"\", name:\""+fs[i].getName()+"\", open:false,checked:\""+checked+"\"}");
+               List<Object> listStr=new ArrayList<Object>();//递归获取文件
+               fileList=getFileList( fs[i].toString(),listStr);
+           }
+       }
+        for(Object o:fileList){
+           list.add(o);
+        }
+        return list;
+   }
+
+   public List<Object> getFileList(String path, List<Object> list){
+       File dirFile = new File(path);//获取文件第一层
+       File[] fs = dirFile.listFiles();
+       for(int i=0; i < fs.length; i++){
+           if(fs[i].isDirectory()){
+               boolean checked=false;
+               String pidStr=fs[i].toString().substring(0,fs[i].toString().lastIndexOf("\\"));
+               list.add("{ id:\""+fs[i].toString().replaceAll("\\\\","/")+"\", pId:\""+pidStr.replaceAll("\\\\","/")+"\", name:\""+fs[i].getName()+"\", open:false,checked:\""+checked+"\"}");
+               getFileList(fs[i].toString(),list);
+           }else if (fs[i].isFile()){
+               boolean checked=false;
+               String pidStr=fs[i].toString().substring(0,fs[i].toString().lastIndexOf("\\"));
+               list.add("{ id:\""+fs[i].toString().replaceAll("\\\\","/")+"\", pId:\""+pidStr.replaceAll("\\\\","/")+"\", name:\""+fs[i].getName()+"\", open:false,checked:\""+checked+"\"}");
+           }
+       }
+        return list;
+   }
+
+    /**
+     * 修改本地上传任务
+     * @param request
+     * @param response
+     * @return
+     * @throws IOException
+     */
+    public void updateLocalTaskData(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        PrintWriter out=response.getWriter();
+        try {
+            String result=new LocalConnDaoService().updateLocalTaskDataById(request,response);
+        } catch (Exception e) {
+            out.println("fail");
+            return;
+        }
+        out.println("success");
+
+    }
+
 
 }

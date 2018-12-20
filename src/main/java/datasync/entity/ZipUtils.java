@@ -36,12 +36,12 @@ public class ZipUtils {
 
             }
         } else {
-            entry.setUnixMode(UnixStat.DEFAULT_DIR_PERM);
-            zipArchiveOutputStream.closeArchiveEntry();
-            File[] files = file.listFiles();
-            for (File child : files) {
-                zipDirectory(child, path + file.getName(), zipArchiveOutputStream);
-            }
+//            entry.setUnixMode(UnixStat.DEFAULT_DIR_PERM);
+//            zipArchiveOutputStream.closeArchiveEntry();
+//            File[] files = file.listFiles();
+//            for (File child : files) {
+//                zipDirectory(child, path + file.getName(), zipArchiveOutputStream);
+//            }
         }
     }
 }
