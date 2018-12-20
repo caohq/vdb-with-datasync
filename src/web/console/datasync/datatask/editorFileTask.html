@@ -128,12 +128,19 @@
                 $("#bdTableLabel").css("display", "block");//显示“选择资源”标签
                 $("#bdSubmitButton").css("display", "block"); //显示“提交”按钮
 
-                var coreData = JSON.parse(data);
+                var coreData = eval("["+JSON.parse(data).list.toString()+"]");
+                var dataTaskFilePathArray=dataTaskFilePath.split(";");
+                for(var i=0;i<coreData.length;i++){
+                    for(var j=0;j<dataTaskFilePathArray.length;j++){
+                        if(coreData[i].id==dataTaskFilePathArray[j]){
+                            coreData[i].checked=true;
+                            coreData[i].open=true;
+                        }
+                    }
+                }
                 console.log(coreData);
-                $("#ViewBdDirDiv").jstree("destroy");
-                $("#ViewBdDirDiv").jstree({
-                    "core": coreData,
-                    "plugins": ["checkbox"]
+                $.getScript("/console/shared/zTree_v3/js/jquery.ztree.all.js",function(){
+                    $.fn.zTree.init($("#treeDemo"), setting, coreData);
                 });
             },
             error: function (data) {

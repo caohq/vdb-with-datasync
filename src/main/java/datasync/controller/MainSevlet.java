@@ -125,7 +125,7 @@ public class MainSevlet extends HttpServlet{
             for(int j = 0;j < localFileRepositories.size() - 1; j++)
             {
                 String localFilePath = ((LocalRepository)(localFileRepositories.get(j))).getPath();
-                list=getJobTree(localFilePath);
+                list=getJobTree(localFilePath,list);
             }
         }
         jsonObject.put("list",list);
@@ -489,8 +489,8 @@ public class MainSevlet extends HttpServlet{
     }
 
     //获取--树--数据源
-   public List<Object> getJobTree(String path){
-        List<Object> list=new ArrayList<Object>();//递归获取文件
+   public List<Object> getJobTree(String path,List<Object> list){
+       // List<Object> list=new ArrayList<Object>();//递归获取文件
         List<Object> fileList=new ArrayList<Object>();//递归获取文件
         File dirFile = new File(path);//获取文件第一层
         File[] fs = dirFile.listFiles();

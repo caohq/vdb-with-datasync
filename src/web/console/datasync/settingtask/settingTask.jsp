@@ -172,10 +172,15 @@
             data:{
                 connData:connData
             },
+            async:true,
+            beforeSend:function(data){
+                index = layer.load(1, {
+                    shade: [0.5,'#fff'] //0.1透明度的白色背景
+                });
+            },
             success:function (data) {
                 if(data.trim()=="数据库连接异常！"){
                     toastr["error"](data);
-                   // alert(data);
                     return;
                 }
                 $('#tablesDiv').empty();//清空div
@@ -185,6 +190,8 @@
                 for(var i=0;i<obj.length;i++){
                     $("#tablesDiv").append("<div style='width: 200px;float:left;'><input type='checkbox' value='"+obj[i]+"'>"+obj[i]+"</input></div>");
                 }
+                $("#layui-layer-shade"+index+"").remove();
+                $("#layui-layer"+index+"").remove();
             },
             error:function () {
                 console.log("请求失败")
@@ -238,6 +245,7 @@
                 localDataSource: localDataSource
             },
             dataType: "text",
+            async:true,
             beforeSend:function(data){
                 index = layer.load(1, {
                     shade: [0.5,'#fff'] //0.1透明度的白色背景
@@ -249,7 +257,6 @@
                 $("#bdSubmitButton").css("display", "block"); //显示“提交”按钮
 
                 var coreData = eval("["+JSON.parse(data).list.toString()+"]");
-                console.log(coreData);
                 $.fn.zTree.init($("#LocalTreeDemo"), setting, coreData);
                 $("#layui-layer-shade"+index+"").remove();
                 $("#layui-layer"+index+"").remove();
@@ -524,6 +531,7 @@
             }
         }
     };
+
 
 </script>
 

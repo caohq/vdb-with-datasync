@@ -150,6 +150,29 @@
                 for(var i=0;i<obj.length;i++){
                     $("#tablesDiv").append("<div style='width: 200px;float:left;'><input type='checkbox' value='"+obj[i]+"'>"+obj[i]+"</input></div>");
                 }
+
+                if(selectdTableNames!="" && selectdTableNames!=null){//任务中有选中的表
+                    var selectdTableNamesArray=selectdTableNames.split(";");
+                    for(var i=0;i<selectdTableNamesArray.length;i++){
+                        $("input:checkBox[value="+selectdTableNamesArray[i]+"]").attr("checked","checked");
+                    }
+                }
+                debugger
+
+                if(newTableNames!="" && newTableNames!=null){//任务中有导出SQL语句(同时必定有对应数量sql语句)
+                    var newTablesArray=newTableNames.split(";");
+                    var sqlStringArray=sqlString.split(";");
+                    if(sqlStringArray.length-1>idNum+1){
+                        for(var i=1;i<sqlStringArray.length-idNum;i++){
+                            addSqlInput();
+                        }
+                    }
+
+                    for(var i=0;i<sqlStringArray.length-1;i++){
+                        $("#sqlInputBox"+i+"")[0].value=sqlStringArray[i];
+                        $("#createNewTableName"+i+"")[0].value=newTablesArray[i];
+                    }
+                }
             },
             error:function () {
                 console.log("请求失败")
