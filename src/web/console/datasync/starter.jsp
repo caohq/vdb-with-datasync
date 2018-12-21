@@ -12,10 +12,10 @@
     <script src="/console/shared/bootstrap-toastr/toastr.js"></script>
     <link rel="stylesheet" type="text/css" href="/console/shared/bootstrap-toastr/toastr.css" />
     <link rel="stylesheet" type="text/css" href="/console/datasync/js/layer/layer.css" />
-    <link rel="stylesheet" type="text/css" href="/console/shared/bootstrap-3.3.7/css/bootstrap.css">
-    <link rel="stylesheet" type="text/css" href="/console/shared/bootstrap-3.3.7/css/bootstrap-table.min.css">
     <link rel="stylesheet" type="text/css" href="/console/datasync/css/createTask.css" />
     <link rel="stylesheet" type="text/css" href="/console/datasync/css/style.min.css" />
+    <link rel="stylesheet" type="text/css" href="/console/shared/bootstrap-3.3.7/css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="/console/shared/bootstrap-3.3.7/css/bootstrap-table.min.css">
     <style>
         .fixed-table-pagination .page-list{
             display: none !important;
@@ -79,6 +79,10 @@
         #wrap li a:active{
             background: none;
         }
+
+        .li2{
+            background-color: #f0f6fe;
+        }
     </style>
 </head>
 <body style="overflow: hidden;">
@@ -124,7 +128,7 @@
                             <font style="color:#fffd4d;font-size:12px"><strong>首页 -&gt; 数据汇交</strong></font>
                         </div>
                     </div>
-                    <iframe src="dataNode/dataNodeInf.jsp" width="100%" style="border:none;height: 85%;" id="iframe"></iframe>
+                    <iframe src="dataNode/dataNodeInf.jsp" width="100%" style="border:none;height: 92%;" id="iframe"></iframe>
                 </div>
             </li>
         </ul>

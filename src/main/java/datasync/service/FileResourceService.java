@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -31,6 +32,8 @@ import java.util.regex.Matcher;
 public class FileResourceService {
 
     private Logger logger = LoggerFactory.getLogger(FileResourceService.class);
+    public static  int fileNumber;
+    public static Map<String, Object> progressMap = new HashMap<String, Object>();
 
     @Resource
     private FileResourceDao fileResourceDao;
@@ -309,6 +312,19 @@ public class FileResourceService {
             outputStream.setCreateUnicodeExtraFields(ZipArchiveOutputStream.UnicodeExtraFieldPolicy.ALWAYS);
             outputStream.setFallbackToUTF8(true);
             logger.info(".zip:文件数据源,开始打包文件...");
+            //获取文件总数量
+            fileNumber=0;
+            for(String filePath : filePaths){
+                filePath = filePath.replace("%_%",File.separator);
+                File file = new File(filePath);
+                if(file.isDirectory()){
+                    continue;
+                }else{
+                    fileNumber++;
+                }
+            }
+            logger.info("文件总数: "+fileNumber+"");
+            int compressedFilesNum=0;
             for (String filePath : filePaths) {
                 filePath = filePath.replace("%_%",File.separator);
                 File file = new File(filePath);
@@ -318,6 +334,16 @@ public class FileResourceService {
                 if(file.isDirectory()){
                     continue;
                 }else{
+                    ++compressedFilesNum;
+                    //float num= (float)compressedFilesNum/fileNumber;
+                   // System.out.println(num);
+
+                    float process= (float)compressedFilesNum/fileNumber*100;
+                    BigDecimal b   =   new   BigDecimal(process);
+                    process   =   b.setScale(0,   BigDecimal.ROUND_HALF_UP).floatValue();
+                    progressMap.put(fileName.substring(fileName.indexOf("_")+1), (long)process);
+                    progressMap.put(fileName.substring(fileName.indexOf("_")+1)+"1", file.toString());
+                    System.out.println(process+"%");
                     ZipUtils.zipDirectory(file, "", outputStream);
                 }
             }
@@ -333,6 +359,13 @@ public class FileResourceService {
             }
         }
         return "ok";
+    }
+
+    public Object getPackProcess(String processId){
+        if(progressMap.get(processId) == null){
+            return 0L;
+        }
+        return progressMap.get(processId);
     }
 
 }

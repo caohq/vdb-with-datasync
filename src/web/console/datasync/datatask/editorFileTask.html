@@ -4,6 +4,7 @@
     <title>任务详情</title>
     <link type="text/css" rel="stylesheet" href="/console/shared/zTree_v3/css/demo.css" />
     <link type="text/css" rel="stylesheet" href="/console/shared/zTree_v3/css/zTreeStyle/zTreeStyle.css" />
+    <link type="text/css" rel="stylesheet" href="/console/datasync/css/editorLoadingCss.css" />
     <style>
         .modal-dialog{
             top:4% !important;
@@ -13,6 +14,15 @@
         ul.ztree {
             width: 100%;
             height: 93%;
+        }
+        #Progress{
+            left: 45% !important;
+            top:  24% !important;
+        }
+        .circle-info{
+            top:58% !important;
+            line-height: 1.5 !important;
+            z-index: 19891019;
         }
     </style>
 </head>
@@ -49,16 +59,25 @@
         </div>
     </div>
 </div>
+
+<div>
+    <div id="Mask"></div>
+    <div id="Progress" data-dimension="250" data-text="0%" data-info="导出进度" data-width="30" data-fontsize="38" data-percent="0" data-fgcolor="#61a9dc" data-bgcolor="#eee"></div>
+</div>
+
+
 <script type="text/javascript">
 
     var dataTaskId="";
     var dataSourceId="";
     var dataSourceType="";
     var dataTaskFilePath="";
-
-    $.getScript("/console/shared/zTree_v3/js/jquery.ztree.all.js");
+    var index;
+    // $.getScript("/console/shared/zTree_v3/js/jquery.ztree.excheck.js");
+    // $.getScript("/console/shared/zTree_v3/js/jquery.ztree.core.js");
     $(document).ready(function(){
         $("#dataModal").modal("show");
+        $.getScript("/console/datasync/js/editorLoadingJs.js");
         loadBdDataList();
       }
     );
@@ -114,7 +133,6 @@
     $("#selectBdDirID").on("change", function () {
         console.log("进入到selectBdDirID的change事件处理函数中了");
         var localDataSource = $("#selectBdDirID option:selected")[0].value;//获取数据库参数
-        debugger
         $.ajax({
             type:"POST",
             url:"/getTreeOfDirList.do",
@@ -122,6 +140,11 @@
                 localDataSource: localDataSource
             },
             dataType: "text",
+            beforeSend:function(data){
+                index = layer.load(1, {
+                    shade: [0.5,'#fff'] //0.1透明度的白色背景
+                });
+            },
             success: function (data) {
                 //console.log(data);
                 $('#bdDirDiv').empty();
@@ -138,10 +161,13 @@
                         }
                     }
                 }
-                console.log(coreData);
-                $.getScript("/console/shared/zTree_v3/js/jquery.ztree.all.js",function(){
+                var zTreeObj = $.fn.zTree.getZTreeObj("treeDemo");
+                zTreeObj.destroy();
+                //$.getScript("/console/shared/zTree_v3/js/jquery.ztree.all.js",function(){
                     $.fn.zTree.init($("#treeDemo"), setting, coreData);
-                });
+                    $("#layui-layer-shade"+index+"").remove();
+                    $("#layui-layer"+index+"").remove();
+              //  });
             },
             error: function (data) {
                 console.log("获得本地目录中的文件树失败")
@@ -173,7 +199,6 @@
                 });
             },
             success: function (data) {
-                console.log(data);
                 $('#bdDirDiv').empty();
                 $("#bdTableLabel").css("display", "block");//显示“选择资源”标签
                 $("#bdSubmitButton").css("display", "block"); //显示“提交”按钮
@@ -187,7 +212,6 @@
                         }
                     }
                 }
-                console.log(coreData);
                 $.getScript("/console/shared/zTree_v3/js/jquery.ztree.all.js",function(){
                     $.fn.zTree.init($("#treeDemo"), setting, coreData);
                 });
@@ -211,21 +235,20 @@
         }
     };
 
+    var SubjectIndex;
     //本地文件任务提交
     function submitLocalFileData(){
         var getCheckedFile = getChecedValueInLocalTree();//获取选中的文件
-        console.log("getCheckedFile = " + getCheckedFile);
         if(getCheckedFile=="" || getCheckedFile ==null){
             toastr["error"]("请选择文件！");
-            // alert("请选择文件！");
             return;
         }else{
             var connDataName = $("#selectBdDirID  option:selected")[0].text;//获取数据源
             var connDataValue = $("#selectBdDirID  option:selected")[0].value;//获取数据源value
+            showPackProgress(0,0);
             $.ajax({
                 type:"POST",
                 url:"/updateLocalTaskData.do",
-                async:true,
                 data:{
                     connDataName:connDataName,
                     connDataValue:connDataValue,
@@ -233,29 +256,25 @@
                     dataTaskId:dataTaskId,
                     dataSourceId:dataSourceId
                 },
-                beforeSend:function(data){
-                    index = layer.load(1, {
-                        shade: [0.5,'#fff'] //0.1透明度的白色背景
-                    });
-                },
                 success:function (dataSession) {
                     if(dataSession.replace(/[\r\n]/g,"")!="success"){
                         toastr["error"]("任务信息更新失败！");
-                        $("#layui-layer-shade"+index+"").remove();
-                        $("#layui-layer"+index+"").remove();
+                        // $("#layui-layer-shade"+index+"").remove();
+                       //  $("#layui-layer"+index+"").remove();
                         return;
                     }else{
                         toastr["success"]("任务信息更新成功！");
                         $("#dataModal").modal('hide');
-                        $("#layui-layer-shade"+index+"").remove();
-                        $("#layui-layer"+index+"").remove();
-                        parent.goToPage("datatask/dataTask.jsp");
+                      //   $("#layui-layer-shade"+SubjectIndex+"").remove();
+
+
                     }
                 },
                 error:function () {
                     console.log("请求失败")
                 }
             })
+            getProcess(dataTaskId,dataTaskId+ new Date().getTime());//获取上传进度
         }
         return;
     }
@@ -267,9 +286,55 @@
             nodes=treeObj.getCheckedNodes(true),v="";
         for(var i=0;i<nodes.length;i++){
             pathsOfCheckedFiles=pathsOfCheckedFiles+nodes[i].id+";";
-            console.log(pathsOfCheckedFiles);
         }
         return pathsOfCheckedFiles;
+    }
+
+    //获取上传进度
+    function getProcess(keyID,souceID) {
+        debugger
+         $("#layui-layer"+SubjectIndex+"").remove();
+        var setout= setInterval(function () {
+            $.ajax({
+                url:"/getPackProcess.do",
+                type:"POST",
+                async:true,
+                data:{
+                    processId:keyID
+                },
+                success:function (dataReult) {
+                    var data=dataReult.replace(/[\r\n]/g,"");
+                    var process=JSON.parse(data).list[0];//上传进度
+                    var fileName="";//上传文件
+                    if(JSON.parse(data).list.length>=1){
+                        fileName=JSON.parse(data).list[1];//上传进度
+                    }
+                    $("#layui-layer"+index+"").html("");
+                    if(process >= 100){
+                        clearInterval(setout);
+                        parent.goToPage("datatask/dataTask.jsp");
+                        return;
+                    }
+                    $("#Progress .circle-text").text(process+"%");
+                    $("#Progress .circle-info").text(fileName);
+                }
+            })
+        },1000)
+    }
+
+    var isFirstExport=true;
+    //展示压缩进度
+    function showPackProgress(progress,filename){
+         $("#Mask").css("height",window.innerHeight);
+         $("#Mask").css("width",window.innerWidth);
+         $("#Mask").show();
+         if(isFirstExport){
+             $("#Progress").circliful();
+         }else{
+             $("#Progress .circle-text").text(progress+"%");
+             $("#Progress .circle-info").text(filename);
+             $("#Progress").show();
+         }
     }
 
 </script>

@@ -15,14 +15,15 @@
     <script src="/console/datasync/js/layer/layer.js"></script>
     <script src="/console/shared/bootstrap-toastr/toastr.js"></script>
     <script src="/console/shared/zTree_v3/js/jquery.ztree.all.js"></script>
-    <link rel="stylesheet" type="text/css" href="/console/shared/bootstrap-3.3.7/css/bootstrap.css">
-    <link rel="stylesheet" type="text/css" href="/console/shared/bootstrap-3.3.7/css/bootstrap-table.min.css">
     <link rel="stylesheet" type="text/css" href="/console/datasync/css/createTask.css" />
     <link rel="stylesheet" type="text/css" href="/console/datasync/css/style.min.css" />
     <link rel="stylesheet" type="text/css" href="/console/datasync/js/layer/layer.css" />
     <link rel="stylesheet" type="text/css" href="/console/shared/bootstrap-toastr/toastr.css" />
     <link type="text/css" rel="stylesheet" href="/console/shared/zTree_v3/css/demo.css" />
     <link type="text/css" rel="stylesheet" href="/console/shared/zTree_v3/css/zTreeStyle/zTreeStyle.css" />
+    <link type="text/css" rel="stylesheet" href="/console/datasync/css/editorLoadingCss.css" />
+    <link rel="stylesheet" type="text/css" href="/console/shared/bootstrap-3.3.7/css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="/console/shared/bootstrap-3.3.7/css/bootstrap-table.min.css">
     <style>
         .fixed-table-pagination .page-list{
             display: none !important;
@@ -64,10 +65,17 @@
             height: 380px;
         }
 
+        #Progress{
+            left: 45% !important;
+            top:  24% !important;
+        }
+        .circle-info{
+            top:58% !important;
+            line-height: 1.5 !important;
+        }
+
     </style>
 
-    <link type="text/css" rel="stylesheet" href="/console/shared/jstree/dist/themes/default/style.css" />
-    <script type="text/javascript" src="/console/shared/jstree/dist/jstree.js"></script>
 </head>
 <body style="overflow: auto; ">
 
@@ -118,16 +126,19 @@
             </div>
         </div>
     </div>
-
     <input type="hidden" id="sql"/>
     <input type="hidden" id="connData"/>
     <input type="hidden" id="dataTaskName"/>
-
+</div>
+<div>
+    <div id="Mask"></div>
+    <div id="Progress" data-dimension="250" data-text="0%" data-info="导出进度" data-width="30" data-fontsize="38" data-percent="0" data-fgcolor="#61a9dc" data-bgcolor="#eee"></div>
 </div>
 
 <script type="text/javascript" src="/console/shared/bootstrap-3.3.7/js/bootstrap-table.js"></script>
+<script type="text/javascript" src="/console/datasync/js/editorLoadingJs.js"></script>
 <script type="text/javascript">
-    $.ajaxSettings.async = false;
+   // $.ajaxSettings.async = false;
     var idNum=0;
     var sqlArray= "";
     var sqlTableArray= "";
@@ -168,7 +179,6 @@
         $.ajax({
             type:"POST",
             url:"/searchTables.do",
-            cache: false,
             data:{
                 connData:connData
             },
@@ -197,6 +207,7 @@
                 console.log("请求失败")
             }
         })
+
     });
 
     //切换数据库和本地数据源radio
@@ -234,10 +245,7 @@
 
     //列出本地数据源中的文件树
     $("#selectBdDirID").on("change", function () {
-        console.log("进入到selectBdDirID的change事件处理函数中了");
         var localDataSource = $("#selectBdDirID option:selected")[0].value;//获取数据库参数
-        console.log(localDataSource);
-
         $.ajax({
             type:"POST",
             url:"/getTreeOfDirList.do",
@@ -257,6 +265,10 @@
                 $("#bdSubmitButton").css("display", "block"); //显示“提交”按钮
 
                 var coreData = eval("["+JSON.parse(data).list.toString()+"]");
+                var zTreeObj = $.fn.zTree.getZTreeObj("LocalTreeDemo");
+                if(zTreeObj!=null){
+                    zTreeObj.destroy();//用之前先销毁tree
+                }
                 $.fn.zTree.init($("#LocalTreeDemo"), setting, coreData);
                 $("#layui-layer-shade"+index+"").remove();
                 $("#layui-layer"+index+"").remove();
@@ -370,7 +382,6 @@
             nodes=treeObj.getCheckedNodes(true),v="";
         for(var i=0;i<nodes.length;i++){
             pathsOfCheckedFiles=pathsOfCheckedFiles+nodes[i].id+";";
-            console.log(pathsOfCheckedFiles);
         }
         return pathsOfCheckedFiles;
     }
@@ -446,10 +457,8 @@
     //本地文件任务提交
     function submitLocalFileData(){
         var getCheckedFile = getChecedValueInLocalTree();//获取选中的文件
-        console.log("getCheckedFile = " + getCheckedFile);
         if(getCheckedFile=="" || getCheckedFile ==null){
             toastr["error"]("请选择文件！");
-            // alert("请选择文件！");
             return;
         }else{
             var dateDef = new Date();
@@ -459,10 +468,10 @@
             var connDataName = $("#selectBdDirID  option:selected")[0].text;//获取数据源
             var connDataValue = $("#selectBdDirID  option:selected")[0].value;//获取数据源value
             var getLocalTaskName=$("#localFileName").val();//获取本地新建任务名称
+            showPackProgress(0,0);
             $.ajax({
                 type:"POST",
                 url:"/submitFileData.do",
-                async:true,
                 data:{
                     connDataName:connDataName,
                     getCheckedFile:getCheckedFile,
@@ -470,19 +479,15 @@
                     connDataValue:connDataValue,
                     dataTaskName:dataTaskName
                 },
-                beforeSend:function(data){
-                    index = layer.load(1, {
-                        shade: [0.5,'#fff'] //0.1透明度的白色背景
-                    });
-                },
                 success:function (dataSession) {
                     // $("#createLocalFileModal").modal("hide");//隐藏弹出框
-                    parent.goToPage("datatask/dataTask.jsp");
+                  //  parent.goToPage("datatask/dataTask.jsp");
                 },
                 error:function () {
                     console.log("请求失败")
                 }
             })
+            getProcess(dataTaskName,dataTaskName+ new Date().getTime());//获取上传进度
         }
         return;
     }
@@ -532,6 +537,51 @@
         }
     };
 
+    //获取上传进度
+    function getProcess(keyID,souceID) {
+        var setout= setInterval(function () {
+            $.ajax({
+                url:"/getPackProcess.do",
+                type:"POST",
+                async:true,
+                data:{
+                    processId:keyID
+                },
+                success:function (dataReult) {
+                    var data=dataReult.replace(/[\r\n]/g,"");
+                    var process=JSON.parse(data).list[0];//上传进度
+                    var fileName="";//上传文件
+                    if(JSON.parse(data).list.length>=1){
+                        fileName=JSON.parse(data).list[1];//上传进度
+                    }
+                    //$("#layui-layer"+index+"").html("");
+                    debugger
+                    if(process >= 100){
+                        clearInterval(setout);
+                        parent.goToPage("datatask/dataTask.jsp");
+                        return;
+                    }
+                    $("#Progress .circle-text").text(process+"%");
+                    $("#Progress .circle-info").text(fileName);
+                }
+            })
+        },1000)
+    }
+
+    var isFirstExport=true;
+    //展示压缩进度
+    function showPackProgress(progress,filename){
+        $("#Mask").css("height",window.innerHeight);
+        $("#Mask").css("width",window.innerWidth);
+        $("#Mask").show();
+        if(isFirstExport){
+            $("#Progress").circliful();
+        }else{
+            $("#Progress .circle-text").text(progress+"%");
+            $("#Progress .circle-info").text(filename);
+            $("#Progress").show();
+        }
+    }
 
 </script>
 

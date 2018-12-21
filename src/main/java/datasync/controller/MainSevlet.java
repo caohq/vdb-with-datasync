@@ -98,6 +98,8 @@ public class MainSevlet extends HttpServlet{
         }else if("/updateLocalTaskData.do".equals(path)){
             //根据id修改本地task
             updateLocalTaskData(req, res);
+        }else if("/getPackProcess.do".equals(path)){
+            getPackProcess(req, res);
         }
         else{
             //错误路径
@@ -437,6 +439,22 @@ public class MainSevlet extends HttpServlet{
         FtpUtil ftpUtil =new FtpUtil();
         Long process =  ftpUtil.getFtpUploadProcess(req.getParameter("processId"));
         out.println(process);
+        return process;
+    }
+
+    //获取文件压缩进度
+    public Object getPackProcess(HttpServletRequest req, HttpServletResponse res) throws IOException {
+        PrintWriter out=res.getWriter();
+        Map<Object,Object> map=new HashMap<Object, Object>();
+        List<Object> list=new ArrayList<Object>();
+        JSONObject jsonObject=new JSONObject();
+        FileResourceService fileResourceService=new FileResourceService();
+        Object process =  fileResourceService.getPackProcess(req.getParameter("processId"));
+        Object fileName=fileResourceService.getPackProcess(req.getParameter("processId")+"1");
+        list.add(process);
+        list.add(fileName);
+        jsonObject.put("list",list);
+        out.println(jsonObject);
         return process;
     }
 

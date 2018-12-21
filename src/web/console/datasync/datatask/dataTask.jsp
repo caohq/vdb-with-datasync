@@ -50,10 +50,9 @@
 
     </style>
 </head>
-<body style="overflow: auto;">
-<div>
+<body style="overflow: auto;background-color: #f0f6fe;">
 
-    <div class="alert alert-info" role="alert" style="margin:0  3px;height: 66px;">
+    <div class="alert alert-info" role="alert" style="margin:0  3px;">
         <!--查询条件 -->
         <div class="row">
             <form class="form-inline">
@@ -87,7 +86,7 @@
             </table>
         </div>
     </div>
-</div>
+
 <input type="hidden" id="taskIdHidden"/>
 
 <script type="text/javascript" src="/console/shared/bootstrap-3.3.7/js/bootstrap-table.js"></script>
@@ -155,7 +154,7 @@
             locale: "zh-CN",
             searchOnEnterKey:true,
             detailView: false,
-            height:$(window).height() - 60,
+            height:$(window).height() - 110,
             columns:[ {
                 field: 'dataTaskId',
                 title: 'id'
