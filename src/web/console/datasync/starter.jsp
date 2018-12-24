@@ -128,7 +128,7 @@
                             <font style="color:#fffd4d;font-size:12px"><strong>首页 -&gt; 数据汇交</strong></font>
                         </div>
                     </div>
-                    <iframe src="dataNode/dataNodeInf.jsp" width="100%" style="border:none;height: 92%;" id="iframe"></iframe>
+                    <iframe src="dataNode/dataNodeInf.jsp" width="100%" style="border:none;" id="iframe"></iframe>
                 </div>
             </li>
         </ul>
@@ -138,10 +138,17 @@
 <script type="text/javascript" src="/console/shared/bootstrap-3.3.7/js/bootstrap-table.js"></script>
 
 <script type="text/javascript">
-    //var param="datatask/dataTask.jsp.jsp";
-    // $(document).ready(function(){
-    //     document.getElementById("iframe").src="dataNode/dataNodeInf.jsp";
-    // });
+
+    document.getElementById("iframe").style.height=$(window).height()-150;
+
+    $(window).resize(function () {          //当浏览器大小变化时
+         document.getElementById("iframe").style.height=$(window).height()-150;
+         document.getElementsByClassName("lab1")[0].style.height=$(window).height();
+        // alert($(window).height());          //浏览器时下窗口可视区域高度
+        // alert($(document).height());        //浏览器时下窗口文档的高度
+        // alert($(document.body).height());   //浏览器时下窗口文档body的高度
+        // alert($(document.body).outerHeight(true)); //浏览器时下窗口文档body的总高度 包括border padding margin
+    });
     // 切换iframe页面
     function goToPage(param){
         document.getElementById("iframe").src=param;

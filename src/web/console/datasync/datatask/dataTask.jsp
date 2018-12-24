@@ -91,6 +91,12 @@
 
 <script type="text/javascript" src="/console/shared/bootstrap-3.3.7/js/bootstrap-table.js"></script>
 <script>
+   document.getElementsByClassName("fixed-table-container")[0].style.height=$(window).height()-280;
+    $(window).resize(function () {          //当浏览器大小变化时
+        searchDataBySql();
+   //    document.getElementsByClassName("table_div")[0].style.height=$(window).height()-80;
+    });
+
     //编辑数据库任务
     function editDataTaskDtails(taskId){
         $("#taskIdHidden").val(taskId);
