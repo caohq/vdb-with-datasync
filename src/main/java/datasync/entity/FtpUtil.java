@@ -22,6 +22,7 @@ import java.util.Map;
  **/
 public class FtpUtil {
 
+
     public static Map<String, Long> progressMap = new HashMap<String, Long>();
 
     public enum UploadStatus {
@@ -48,9 +49,11 @@ public class FtpUtil {
     public FTPClient ftpClient = new FTPClient();
 
     public boolean connect(String hostname, int port, String username, String password) throws IOException {
-        ftpClient.connect(hostname, port);
+        if(!ftpClient.isConnected()){
+            ftpClient.connect(hostname, port);
+        }
         ftpClient.setControlEncoding("GBK");
-        if (FTPReply.isPositiveCompletion(ftpClient.getReplyCode())) {
+        if (FTPReply.isPositiveCompletion(ftpClient.getReplyCode())) {//判断ftp是否正常连接
             if (ftpClient.login(username, password)) {
                 return true;
             }
@@ -174,6 +177,7 @@ public class FtpUtil {
 //        ftpClient.enterRemotePassiveMode();
         ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
         ftpClient.setControlEncoding("GBK");
+        ftpClient.enterLocalPassiveMode();
         System.out.println(ftpClient.getStatus());
         UploadStatus result;
         Map resultmap;
@@ -210,7 +214,7 @@ public class FtpUtil {
             //检查远程是否存在文件
             FTPFile[] files = ftpClient.listFiles(new String(remoteFileName.getBytes("GBK"), "iso-8859-1"));
             if (files.length == 1) {
-                long remoteSize = files[0].getSize();
+                  long remoteSize = files[0].getSize();
                 File f = new File(newlocalFilepath);
                 long localSize = f.length();
                 if (remoteSize == localSize) {
@@ -220,12 +224,12 @@ public class FtpUtil {
                 }
 
                 //尝试移动文件内读取指针,实现断点续传
-//                resultmap = uploadFile(fileTotalSize, finishedSize,processId, remoteFileName, f, ftpClient, remoteSize);
-//                result = (UploadStatus)(resultmap.get("status"));
+                 resultmap = uploadFile(fileTotalSize, finishedSize,processId, remoteFileName, f, ftpClient, remoteSize);
+                result = (UploadStatus)(resultmap.get("status"));
 //                finishedSize = (Long)(resultmap.get("finishedSize"));
 
                 //如果断点续传没有成功，则删除服务器上文件，重新上传
-                if (true){//(result == UploadStatus.Upload_From_Break_Failed) {
+                if (result == UploadStatus.Upload_From_Break_Failed){//(result == UploadStatus.Upload_From_Break_Failed) {
                     if (!ftpClient.deleteFile(remoteFileName)) {
                         return UploadStatus.Delete_Remote_Faild;
                     }
@@ -257,54 +261,61 @@ public class FtpUtil {
     public Map uploadFile(long fileTotalSize, long finishedSize, String processId, String remoteFile, File localFile, FTPClient ftpClient, long remoteSize) throws IOException {
         Map returnMap = new HashMap();
         UploadStatus status;
+        //显示上传进度
         long step = fileTotalSize / 100;
         long process = progressMap.get(processId)==null?0:progressMap.put(processId,0L);
         long localreadbytes = 0L;
         RandomAccessFile raf = new RandomAccessFile(localFile, "r");
-        System.out.println("------------remoteFile.getBytes(\"GBK\")="+remoteFile.getBytes("GBK"));
+       // System.out.println("------------remoteFile.getBytes(\"GBK\")="+remoteFile.getBytes("GBK"));
         String testtring = new String(remoteFile.getBytes("GBK"), "iso-8859-1");
         System.out.println("!!!!!!!!!!!!!!!!!!!!!!"+testtring);
+
+
         OutputStream out = ftpClient.appendFileStream(new String(remoteFile.getBytes("GBK"), "iso-8859-1"));
         if(out == null){
             System.out.println("=============null out");
         }
-        //断点续传
-        if (remoteSize > 0) {
-            /*ftpClient.setRestartOffset(remoteSize);
-            process = process+remoteSize / step;
-            raf.seek(remoteSize);
-            localreadbytes = remoteSize;*/
-
-            finishedSize += remoteSize;
-            process = finishedSize / step;
-            raf.seek(remoteSize);
-            localreadbytes = remoteSize;
-            progressMap.put(processId, process);
-        }
-        System.out.println(raf);
-        byte[] bytes = new byte[1024];
-        int c;
-        while ((c = raf.read(bytes)) != -1) {
-            out.write(bytes, 0, c);
-            localreadbytes += c;
-            finishedSize += c;
-            /*if (localreadbytes / step != process) {
-                process = localreadbytes / step;
-                System.out.println("上传进度:" + process);
-                progressMap.put(processId, process);
-            }*/
-            if (finishedSize / step != process) {
+        try{
+            //断点续传
+            if (remoteSize > 0) {
+                /*ftpClient.setRestartOffset(remoteSize);
+                process = process+remoteSize / step;
+                raf.seek(remoteSize);
+                localreadbytes = remoteSize;*/
+                finishedSize += remoteSize;
+                ftpClient.setRestartOffset(remoteSize);
                 process = finishedSize / step;
-                if(process>100){
-                    process = 100;
-                }
-                System.out.println("上传进度:" + process);
+                raf.seek(remoteSize);
+                localreadbytes = remoteSize;
                 progressMap.put(processId, process);
             }
+            byte[] bytes = new byte[1024];
+            int c;
+            while ((c = raf.read(bytes)) != -1) {
+                out.write(bytes, 0, c);
+                localreadbytes += c;
+                finishedSize += c;
+                /*if (localreadbytes / step != process) {
+                    process = localreadbytes / step;
+                    System.out.println("上传进度:" + process);
+                    progressMap.put(processId, process);
+                }*/
+                if (finishedSize / step != process) {
+                    process = finishedSize / step;
+                    if(process>100){
+                        process = 100;
+                    }
+                    System.out.println("上传进度:" + process);
+                    progressMap.put(processId, process);
+                }
+            }
+        }catch (IOException e){
+            System.out.println("ftp 连接失败！");
+        }finally {
+            out.flush();
+            raf.close();
+            out.close();
         }
-        out.flush();
-        raf.close();
-        out.close();
         boolean result = ftpClient.completePendingCommand();
         if (remoteSize > 0) {
             status = result ? UploadStatus.Upload_From_Break_Success : UploadStatus.Upload_From_Break_Failed;
@@ -377,12 +388,16 @@ public class FtpUtil {
                 String fname = delDirectory+"/"+file.getName();
                 String name = new String(fname.getBytes("GBK"),"iso-8859-1");
                 boolean f = ftpClient.deleteFile(name);
-                System.out.println(f);
+               // System.out.println(f);//删除远程文件是否成功
             }
             ftpClient.removeDirectory(delDirectory);
         } catch (IOException e) {
             e.printStackTrace();
         }
         return flag;
+    }
+
+    public  void setProgressMap(String  key,long process) {
+        FtpUtil.progressMap .put(key,process);
     }
 }

@@ -152,12 +152,12 @@
         var checked=true;
         if(username=="" || username==null){
             checked=false;
-            alert("请输入用户名!");
+            $("#checkedUserName").html("账号不能为空！");
             return;
         }
         if(password=="" || password==null){
             checked=false;
-            alert("请输入密码!");
+            $("#checkedUserPassword").html("密码不能为空！");
             return;
         }
 

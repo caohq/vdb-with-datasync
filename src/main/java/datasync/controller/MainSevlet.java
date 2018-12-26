@@ -5,6 +5,7 @@ import datasync.entity.DataTask;
 import datasync.entity.FtpUtil;
 import datasync.service.FileResourceService;
 import datasync.service.dataNodeInf.AchieveFtpConfigInf;
+import datasync.service.dataTask.DataTaskDao;
 import datasync.service.dataTask.DataTaskService;
 import datasync.service.login.GetInfoService;
 import datasync.service.settingTask.DataConnDaoService;
@@ -31,6 +32,8 @@ import java.util.*;
 public class MainSevlet extends HttpServlet{
 
     private Logger logger = LoggerFactory.getLogger(MainSevlet.class);
+
+
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 
@@ -360,7 +363,19 @@ public class MainSevlet extends HttpServlet{
         JSONObject jsonObject = new JSONObject();
         String connData="";
         List<DataTask> dataTasks = new DataTaskService().getDataTaskList(params);
+        List<Map<Object,Object>> taskProcessList = new ArrayList<Map<Object,Object>>();
+        Map<Object,Object> map=new HashMap<Object, Object>();
+        FtpUtil fileUtil=new FtpUtil();
+        if(dataTasks.size()!=0){
+            for(int i=0;i<dataTasks.size();i++){
+                Object process =  fileUtil.getFtpUploadProcess(dataTasks.get(i).getDataTaskId());
+                map.put(dataTasks.get(i).getDataTaskId(),process);
+                System.out.println(process);
+            }
+        }
+        taskProcessList.add(map);
         jsonObject.put("dataTasks",dataTasks);
+        jsonObject.put("taskProcessList",taskProcessList);
         out.println(jsonObject);
         return jsonObject;
     }
@@ -409,7 +424,13 @@ public class MainSevlet extends HttpServlet{
 
     //上传文件到FTP
     public  int ftpLocalUpload(HttpServletRequest req, HttpServletResponse res) throws IOException {
-        new DataTaskService().ftpLocalUpload(req,res);
+        FtpUtil ftpUtil=new FtpUtil();
+        Long process= Long.valueOf(0);
+        ftpUtil.setProgressMap(req.getParameter("taskId"),process);
+        new DataTaskDao().ftpLocalUpload(req, res);
+        // new ThreadUploadFiles().createUoloadFileThread(req, res);
+//        Thread thread=new Thread(new ThreadUploadFiles(req, res));
+//        thread.start();
         return 1;
     }
 

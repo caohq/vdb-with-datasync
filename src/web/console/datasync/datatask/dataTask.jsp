@@ -96,6 +96,7 @@
     //    document.getElementsByClassName("fixed-table-container")[0].style.height=$(window).height()-320;
         searchDataBySql();
     });
+    var taskProcessStr=null;
 
     //编辑数据库任务
     function editDataTaskDtails(taskId){
@@ -122,7 +123,6 @@
         var SearchDataTaskName=$("#SearchDataTaskName").val();//任务标识
         var dataSourceList=$("#dataSourceList  option:selected")[0].value;//数据类型
         var dataStatusList=$("#dataStatusList").val();//任务状态
-
         $.ajax({
             type:"POST",
             url:"/searchDataTaskList.do",
@@ -134,6 +134,7 @@
             },
             success:function (data) {
                 var DataList = JSON.parse(data);
+                taskProcessStr=DataList.taskProcessList[0];
                 loadDataTaskList(DataList.dataTasks);
             },
             error:function () {
@@ -203,12 +204,18 @@
                 width:'29%',
                 formatter: operateFormatter //自定义方法，添加操作按钮
             } ]
-        });
+    });
         $('#dataTaskTableID').bootstrapTable('load', dataList);
         $('#dataTaskTableID').bootstrapTable('hideColumn', 'dataTaskId');
         $('#dataTaskTableID').bootstrapTable('hideColumn', 'dataSo');
         $('#dataTaskTableID').bootstrapTable('resetView');
+        for(var taskId in taskProcessStr){//用javascript的for/in循环遍历对象的属性
+            if($("#"+taskId+"")[0]!=null&&$("#"+taskId+"")[0].style.width!="100%" ){
 
+                $("#"+taskId+"")[0].style.width=taskProcessStr[taskId]+"%";
+                $("#"+taskId+"Text")[0].textContent=taskProcessStr[taskId]+"%";
+            }
+        }
         // $("#dataTaskTableID").bootstrapTable('resetView');
     };
 
@@ -261,6 +268,8 @@
         if(status==1){//已经上传的文件
             bootbox.confirm("<span style='font-size: 16px'>确认需要重新上传吗?</span>",function (r) {
                 if (r) {
+                    $("#"+taskId+"")[0].style.width="0%";
+                    $("#"+taskId+"Text")[0].textContent="0%";
                     startFtpUpload(taskId);
                 } else {
                     return;
@@ -272,8 +281,6 @@
     };
 
     function startFtpUpload(taskId) {//执行上传ftp
-        $("#"+taskId+"")[0].style.width="0%";
-        $("#"+taskId+"Text")[0].textContent="0%";
         var souceID = taskId;
         var keyID = souceID + new Date().getTime();
         $.ajax({
@@ -283,8 +290,10 @@
             success:function(data){
                 if(data=="" || data==1){
                     searchDataBySql();
-                }else {
-                    alert(data);
+                }else if(data==0) {
+                    toastr["error"]("上传失败");
+                }else{
+                    // toastr["success"]("上传成功！");
                 }
             },
             error:function () {
@@ -365,6 +374,7 @@
 
     //获取上传进度
     function getProcess(keyID,souceID) {
+        debugger
         var setout= setInterval(function () {
             $.ajax({
                 url:"/ftpUploadProcess.do",
@@ -406,6 +416,10 @@
         });
         fatherBody.append("<div id='backdropId' class='modal-backdrop fade in'></div>");
     }
+
+    $(document).ready(function(){
+        // console.log(taskIdStr[(taskIdStr.length+1)/3+1])
+    });
 
 </script>
 </body>

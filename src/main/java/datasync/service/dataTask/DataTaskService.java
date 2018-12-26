@@ -28,8 +28,8 @@ public class DataTaskService {
         return new DataTaskDao().deleteTaskById(taskId);
     }
 
-    public int updateDataTaskStatusById(String taskId){
-        return new DataTaskDao().updateDataTaskStatusById(taskId);
+    public int updateDataTaskStatusById(String taskId,String status){
+        return new DataTaskDao().updateDataTaskStatusById(taskId,status);
     }
 
     public int updateSqlFilePathById(DataTask dataTask){

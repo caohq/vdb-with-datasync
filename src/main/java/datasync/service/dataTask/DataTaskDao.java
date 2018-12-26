@@ -123,8 +123,8 @@ public class DataTaskDao {
         return result;
     }
     //根据id修改task导入状态
-    public int updateDataTaskStatusById(String taskId){
-        String sql = "update  t_datatask  set  status ='1' where  dataTaskId = '"+taskId+"'";
+    public int updateDataTaskStatusById(String taskId,String status){
+        String sql = "update  t_datatask  set  status ='"+status+"' where  dataTaskId = '"+taskId+"'";
         SqlLiteDataConnection sqlLiteDataConnection=new SqlLiteDataConnection();
         JdbcTemplate jdbcTemplate=sqlLiteDataConnection.makeJdbcTemplate();
         int result = jdbcTemplate.update(sql);//query(sql, new Object[]{taskId}, new DataTaskMapper());
@@ -264,6 +264,7 @@ public class DataTaskDao {
     public int ftpLocalUpload(HttpServletRequest req, HttpServletResponse res) throws IOException {
         PrintWriter out=res.getWriter();
         String taskId=req.getParameter("taskId");
+        updateDataTaskStatusById(taskId,"0");
         DataTask dataTask = new DataTaskService().getDataTaskInfById(taskId);
         String processId=dataTask.getDataTaskId();
         String fileName = dataTask.getDataTaskName ()+"log.txt";//文件名及类型
@@ -306,10 +307,13 @@ public class DataTaskDao {
         String port = ConfigUtil.getConfigItem(configFilePath, "FrpPort");//"21";
         String ftpRootPath = "/";
         String portalUrl =ConfigUtil.getConfigItem(configFilePath, "PortalUrl");//"10.0.86.77/portal";
-        FtpUtil ftpUtil = new FtpUtil();
+        FtpUtil ftpUtil=new FtpUtil();
+       // ftpUtil.disconnect();
         pw.println("数据任务名称为：" + dataTask.getDataTaskName() +"\n");
         try {
             ftpUtil.connect(host, Integer.parseInt(port), userName, password);
+
+            //ftpUtil.disconnect();
             String result = "";
             if(dataTask.getDataTaskType().equals("file")){
                 String[] localFileList = {dataTask.getSqlFilePath()};
@@ -399,7 +403,7 @@ public class DataTaskDao {
                             pw.println(current1+":"+"=========================解压流程结束========================" + "\n");
                         }
                         dataTask.setStatus("1");
-                        new DataTaskService().updateDataTaskStatusById(taskId);
+                        updateDataTaskStatusById(taskId,"1");
                         return 1;
                     }else{
                         if("mysql".equals(dataTask.getDataTaskType())){
@@ -440,6 +444,7 @@ public class DataTaskDao {
                 return 0;
             }
         } catch (IOException e) {
+            ftpUtil.disconnect();
             now = new java.util.Date();
             dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");//可以方便地修改日期格式
             current = dateFormat.format(now);
