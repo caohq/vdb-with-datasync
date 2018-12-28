@@ -25,6 +25,8 @@ public class FtpUtil {
 
     public static Map<String, Long> progressMap = new HashMap<String, Long>();
 
+    public static Map<String, String> numberOfRequest = new HashMap<String,String>();
+
     public enum UploadStatus {
         Create_Directory_Fail,   //远程服务器相应目录创建失败
         Create_Directory_Success, //远程服务器闯将目录成功
@@ -175,6 +177,7 @@ public class FtpUtil {
     public UploadStatus upload(String[] localFileList, String processId,String remoteFilepath,DataTask dataTask,String subjectCode) throws IOException {
 //        ftpClient.enterLocalPassiveMode();
 //        ftpClient.enterRemotePassiveMode();
+        System.out.println("开始调用上传程序！");
         ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
         ftpClient.setControlEncoding("GBK");
         ftpClient.enterLocalPassiveMode();
@@ -200,7 +203,7 @@ public class FtpUtil {
                 fileName = localFilepath.substring(localFilepath.lastIndexOf("%_%")+3);
                 System.out.println("-------fileName"+fileName);
             }*/
-            if(dataTask.getDataTaskType().equals("mysql")){
+            if("mysql".equals(dataTask.getDataTaskType()) || "oracle".equals(dataTask.getDataTaskType())){
                 fileName = dataTask.getDataTaskId()+".zip";
             }else{
                 fileName = subjectCode + "_" +dataTask.getDataTaskId()+".zip";
@@ -399,5 +402,15 @@ public class FtpUtil {
 
     public  void setProgressMap(String  key,long process) {
         FtpUtil.progressMap .put(key,process);
+    }
+
+    //获取阻塞请求的数量
+    public  String getBlockRequest(String request) {
+//        requestId="blockRequest";
+//        requestId="successRequest";
+        if(numberOfRequest.get(request) == null){
+            return "";
+        }
+        return numberOfRequest.get(request);
     }
 }

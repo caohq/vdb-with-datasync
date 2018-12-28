@@ -44,7 +44,7 @@ public class DataTaskService {
         return  new DataTaskDao().uploadTask(req, res,dataTaskId);
     }
 
-    public int ftpLocalUpload(HttpServletRequest req, HttpServletResponse res) throws IOException {
-        return  new DataTaskDao().ftpLocalUpload(req, res);
+    public int ftpLocalUpload(HttpServletRequest req, HttpServletResponse res,String taskId) throws IOException {
+        return  new DataTaskDao().ftpLocalUpload(req, res,taskId);
     }
 }

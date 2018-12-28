@@ -93,9 +93,9 @@ public class UploadTaskService {
                 DataSrc dataSrc = getDataSource(dataSourceId);
                 String getConnectionParameter = dataSrc.getDataSourceType();
                 Connection oracleDataConnection = OracleDataConnection.makeConn(getConnectionParameter);
-                System.out.println("mysqlDataConnection = " + oracleDataConnection);
+                System.out.println("oracleDataConnection = " + oracleDataConnection);
 
-                exportTaskDataFromSql(request, oracleDataConnection, dataTask);
+                ZipFilePath=exportTaskDataFromSql(request, oracleDataConnection, dataTask);
             }
             catch (Exception e)
             {

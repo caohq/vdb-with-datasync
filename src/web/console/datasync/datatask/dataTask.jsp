@@ -97,6 +97,7 @@
         searchDataBySql();
     });
     var taskProcessStr=null;
+    var requestStr=null;//阻塞的线程串
 
     //编辑数据库任务
     function editDataTaskDtails(taskId){
@@ -135,6 +136,7 @@
             success:function (data) {
                 var DataList = JSON.parse(data);
                 taskProcessStr=DataList.taskProcessList[0];
+                requestStr=DataList.requestList[0];
                 loadDataTaskList(DataList.dataTasks);
             },
             error:function () {
@@ -187,6 +189,7 @@
             }, {
                 field: 'status',
                 title: '上传进度',
+                width:'10%',
                 formatter: processFormatter
             }, {
                 field: 'status',
@@ -210,11 +213,19 @@
         $('#dataTaskTableID').bootstrapTable('hideColumn', 'dataSo');
         $('#dataTaskTableID').bootstrapTable('resetView');
         for(var taskId in taskProcessStr){//用javascript的for/in循环遍历对象的属性
-            if($("#"+taskId+"")[0]!=null&&$("#"+taskId+"")[0].style.width!="100%" ){
-
+            if(taskProcessStr[taskId]!=0 && taskProcessStr[taskId]!=100){
                 $("#"+taskId+"")[0].style.width=taskProcessStr[taskId]+"%";
                 $("#"+taskId+"Text")[0].textContent=taskProcessStr[taskId]+"%";
+                // var souceID = taskId;
+                // var keyID = souceID + new Date().getTime();
+                // getProcess(keyID,souceID);
             }
+        }
+
+        for(var request in requestStr){
+            var souceID = request.substr(0,request.indexOf("Block"));
+            var keyID = souceID + new Date().getTime();
+            getProcess(keyID,souceID);
         }
         // $("#dataTaskTableID").bootstrapTable('resetView');
     };
@@ -270,6 +281,7 @@
                 if (r) {
                     $("#"+taskId+"")[0].style.width="0%";
                     $("#"+taskId+"Text")[0].textContent="0%";
+                    $("#"+taskId+"Loading")[0].style.display="block";
                     startFtpUpload(taskId);
                 } else {
                     return;
@@ -289,14 +301,17 @@
             data:{taskId:taskId},
             success:function(data){
                 if(data=="" || data==1){
-                    searchDataBySql();
+                    toastr["success"]("上传成功");
+                    parent.goToPage("datatask/dataTask.jsp");
                 }else if(data==0) {
+                    stopSetOuts();
                     toastr["error"]("上传失败");
                 }else{
-                    // toastr["success"]("上传成功！");
+                    toastr["error"](data);
                 }
             },
             error:function () {
+                searchDataBySql();
                 console.log("请求失败")
             }
         })
@@ -352,7 +367,8 @@
     //进度条
     var processFormatter = function (value, row, index) {
         if(value==0){
-            var process = "<div class=\"progress progress-striped active\" >\n" +
+            var process = "<div class=\"progress progress-striped active\"  >\n" +
+                "<div id=\""+row.dataTaskId+"Loading\" style=\"color:red;display:none;height:100%;line-height: 1.7;\">等待上传..</div>"+
                 "\t<div id=\""+row.dataTaskId+"\" class=\"progress-bar progress-bar-success\" role=\"progressbar\"\n" +
                 "\t\t aria-valuenow=\"60\" aria-valuemin=\"0\" aria-valuemax=\"100\"\n" +
                 "\t\t style=\"width: 0%;\">\n" +
@@ -361,7 +377,8 @@
                 "</div>";
             return process;
         }else{
-            var process = "<div class=\"progress progress-striped active\" >\n" +
+            var process = "<div class=\"progress progress-striped active\"  >\n" +
+                "<div id=\""+row.dataTaskId+"Loading\" style=\"color:red;display:none;height:100%;line-height: 1.7;\">等待上传..</div>"+
                 "\t<div id=\""+row.dataTaskId+"\" class=\"progress-bar progress-bar-success\" role=\"progressbar\"\n" +
                 "\t\t aria-valuenow=\"60\" aria-valuemin=\"0\" aria-valuemax=\"100\"\n" +
                 "\t\t style=\"width: 100%;\">\n" +
@@ -371,10 +388,9 @@
             return process;
         }
     };
-
+    var setouts;
     //获取上传进度
     function getProcess(keyID,souceID) {
-        debugger
         var setout= setInterval(function () {
             $.ajax({
                 url:"/ftpUploadProcess.do",
@@ -385,16 +401,27 @@
                 },
                 success:function (dataReult) {
                     var data=dataReult.replace(/[\r\n]/g,"");
-                    if(data >= 100){
-                        clearInterval(setout);
-                        return;
+                    var dataJson=JSON.parse(data);
+                    if(dataJson.process[0]==0){
+                        $("#"+souceID+"Loading")[0].style.display="block";
+                    }else{
+                        $("#"+souceID+"Loading")[0].style.display="none";
+                        $("#"+souceID+"")[0].style.width=dataJson.process[0]+"%";
+                        $("#"+souceID+"Text")[0].textContent=dataJson.process[0]+"%";
                     }
-                     $("#"+souceID+"")[0].style.width=data+"%";
-                     $("#"+souceID+"Text")[0].textContent=data+"%";
+                    if(dataJson.process[0] >= 100 && dataJson.blockList.length==0){
+                        // $("#"+dataJson.blockList[i]+"Loading")[0].style.display="none";
+                        searchDataBySql();
+                        stopSetOuts();
+                    }
                 }
             })
         },1000)
+        setouts=setout;
+    };
 
+    function stopSetOuts(){
+        clearInterval(setouts);
     }
 
     //编辑本地文件任务
@@ -420,6 +447,7 @@
     $(document).ready(function(){
         // console.log(taskIdStr[(taskIdStr.length+1)/3+1])
     });
+
 
 </script>
 </body>

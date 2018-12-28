@@ -32,6 +32,7 @@ import java.util.*;
 public class MainSevlet extends HttpServlet{
 
     private Logger logger = LoggerFactory.getLogger(MainSevlet.class);
+    private  FtpUtil ftpUtil=new FtpUtil();
 
 
     @Override
@@ -364,7 +365,9 @@ public class MainSevlet extends HttpServlet{
         String connData="";
         List<DataTask> dataTasks = new DataTaskService().getDataTaskList(params);
         List<Map<Object,Object>> taskProcessList = new ArrayList<Map<Object,Object>>();
+        List<Map<Object,Object>> requestList = new ArrayList<Map<Object,Object>>();
         Map<Object,Object> map=new HashMap<Object, Object>();
+        Map<Object,Object> requestMap=new HashMap<Object, Object>();
         FtpUtil fileUtil=new FtpUtil();
         if(dataTasks.size()!=0){
             for(int i=0;i<dataTasks.size();i++){
@@ -373,9 +376,17 @@ public class MainSevlet extends HttpServlet{
                 System.out.println(process);
             }
         }
+
+        for (String in : fileUtil.numberOfRequest.keySet()) {
+               String value = fileUtil.numberOfRequest.get(in);//得到每个key多对用value的值
+                requestMap.put(in,value);
+            }
+
         taskProcessList.add(map);
+        requestList.add(requestMap);
         jsonObject.put("dataTasks",dataTasks);
         jsonObject.put("taskProcessList",taskProcessList);
+        jsonObject.put("requestList",requestList);
         out.println(jsonObject);
         return jsonObject;
     }
@@ -423,14 +434,17 @@ public class MainSevlet extends HttpServlet{
     }
 
     //上传文件到FTP
-    public  int ftpLocalUpload(HttpServletRequest req, HttpServletResponse res) throws IOException {
+    public  int ftpLocalUpload(final HttpServletRequest req, final HttpServletResponse res) throws IOException {
+        String taskId=req.getParameter("taskId");
+        new DataTaskDao().updateDataTaskStatusById(taskId,"0");//修改任务状态
+        ftpUtil.numberOfRequest.put(taskId+"Block",taskId);//存放请求
         FtpUtil ftpUtil=new FtpUtil();
         Long process= Long.valueOf(0);
-        ftpUtil.setProgressMap(req.getParameter("taskId"),process);
-        new DataTaskDao().ftpLocalUpload(req, res);
-        // new ThreadUploadFiles().createUoloadFileThread(req, res);
-//        Thread thread=new Thread(new ThreadUploadFiles(req, res));
-//        thread.start();
+        ftpUtil.setProgressMap(req.getParameter("taskId"),process);//初始化进度
+        synchronized (this){
+            System.out.println("任务"+req.getParameter("taskId")+"开始！");
+            new DataTaskDao().ftpLocalUpload(req,res,req.getParameter("taskId"));
+        }
         return 1;
     }
 
@@ -458,8 +472,18 @@ public class MainSevlet extends HttpServlet{
     public Long ftpUploadProcess(HttpServletRequest req, HttpServletResponse res) throws IOException {
         PrintWriter out=res.getWriter();
         FtpUtil ftpUtil =new FtpUtil();
-        Long process =  ftpUtil.getFtpUploadProcess(req.getParameter("processId"));
-        out.println(process);
+        JSONObject jsonObject = new JSONObject();
+        List<Long> processList=new ArrayList<Long>();
+        List<String> blockList=new ArrayList<String>();
+        String processId=req.getParameter("processId");
+        for(String value:ftpUtil.numberOfRequest.values()){
+            blockList.add(value);
+        }
+        Long process =  ftpUtil.getFtpUploadProcess(processId);
+        processList.add(process);
+        jsonObject.put("process",processList);
+        jsonObject.put("blockList",blockList);
+        out.println(jsonObject);
         return process;
     }
 

@@ -261,14 +261,13 @@ public class DataTaskDao {
     }
 
 
-    public int ftpLocalUpload(HttpServletRequest req, HttpServletResponse res) throws IOException {
+    public int ftpLocalUpload(HttpServletRequest req, HttpServletResponse res,String taskId) throws IOException {
         PrintWriter out=res.getWriter();
-        String taskId=req.getParameter("taskId");
-        updateDataTaskStatusById(taskId,"0");
+       // String taskId=taskId;
         DataTask dataTask = new DataTaskService().getDataTaskInfById(taskId);
         String processId=dataTask.getDataTaskId();
         String fileName = dataTask.getDataTaskName ()+"log.txt";//文件名及类型
-        String path=req.getRealPath("/")+"console/datasync/logFile/";
+        String path=this.getClass().getResource("").getPath().substring(1, this.getClass().getResource("").getPath().indexOf("WEB-INF"))+"console/datasync/logFile/";//req.getRealPath("/")+"/console/datasync/logFile/";
 //        String path = "/logs/";
         FileWriter fw = null;
         File file = new File(path, fileName);
@@ -318,7 +317,7 @@ public class DataTaskDao {
             if(dataTask.getDataTaskType().equals("file")){
                 String[] localFileList = {dataTask.getSqlFilePath()};
                 result = ftpUtil.upload(localFileList, processId,ftpRootPath,dataTask,subjectCode).toString();
-                if(result.equals("File_Exits")){
+                if(result.equals("File_Exits") || result.equals("Remote_Bigger_Local")){
                     ftpUtil.removeDirectory(ftpRootPath+subjectCode+"_"+dataTask.getDataTaskId());
                     ftpUtil.deleteFile(ftpRootPath+subjectCode+"_"+dataTask.getDataTaskId()+".zip");
                     result = ftpUtil.upload(localFileList, processId,ftpRootPath,dataTask,subjectCode).toString();
@@ -330,7 +329,7 @@ public class DataTaskDao {
                     pw.println(current1+":"+"上传失败"+ "\n");
                     return 0;
                 }
-            }else if(dataTask.getDataTaskType().equals("mysql")){
+            }else if("mysql".equals(dataTask.getDataTaskType()) || "oracle".equals(dataTask.getDataTaskType())){
                 String remoteFilepath = ftpRootPath+subjectCode+"_"+dataTask.getDataTaskId()+"_sql/";
                 String[] localFileList = {dataTask.getSqlFilePath()};
                 result = ftpUtil.upload(localFileList, processId,remoteFilepath,dataTask,subjectCode+"_sql").toString();
@@ -346,9 +345,11 @@ public class DataTaskDao {
                     return 0;
                 }
             }
+
             pw.println("ftpDataTaskId"+dataTask.getDataTaskId()+"上传状态:" + result + "\n");
             ftpUtil.disconnect();
             if(result.equals("Upload_New_File_Success")||result.equals("Upload_From_Break_Succes")){
+                System.out.println("开始调用解压！");
                 String dataTaskString = com.alibaba.fastjson.JSONObject.toJSONString(dataTask);
                 com.alibaba.fastjson.JSONObject requestJSON = new com.alibaba.fastjson.JSONObject();
                 requestJSON.put("dataTask",dataTaskString);
@@ -358,7 +359,7 @@ public class DataTaskDao {
                 HttpPost postMethod = null;
                 HttpResponse response = null;
                 try {
-                    if("mysql".equals(dataTask.getDataTaskType())){
+                    if("mysql".equals(dataTask.getDataTaskType()) || "oracle".equals(dataTask.getDataTaskType())){
                         now = new java.util.Date();
                         dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");//可以方便地修改日期格式
                         String current1 = dateFormat.format(now);
@@ -388,7 +389,7 @@ public class DataTaskDao {
                     EntityUtils.consume(httpEntity);//释放资源
                     System.out.println("响应内容："  + reponseContent);
                     if(reponseContent.equals("1")){
-                        if("mysql".equals(dataTask.getDataTaskType())){
+                        if("mysql".equals(dataTask.getDataTaskType()) || "oracle".equals(dataTask.getDataTaskType())){
                             now = new java.util.Date();
                             dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");//可以方便地修改日期格式
                             String current1 = dateFormat.format(now);
@@ -404,9 +405,10 @@ public class DataTaskDao {
                         }
                         dataTask.setStatus("1");
                         updateDataTaskStatusById(taskId,"1");
+                        ftpUtil.numberOfRequest.remove(taskId+"Block");
                         return 1;
                     }else{
-                        if("mysql".equals(dataTask.getDataTaskType())){
+                        if("mysql".equals(dataTask.getDataTaskType()) || "oracle".equals(dataTask.getDataTaskType())){
                             now = new java.util.Date();
                             dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");//可以方便地修改日期格式
                             String current1 = dateFormat.format(now);
@@ -424,7 +426,7 @@ public class DataTaskDao {
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
-                    if("mysql".equals(dataTask.getDataTaskType())){
+                    if("mysql".equals(dataTask.getDataTaskType()) || "oracle".equals(dataTask.getDataTaskType())){
                         now = new java.util.Date();
                         dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");//可以方便地修改日期格式
                         String current1 = dateFormat.format(now);
@@ -450,6 +452,9 @@ public class DataTaskDao {
             current = dateFormat.format(now);
             pw.println(current+":"+"连接FTP出错:"+e+ "\n");
             out.println("连接FTP出错：" + e.getMessage());
+            for (String in : ftpUtil.numberOfRequest.keySet()) {
+                ftpUtil.numberOfRequest.remove(in);
+            }
             System.out.println("连接FTP出错：" + e.getMessage());
             return 0;
         }finally {
