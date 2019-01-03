@@ -164,7 +164,7 @@
                     var sqlStringArray=sqlString.split(";");
                     if(sqlStringArray.length-1>idNum+1){
                         for(var i=1;i<sqlStringArray.length-idNum;i++){
-                            addSqlInput();
+                            addSqlInputInit();
                         }
                     }
 
@@ -191,17 +191,35 @@
     });
 
     //添加sql语句
+    function addSqlInputInit(){
+        idNum=idNum+1;
+        var divId="sqlSearchDiv"+idNum;
+        var divSqlId="sqlInputBox"+idNum+"";
+        $("#sjk").append("<div style=\"width: 100%;height: 40px;margin-top: 20px;margin-bottom: 20px; \" id=\""+divId+"\">\n" +
+            " <label>sql查询</label>\n" +
+            " <input id=\""+divSqlId+"\" class=\"form-control sqlStatements\" style=\"width: 300px;display: inline !important;\" type=\"text\"/>\n" +
+            " <input id=\"createNewTableName"+idNum+"\"  class=\"form-control sqlStatements\" style=\"width: 100px;display: inline !important;\" type=\"text\" placeholder=\"请输入表名\"/>\n" +
+            " <button type=\"button\" class=\"btn blue preview\" onclick=\"showPreviewModal("+divSqlId+")\" >预览</button>\n" +
+            " <button type=\"button\" class=\"btn blue preview\" onclick=\"deleteSqlSearchDiv("+divId+")\" >删除</button>\n" +
+            " </div>");
+
+    };
+            //添加sql语句
     function addSqlInput(){
-    idNum=idNum+1;
-    var divId="sqlSearchDiv"+idNum;
-    var divSqlId="sqlInputBox"+idNum+"";
-    $("#sjk").append("<div style=\"width: 100%;height: 40px;margin-top: 20px;margin-bottom: 20px; \" id=\""+divId+"\">\n" +
-        " <label>sql查询</label>\n" +
-        " <input id=\""+divSqlId+"\" class=\"form-control sqlStatements\" style=\"width: 300px;display: inline !important;\" type=\"text\"/>\n" +
-        " <input id=\"createNewTableName"+idNum+"\"  class=\"form-control sqlStatements\" style=\"width: 100px;display: inline !important;\" type=\"text\" placeholder=\"请输入表名\"/>\n" +
-        " <button type=\"button\" class=\"btn blue preview\" onclick=\"showPreviewModal("+divSqlId+")\" >预览</button>\n" +
-        " <button type=\"button\" class=\"btn blue preview\" onclick=\"deleteSqlSearchDiv("+divId+")\" >删除</button>\n" +
-        " </div>");
+        if(($('#createNewTableName'+idNum+'').val()=="" || $('#createNewTableName'+idNum+'').val()==null)&&($('#sqlInputBox'+idNum+'').val()=="" || $('#sqlInputBox'+idNum+'').val()==null)){
+            toastr["error"]("请补充已有“sql查询”后再添加新的SQL查询！");
+            return;
+        }
+        idNum=idNum+1;
+        var divId="sqlSearchDiv"+idNum;
+        var divSqlId="sqlInputBox"+idNum+"";
+        $("#sjk").append("<div style=\"width: 100%;height: 40px;margin-top: 20px;margin-bottom: 20px; \" id=\""+divId+"\">\n" +
+            " <label>sql查询</label>\n" +
+            " <input id=\""+divSqlId+"\" class=\"form-control sqlStatements\" style=\"width: 300px;display: inline !important;\" type=\"text\"/>\n" +
+            " <input id=\"createNewTableName"+idNum+"\"  class=\"form-control sqlStatements\" style=\"width: 100px;display: inline !important;\" type=\"text\" placeholder=\"请输入表名\"/>\n" +
+            " <button type=\"button\" class=\"btn blue preview\" onclick=\"showPreviewModal("+divSqlId+")\" >预览</button>\n" +
+            " <button type=\"button\" class=\"btn blue preview\" onclick=\"deleteSqlSearchDiv("+divId+")\" >删除</button>\n" +
+            " </div>");
     };
 
     //删除新增的sql语句输入框
@@ -246,7 +264,7 @@
                     var sqlStringArray=sqlString.split(";");
                     if(sqlStringArray.length-1>idNum+1){
                         for(var i=1;i<sqlStringArray.length-idNum;i++){
-                            addSqlInput();
+                            addSqlInputInit();
                         }
                     }
 

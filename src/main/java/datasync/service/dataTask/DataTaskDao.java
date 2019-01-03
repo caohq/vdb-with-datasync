@@ -33,6 +33,7 @@ import java.nio.charset.Charset;
 import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -267,7 +268,7 @@ public class DataTaskDao {
         DataTask dataTask = new DataTaskService().getDataTaskInfById(taskId);
         String processId=dataTask.getDataTaskId();
         String fileName = dataTask.getDataTaskName ()+"log.txt";//文件名及类型
-        String path=this.getClass().getResource("").getPath().substring(1, this.getClass().getResource("").getPath().indexOf("WEB-INF"))+"console/datasync/logFile/";//req.getRealPath("/")+"/console/datasync/logFile/";
+        String path=req.getRealPath("/")+"console/datasync/logFile/";//this.getClass().getResource("").getPath().substring(1, this.getClass().getResource("").getPath().indexOf("WEB-INF"))+"console/datasync/logFile/";
 //        String path = "/logs/";
         FileWriter fw = null;
         File file = new File(path, fileName);
@@ -286,6 +287,7 @@ public class DataTaskDao {
             }
         }
         PrintWriter pw = new PrintWriter(fw);
+        pw.println("日志存放路径"+":"+path + "\n");
         java.util.Date now = new java.util.Date();
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");//可以方便地修改日期格式
         String current = dateFormat.format(now);
@@ -299,7 +301,6 @@ public class DataTaskDao {
         }
         String configFilePath = GetInfoService.class.getClassLoader().getResource("../../WEB-INF/config.properties").getFile();
         String subjectCode= ConfigUtil.getConfigItem(configFilePath, "SubjectCode");
-//        String subjectCode = "ssdd";
         String host = ConfigUtil.getConfigItem(configFilePath, "FtpHost");// "10.0.86.77";
         String userName = ConfigUtil.getConfigItem(configFilePath, "FtpUser");//"ftpUserssdd";
         String password = ConfigUtil.getConfigItem(configFilePath, "FtpPassword");//"ftpPasswordssdd";
@@ -307,12 +308,10 @@ public class DataTaskDao {
         String ftpRootPath = "/";
         String portalUrl =ConfigUtil.getConfigItem(configFilePath, "PortalUrl");//"10.0.86.77/portal";
         FtpUtil ftpUtil=new FtpUtil();
-       // ftpUtil.disconnect();
         pw.println("数据任务名称为：" + dataTask.getDataTaskName() +"\n");
         try {
             ftpUtil.connect(host, Integer.parseInt(port), userName, password);
 
-            //ftpUtil.disconnect();
             String result = "";
             if(dataTask.getDataTaskType().equals("file")){
                 String[] localFileList = {dataTask.getSqlFilePath()};
@@ -347,6 +346,7 @@ public class DataTaskDao {
             }
 
             pw.println("ftpDataTaskId"+dataTask.getDataTaskId()+"上传状态:" + result + "\n");
+            ftpUtil.numberOfRequest.remove(taskId+"Block");
             ftpUtil.disconnect();
             if(result.equals("Upload_New_File_Success")||result.equals("Upload_From_Break_Succes")){
                 System.out.println("开始调用解压！");
@@ -405,7 +405,7 @@ public class DataTaskDao {
                         }
                         dataTask.setStatus("1");
                         updateDataTaskStatusById(taskId,"1");
-                        ftpUtil.numberOfRequest.remove(taskId+"Block");
+
                         return 1;
                     }else{
                         if("mysql".equals(dataTask.getDataTaskType()) || "oracle".equals(dataTask.getDataTaskType())){
@@ -451,9 +451,10 @@ public class DataTaskDao {
             dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");//可以方便地修改日期格式
             current = dateFormat.format(now);
             pw.println(current+":"+"连接FTP出错:"+e+ "\n");
-            out.println("连接FTP出错：" + e.getMessage());
-            for (String in : ftpUtil.numberOfRequest.keySet()) {
-                ftpUtil.numberOfRequest.remove(in);
+            out.println("连接FTP出错：" + e.getMessage()+";"+dataTask.getDataTaskId());
+            for(Iterator<Map.Entry<String, String>> it = ftpUtil.numberOfRequest.entrySet().iterator(); it.hasNext();){
+                Map.Entry<String, String> item = it.next();
+                it.remove();
             }
             System.out.println("连接FTP出错：" + e.getMessage());
             return 0;

@@ -264,7 +264,7 @@
                 $("#bdDirDiv").css("display", "block");//显示“选择资源”标签
                 $("#bdSubmitButton").css("display", "block"); //显示“提交”按钮
 
-                var coreData = eval("["+JSON.parse(data).list.toString()+"]");
+                var coreData = eval("["+JSON.parse(data).list.toString().replace(/\\/g,"/")+"]");
                 var zTreeObj = $.fn.zTree.getZTreeObj("LocalTreeDemo");
                 if(zTreeObj!=null){
                     zTreeObj.destroy();//用之前先销毁tree
@@ -480,6 +480,7 @@
                     dataTaskName:dataTaskName
                 },
                 success:function (dataSession) {
+                    parent.goToPage("datatask/dataTask.jsp");
                     // $("#createLocalFileModal").modal("hide");//隐藏弹出框
                   //  parent.goToPage("datatask/dataTask.jsp");
                 },
@@ -555,10 +556,9 @@
                         fileName=JSON.parse(data).list[1];//上传进度
                     }
                     //$("#layui-layer"+index+"").html("");
-                    debugger
                     if(process >= 100){
+                        debugger
                         clearInterval(setout);
-                        parent.goToPage("datatask/dataTask.jsp");
                         return;
                     }
                     $("#Progress .circle-text").text(process+"%");

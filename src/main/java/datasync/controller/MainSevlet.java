@@ -368,17 +368,17 @@ public class MainSevlet extends HttpServlet{
         List<Map<Object,Object>> requestList = new ArrayList<Map<Object,Object>>();
         Map<Object,Object> map=new HashMap<Object, Object>();
         Map<Object,Object> requestMap=new HashMap<Object, Object>();
-        FtpUtil fileUtil=new FtpUtil();
+       // FtpUtil fileUtil=new FtpUtil();
         if(dataTasks.size()!=0){
             for(int i=0;i<dataTasks.size();i++){
-                Object process =  fileUtil.getFtpUploadProcess(dataTasks.get(i).getDataTaskId());
+                Object process =  ftpUtil.getFtpUploadProcess(dataTasks.get(i).getDataTaskId());
                 map.put(dataTasks.get(i).getDataTaskId(),process);
                 System.out.println(process);
             }
         }
 
-        for (String in : fileUtil.numberOfRequest.keySet()) {
-               String value = fileUtil.numberOfRequest.get(in);//得到每个key多对用value的值
+        for (String in : ftpUtil.numberOfRequest.keySet()) {
+               String value = ftpUtil.numberOfRequest.get(in);//得到每个key多对用value的值
                 requestMap.put(in,value);
             }
 
@@ -438,7 +438,7 @@ public class MainSevlet extends HttpServlet{
         String taskId=req.getParameter("taskId");
         new DataTaskDao().updateDataTaskStatusById(taskId,"0");//修改任务状态
         ftpUtil.numberOfRequest.put(taskId+"Block",taskId);//存放请求
-        FtpUtil ftpUtil=new FtpUtil();
+//        FtpUtil ftpUtil=new FtpUtil();
         Long process= Long.valueOf(0);
         ftpUtil.setProgressMap(req.getParameter("taskId"),process);//初始化进度
         synchronized (this){
@@ -471,7 +471,7 @@ public class MainSevlet extends HttpServlet{
     //获取上传进度
     public Long ftpUploadProcess(HttpServletRequest req, HttpServletResponse res) throws IOException {
         PrintWriter out=res.getWriter();
-        FtpUtil ftpUtil =new FtpUtil();
+        //FtpUtil ftpUtil =new FtpUtil();
         JSONObject jsonObject = new JSONObject();
         List<Long> processList=new ArrayList<Long>();
         List<String> blockList=new ArrayList<String>();
@@ -553,44 +553,69 @@ public class MainSevlet extends HttpServlet{
 
     //获取--树--数据源
    public List<Object> getJobTree(String path,List<Object> list){
+       System.out.println("服务器系统:"+System.getProperties().getProperty("os.name"));
+       String systemName=System.getProperties().getProperty("os.name");
+       int isWindows=systemName.indexOf("Windows");
        // List<Object> list=new ArrayList<Object>();//递归获取文件
         List<Object> fileList=new ArrayList<Object>();//递归获取文件
         File dirFile = new File(path);//获取文件第一层
         File[] fs = dirFile.listFiles();
-       list.add("{ id:\""+path.replaceAll("\\\\","/")+"\", pId:0, name:\""+path.replaceAll("\\\\","/")+"\", open:true,checked:false}");
+       list.add("{ id:\""+path+"\", pId:0, name:\""+path+"\", open:true,checked:false}");
        for (int i = 0; i < fs.length; i++) {
            if(fs[i].isFile()){//当对象为文件时
                boolean checked=false;
-               String pidStr=fs[i].toString().substring(0,fs[i].toString().lastIndexOf("\\"));
-               list.add("{ id:\""+fs[i].toString().replaceAll("\\\\","/")+"\", pId:\""+pidStr.replaceAll("\\\\","/")+"\", name:\""+fs[i].getName()+"\", open:true,checked:\""+checked+"\"}");
+               String pidStr="";
+               if("-1".equals(isWindows+"")){//linux
+                    pidStr=fs[i].toString().substring(0,fs[i].toString().lastIndexOf("/"));
+               }else {
+                    pidStr=fs[i].toString().substring(0,fs[i].toString().lastIndexOf("\\"));
+               }
+               list.add("{ id:\""+fs[i].toString()+"\", pId:\""+pidStr+"\", name:\""+fs[i].getName()+"\", open:true,checked:\""+checked+"\"}");
                System.out.println();
            }else if(fs[i].isDirectory()){//当对象为路径时
                boolean checked=false;
-               String pidStr=fs[i].toString().substring(0,fs[i].toString().lastIndexOf("\\"));
-               list.add("{ id:\""+fs[i].toString().replaceAll("\\\\","/")+"\", pId:\""+pidStr.replaceAll("\\\\","/")+"\", name:\""+fs[i].getName()+"\", open:false,checked:\""+checked+"\"}");
+               String pidStr="";
+               if("-1".equals(isWindows+"")){//linux
+                   pidStr=fs[i].toString().substring(0,fs[i].toString().lastIndexOf("/"));
+               }else {
+                   pidStr=fs[i].toString().substring(0,fs[i].toString().lastIndexOf("\\"));
+               }
+               list.add("{ id:\""+fs[i].toString()+"\", pId:\""+pidStr+"\", name:\""+fs[i].getName()+"\", open:false,checked:\""+checked+"\"}");
                List<Object> listStr=new ArrayList<Object>();//递归获取文件
                fileList=getFileList( fs[i].toString(),listStr);
+               for(Object o:fileList){
+                  list.add(o);
+               }
            }
        }
-        for(Object o:fileList){
-           list.add(o);
-        }
         return list;
    }
 
    public List<Object> getFileList(String path, List<Object> list){
+       String systemName=System.getProperties().getProperty("os.name");
+       int isWindows=systemName.indexOf("Windows");
        File dirFile = new File(path);//获取文件第一层
        File[] fs = dirFile.listFiles();
        for(int i=0; i < fs.length; i++){
            if(fs[i].isDirectory()){
                boolean checked=false;
-               String pidStr=fs[i].toString().substring(0,fs[i].toString().lastIndexOf("\\"));
-               list.add("{ id:\""+fs[i].toString().replaceAll("\\\\","/")+"\", pId:\""+pidStr.replaceAll("\\\\","/")+"\", name:\""+fs[i].getName()+"\", open:false,checked:\""+checked+"\"}");
+               String pidStr="";
+               if("-1".equals(isWindows+"")){//linux
+                   pidStr=fs[i].toString().substring(0,fs[i].toString().lastIndexOf("/"));
+               }else {
+                   pidStr=fs[i].toString().substring(0,fs[i].toString().lastIndexOf("\\"));
+               }
+               list.add("{ id:\""+fs[i].toString()+"\", pId:\""+pidStr+"\", name:\""+fs[i].getName()+"\", open:false,checked:\""+checked+"\"}");
                getFileList(fs[i].toString(),list);
            }else if (fs[i].isFile()){
                boolean checked=false;
-               String pidStr=fs[i].toString().substring(0,fs[i].toString().lastIndexOf("\\"));
-               list.add("{ id:\""+fs[i].toString().replaceAll("\\\\","/")+"\", pId:\""+pidStr.replaceAll("\\\\","/")+"\", name:\""+fs[i].getName()+"\", open:false,checked:\""+checked+"\"}");
+               String pidStr="";
+               if("-1".equals(isWindows+"")){//linux
+                   pidStr=fs[i].toString().substring(0,fs[i].toString().lastIndexOf("/"));
+               }else {
+                   pidStr=fs[i].toString().substring(0,fs[i].toString().lastIndexOf("\\"));
+               }
+               list.add("{ id:\""+fs[i].toString()+"\", pId:\""+pidStr+"\", name:\""+fs[i].getName()+"\", open:false,checked:\""+checked+"\"}");
            }
        }
         return list;

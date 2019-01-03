@@ -216,9 +216,6 @@
             if(taskProcessStr[taskId]!=0 && taskProcessStr[taskId]!=100){
                 $("#"+taskId+"")[0].style.width=taskProcessStr[taskId]+"%";
                 $("#"+taskId+"Text")[0].textContent=taskProcessStr[taskId]+"%";
-                // var souceID = taskId;
-                // var keyID = souceID + new Date().getTime();
-                // getProcess(keyID,souceID);
             }
         }
 
@@ -300,6 +297,7 @@
             url:"/ftpLocalUpload.do",
             data:{taskId:taskId},
             success:function(data){
+                data=data.replace(/[\r\n]/g,"");
                 if(data=="" || data==1){
                     toastr["success"]("上传成功");
                     parent.goToPage("datatask/dataTask.jsp");
@@ -307,12 +305,28 @@
                     stopSetOuts();
                     toastr["error"]("上传失败");
                 }else{
-                    toastr["error"](data);
+                    var dataIdArray=data.split(";");
+                    toastr.options = {
+                        closeButton: true,
+                        showDuration: "1000"
+
+                      };
+                    if(dataIdArray.length>1){
+                        toastr["error"](dataIdArray[0]+"\n任务"+dataIdArray[1]+": 上传失败,请确认网络连接，重新选择上传任务！");
+                        $("#"+dataIdArray[1]+"Loading")[0].style.display="none";
+                        $("#"+dataIdArray[1]+"LoadingFail")[0].style.display="block";
+                    }else {
+                        toastr["error"](data);
+                    }
+                    toastr.options = {
+                        closeButton: true,
+                        showDuration: "300"
+                    };
                 }
             },
             error:function () {
                 searchDataBySql();
-                console.log("请求失败")
+                console.log("请求ajax失败")
             }
         })
         getProcess(keyID,souceID);//获取上传进度
@@ -326,7 +340,6 @@
         var dialog = $('#' + id);
         if (dialog.length == 0) {
             dialog = $('<div class="modal fade" role="dialog" id="' + id + '"/>');
-            //  dialog.empty()
             dialog.appendTo(fatherBody);
         }
         dialog.load("/console/datasync/datatask/viewTaskDetailsWin.html", function() {
@@ -369,6 +382,7 @@
         if(value==0){
             var process = "<div class=\"progress progress-striped active\"  >\n" +
                 "<div id=\""+row.dataTaskId+"Loading\" style=\"color:red;display:none;height:100%;line-height: 1.7;\">等待上传..</div>"+
+                "<div id=\""+row.dataTaskId+"LoadingFail\" style=\"color:red;display:none;height:100%;line-height: 1.7;\">上传失败</div>"+
                 "\t<div id=\""+row.dataTaskId+"\" class=\"progress-bar progress-bar-success\" role=\"progressbar\"\n" +
                 "\t\t aria-valuenow=\"60\" aria-valuemin=\"0\" aria-valuemax=\"100\"\n" +
                 "\t\t style=\"width: 0%;\">\n" +
@@ -379,6 +393,7 @@
         }else{
             var process = "<div class=\"progress progress-striped active\"  >\n" +
                 "<div id=\""+row.dataTaskId+"Loading\" style=\"color:red;display:none;height:100%;line-height: 1.7;\">等待上传..</div>"+
+                "<div id=\""+row.dataTaskId+"LoadingFail\" style=\"color:red;display:none;height:100%;line-height: 1.7;\">上传失败</div>"+
                 "\t<div id=\""+row.dataTaskId+"\" class=\"progress-bar progress-bar-success\" role=\"progressbar\"\n" +
                 "\t\t aria-valuenow=\"60\" aria-valuemin=\"0\" aria-valuemax=\"100\"\n" +
                 "\t\t style=\"width: 100%;\">\n" +
@@ -411,6 +426,7 @@
                     }
                     if(dataJson.process[0] >= 100 && dataJson.blockList.length==0){
                         // $("#"+dataJson.blockList[i]+"Loading")[0].style.display="none";
+                        debugger
                         searchDataBySql();
                         stopSetOuts();
                     }
@@ -421,7 +437,11 @@
     };
 
     function stopSetOuts(){
-        clearInterval(setouts);
+        var start = (setouts - 100) > 0 ? setouts -100 : 0;
+        for(var i = start; i <= setouts; i++)
+        {
+            clearInterval(i);
+        }
     }
 
     //编辑本地文件任务
