@@ -150,8 +150,7 @@
                 $('#bdDirDiv').empty();
                 $("#bdTableLabel").css("display", "block");//显示“选择资源”标签
                 $("#bdSubmitButton").css("display", "block"); //显示“提交”按钮
-
-                var coreData = eval("["+JSON.parse(data).list.toString()+"]");
+                var coreData = eval("["+JSON.parse(data).list.toString().replace(/\\/g,"/")+"]");
                 var dataTaskFilePathArray=dataTaskFilePath.split(";");
                 for(var i=0;i<coreData.length;i++){
                     for(var j=0;j<dataTaskFilePathArray.length;j++){
@@ -199,8 +198,8 @@
                 });
             },
             success: function (data) {
-                debugger
                 $('#bdDirDiv').empty();
+                $("#bdTableLabel").css("display", "block");//显示“选择资源”标签
                 $("#bdTableLabel").css("display", "block");//显示“选择资源”标签
                 $("#bdSubmitButton").css("display", "block"); //显示“提交”按钮
                 var coreData = eval("["+JSON.parse(data).list.toString().replace(/\\/g,"/")+"]");
@@ -293,7 +292,6 @@
 
     //获取上传进度
     function getProcess(keyID,souceID) {
-        debugger
          $("#layui-layer"+SubjectIndex+"").remove();
         var setout= setInterval(function () {
             $.ajax({

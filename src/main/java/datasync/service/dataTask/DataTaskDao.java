@@ -405,6 +405,7 @@ public class DataTaskDao {
                         }
                         dataTask.setStatus("1");
                         updateDataTaskStatusById(taskId,"1");
+                        out.println(1);
 
                         return 1;
                     }else{
@@ -422,7 +423,8 @@ public class DataTaskDao {
                             pw.println(current1+":"+"解压失败"+ "\n");
                             pw.println(current1+":"+"=========================解压流程结束========================" + "\n");
                         }
-                        return 0;
+                        out.println(3);
+                        return 3;
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -457,7 +459,7 @@ public class DataTaskDao {
                 it.remove();
             }
             System.out.println("连接FTP出错：" + e.getMessage());
-            return 0;
+            return 3;
         }finally {
             now = new Date();
             dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");//可以方便地修改日期格式
@@ -473,6 +475,5 @@ public class DataTaskDao {
         }
         out.println(1);
         return 1;
-
     }
 }

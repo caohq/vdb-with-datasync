@@ -28,11 +28,18 @@ import java.io.PrintWriter;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 public class MainSevlet extends HttpServlet{
 
     private Logger logger = LoggerFactory.getLogger(MainSevlet.class);
     private  FtpUtil ftpUtil=new FtpUtil();
+    public static BlockingQueue<Runnable> queue = new ArrayBlockingQueue<Runnable>(20);
+    //创建线程池，池中保存的线程数为5，允许的最大线程数为20
+    static ThreadPoolExecutor pool = new ThreadPoolExecutor(5,20,50,TimeUnit.MILLISECONDS, queue);
 
 
     @Override
@@ -434,17 +441,13 @@ public class MainSevlet extends HttpServlet{
     }
 
     //上传文件到FTP
-    public  int ftpLocalUpload(final HttpServletRequest req, final HttpServletResponse res) throws IOException {
+    public  int ftpLocalUpload( HttpServletRequest req, HttpServletResponse res) throws IOException {
         String taskId=req.getParameter("taskId");
         new DataTaskDao().updateDataTaskStatusById(taskId,"0");//修改任务状态
         ftpUtil.numberOfRequest.put(taskId+"Block",taskId);//存放请求
-//        FtpUtil ftpUtil=new FtpUtil();
         Long process= Long.valueOf(0);
-        ftpUtil.setProgressMap(req.getParameter("taskId"),process);//初始化进度
-        synchronized (this){
-            System.out.println("任务"+req.getParameter("taskId")+"开始！");
-            new DataTaskDao().ftpLocalUpload(req,res,req.getParameter("taskId"));
-        }
+        ftpUtil.setProgressMap(taskId,process);//初始化进度
+        new DataTaskDao().ftpLocalUpload(req,res,req.getParameter("taskId"));
         return 1;
     }
 

@@ -557,7 +557,6 @@
                     }
                     //$("#layui-layer"+index+"").html("");
                     if(process >= 100){
-                        debugger
                         clearInterval(setout);
                         return;
                     }

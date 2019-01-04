@@ -297,13 +297,18 @@
             url:"/ftpLocalUpload.do",
             data:{taskId:taskId},
             success:function(data){
+                debugger
                 data=data.replace(/[\r\n]/g,"");
                 if(data=="" || data==1){
-                    toastr["success"]("上传成功");
-                    parent.goToPage("datatask/dataTask.jsp");
+                    toastr["success"]("上传成功！");
+                    searchDataBySql();
+                    // parent.goToPage("datatask/dataTask.jsp");
                 }else if(data==0) {
                     stopSetOuts();
-                    toastr["error"]("上传失败");
+                    toastr["error"]("上传失败！");
+                }else if(data==3){
+                    stopSetOuts();
+                    toastr["error"]("ftp端解压失败！");
                 }else{
                     var dataIdArray=data.split(";");
                     toastr.options = {
@@ -381,18 +386,18 @@
     var processFormatter = function (value, row, index) {
         if(value==0){
             var process = "<div class=\"progress progress-striped active\"  >\n" +
-                "<div id=\""+row.dataTaskId+"Loading\" style=\"color:red;display:none;height:100%;line-height: 1.7;\">等待上传..</div>"+
+                "<div id=\""+row.dataTaskId+"Loading\" style=\"color:red;display:none;height:100%;line-height: 1.7;\">连接中..</div>"+
                 "<div id=\""+row.dataTaskId+"LoadingFail\" style=\"color:red;display:none;height:100%;line-height: 1.7;\">上传失败</div>"+
                 "\t<div id=\""+row.dataTaskId+"\" class=\"progress-bar progress-bar-success\" role=\"progressbar\"\n" +
                 "\t\t aria-valuenow=\"60\" aria-valuemin=\"0\" aria-valuemax=\"100\"\n" +
                 "\t\t style=\"width: 0%;\">\n" +
-                 "\t\t<span class=\"sr-only\" id='"+row.dataTaskId+"Text'></span>\n" +
+                 "\t\t<span class=\"sr-only\" style=\"color:#f9170a;\" id='"+row.dataTaskId+"Text'></span>\n" +
                 "\t</div>\n" +
                 "</div>";
             return process;
         }else{
             var process = "<div class=\"progress progress-striped active\"  >\n" +
-                "<div id=\""+row.dataTaskId+"Loading\" style=\"color:red;display:none;height:100%;line-height: 1.7;\">等待上传..</div>"+
+                "<div id=\""+row.dataTaskId+"Loading\" style=\"color:red;display:none;height:100%;line-height: 1.7;\">连接中..</div>"+
                 "<div id=\""+row.dataTaskId+"LoadingFail\" style=\"color:red;display:none;height:100%;line-height: 1.7;\">上传失败</div>"+
                 "\t<div id=\""+row.dataTaskId+"\" class=\"progress-bar progress-bar-success\" role=\"progressbar\"\n" +
                 "\t\t aria-valuenow=\"60\" aria-valuemin=\"0\" aria-valuemax=\"100\"\n" +
@@ -425,21 +430,18 @@
                         $("#"+souceID+"Text")[0].textContent=dataJson.process[0]+"%";
                     }
                     if(dataJson.process[0] >= 100 && dataJson.blockList.length==0){
-                        // $("#"+dataJson.blockList[i]+"Loading")[0].style.display="none";
-                        debugger
-                        searchDataBySql();
                         stopSetOuts();
+                        searchDataBySql();
                     }
                 }
             })
-        },1000)
+        },2000)
         setouts=setout;
     };
 
     function stopSetOuts(){
         var start = (setouts - 100) > 0 ? setouts -100 : 0;
-        for(var i = start; i <= setouts; i++)
-        {
+        for(var i = start; i <= setouts; i++){
             clearInterval(i);
         }
     }
