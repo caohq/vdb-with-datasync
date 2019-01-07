@@ -457,6 +457,17 @@ public class MainSevlet extends HttpServlet{
         PrintWriter out = res.getWriter();
         JSONObject jsonObject = new JSONObject();
         DataTask dataTask = new DataTaskService().getDataTaskInfById(taskId);
+        String filePathStr="";
+        if(dataTask.getFilePath()!=null && dataTask.getFilePath()!=""){
+            String[] filePathArray=dataTask.getFilePath().split(";");
+            for(String filePath:filePathArray){
+                File dirFile = new File(filePath);//获取文件第一层
+                if(dirFile.isFile()){
+                    filePathStr=filePathStr+dirFile+";";
+                }
+            }
+        }
+        dataTask.setFilePath(filePathStr.replaceAll("\\\\","/"));
         jsonObject.put("dataTask",dataTask);
         out.println(jsonObject);
         return  jsonObject;
@@ -633,6 +644,8 @@ public class MainSevlet extends HttpServlet{
      */
     public void updateLocalTaskData(HttpServletRequest request, HttpServletResponse response) throws IOException {
         PrintWriter out=response.getWriter();
+        Long process= Long.valueOf(0);
+        ftpUtil.setProgressMap(request.getParameter("dataTaskId"),process);//初始化进度
         try {
             String result=new LocalConnDaoService().updateLocalTaskDataById(request,response);
         } catch (Exception e) {

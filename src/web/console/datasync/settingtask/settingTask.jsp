@@ -274,6 +274,7 @@
                 $("#layui-layer"+index+"").remove();
             },
             error: function (data) {
+                toastr["error"]("获得本地目录中的文件树失败,请检查文件上路径及数据源！");
                 console.log("获得本地目录中的文件树失败")
             }
         })

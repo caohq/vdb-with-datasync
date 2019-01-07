@@ -13,8 +13,8 @@ import java.io.IOException;
 /**
  * @program: DataSync
  * @description: compress files
- * @author: huangwei
- * @create: 2018-10-23 16:03
+ * @author: caohq
+ * @create: 2018-12-23 13:12
  **/
 public class ZipUtils {
 
