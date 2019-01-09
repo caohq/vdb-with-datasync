@@ -424,17 +424,20 @@
                 success:function (dataReult) {
                     var data=dataReult.replace(/[\r\n]/g,"");
                     var dataJson=JSON.parse(data);
-                    if(dataJson.process[0]==0){
+                    if(dataJson.process[0]==0 && dataJson.process[0]!=99){
                         $("#"+souceID+"Loading")[0].style.display="block";
+                    }else if(dataJson.process[0]==99){
+                        $("#"+souceID+"Unziping")[0].style.display="block";
                     }else{
                         $("#"+souceID+"Loading")[0].style.display="none";
                         $("#"+souceID+"")[0].style.width=dataJson.process[0]+"%";
                         $("#"+souceID+"Text")[0].textContent=dataJson.process[0]+"%";
                     }
+                    // if(){}
                     if(dataJson.process[0] >= 100 && dataJson.blockList.length==0){
                         stopSetOuts();
-                        //searchDataBySql();
-                        $("#"+souceID+"Unziping")[0].style.display="block";
+                        searchDataBySql();
+                        // $("#"+souceID+"Unziping")[0].style.display="block";
                     }
                 }
             })
@@ -469,9 +472,9 @@
         fatherBody.append("<div id='backdropId' class='modal-backdrop fade in'></div>");
     }
 
-    $(document).ready(function(){
-        // console.log(taskIdStr[(taskIdStr.length+1)/3+1])
-    });
+    // $(document).ready(function(){
+    //     // console.log(taskIdStr[(taskIdStr.length+1)/3+1])
+    // });
 
 
 </script>

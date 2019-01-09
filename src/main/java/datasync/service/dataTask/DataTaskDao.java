@@ -406,7 +406,7 @@ public class DataTaskDao {
                         dataTask.setStatus("1");
                         updateDataTaskStatusById(taskId,"1");
                         ftpUtil.numberOfRequest.remove(taskId+"Block");
-                        ftpUtil.progressMap.remove(taskId);
+                        ftpUtil.progressMap.put(taskId,Long.valueOf(100));
                         out.println(1);
 
                         return 1;

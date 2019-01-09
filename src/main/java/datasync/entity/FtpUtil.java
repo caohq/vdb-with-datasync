@@ -309,7 +309,9 @@ public class FtpUtil {
                         process = 100;
                     }
                     System.out.println("上传进度:" + process);
-                    progressMap.put(processId, process);
+                    if(process!=100){
+                        progressMap.put(processId, process);
+                    }
                 }
             }
         }catch (IOException e){
