@@ -249,6 +249,7 @@
             $.ajax({
                 type:"POST",
                 url:"/updateLocalTaskData.do",
+                timeout : 600000, //超时时间设置，单位毫秒
                 data:{
                     connDataName:connDataName,
                     connDataValue:connDataValue,
@@ -266,12 +267,10 @@
                         toastr["success"]("任务信息更新成功！");
                         $("#dataModal").modal('hide');
                       //   $("#layui-layer-shade"+SubjectIndex+"").remove();
-
-
                     }
                 },
                 error:function () {
-                    console.log("请求失败")
+                    console.log("请求超时！")
                 }
             })
             getProcess(dataTaskId,dataTaskId+ new Date().getTime());//获取上传进度
@@ -310,6 +309,8 @@
                     }
                     $("#layui-layer"+index+"").html("");
                     if(process >= 100){
+                        $("#Progress .circle-text").text(process+"%");
+                        $("#Progress .circle-info").text(fileName);
                         clearInterval(setout);
                         parent.goToPage("datatask/dataTask.jsp");
                         return;

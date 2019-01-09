@@ -295,9 +295,9 @@
         $.ajax({
             type:"POST",
             url:"/ftpLocalUpload.do",
+            timeout:600000,
             data:{taskId:taskId},
             success:function(data){
-                debugger
                 data=data.replace(/[\r\n]/g,"");
                 if(data=="" || data==1){
                     toastr["success"]("上传成功！");
@@ -388,6 +388,7 @@
             var process = "<div class=\"progress progress-striped active\"  >\n" +
                 "<div id=\""+row.dataTaskId+"Loading\" style=\"color:red;display:none;height:100%;line-height: 1.7;\">连接中..</div>"+
                 "<div id=\""+row.dataTaskId+"LoadingFail\" style=\"color:red;display:none;height:100%;line-height: 1.7;\">上传失败</div>"+
+                "<div id=\""+row.dataTaskId+"Unziping\" style=\"color:red;display:none;height:100%;line-height: 1.7;\">解压中...</div>"+
                 "\t<div id=\""+row.dataTaskId+"\" class=\"progress-bar progress-bar-success\" role=\"progressbar\"\n" +
                 "\t\t aria-valuenow=\"60\" aria-valuemin=\"0\" aria-valuemax=\"100\"\n" +
                 "\t\t style=\"width: 0%;\">\n" +
@@ -399,6 +400,7 @@
             var process = "<div class=\"progress progress-striped active\"  >\n" +
                 "<div id=\""+row.dataTaskId+"Loading\" style=\"color:red;display:none;height:100%;line-height: 1.7;\">连接中..</div>"+
                 "<div id=\""+row.dataTaskId+"LoadingFail\" style=\"color:red;display:none;height:100%;line-height: 1.7;\">上传失败</div>"+
+                "<div id=\""+row.dataTaskId+"Unziping\" style=\"color:red;display:none;height:100%;line-height: 1.7;\">解压中...</div>"+
                 "\t<div id=\""+row.dataTaskId+"\" class=\"progress-bar progress-bar-success\" role=\"progressbar\"\n" +
                 "\t\t aria-valuenow=\"60\" aria-valuemin=\"0\" aria-valuemax=\"100\"\n" +
                 "\t\t style=\"width: 100%;\">\n" +
@@ -431,7 +433,8 @@
                     }
                     if(dataJson.process[0] >= 100 && dataJson.blockList.length==0){
                         stopSetOuts();
-                        searchDataBySql();
+                        //searchDataBySql();
+                        $("#"+souceID+"Unziping")[0].style.display="block";
                     }
                 }
             })

@@ -346,7 +346,7 @@ public class DataTaskDao {
             }
 
             pw.println("ftpDataTaskId"+dataTask.getDataTaskId()+"上传状态:" + result + "\n");
-            ftpUtil.numberOfRequest.remove(taskId+"Block");
+
             ftpUtil.disconnect();
             if(result.equals("Upload_New_File_Success")||result.equals("Upload_From_Break_Succes")){
                 System.out.println("开始调用解压！");
@@ -405,6 +405,8 @@ public class DataTaskDao {
                         }
                         dataTask.setStatus("1");
                         updateDataTaskStatusById(taskId,"1");
+                        ftpUtil.numberOfRequest.remove(taskId+"Block");
+                        ftpUtil.progressMap.remove(taskId);
                         out.println(1);
 
                         return 1;

@@ -473,6 +473,7 @@
             $.ajax({
                 type:"POST",
                 url:"/submitFileData.do",
+                timeout:600000,
                 data:{
                     connDataName:connDataName,
                     getCheckedFile:getCheckedFile,
@@ -539,7 +540,7 @@
         }
     };
 
-    //获取上传进度
+    //获取压缩进度
     function getProcess(keyID,souceID) {
         var setout= setInterval(function () {
             $.ajax({
@@ -558,6 +559,8 @@
                     }
                     //$("#layui-layer"+index+"").html("");
                     if(process >= 100){
+                        $("#Progress .circle-text").text(process+"%");
+                        $("#Progress .circle-info").text(fileName);
                         clearInterval(setout);
                         return;
                     }
