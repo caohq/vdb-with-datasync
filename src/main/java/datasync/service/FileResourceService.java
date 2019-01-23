@@ -290,8 +290,8 @@ public class FileResourceService {
      *
      * @param: [datasrcId, filePaths, dbFlag]
      * @return: void
-     * @auther: hw
-     * @date: 2018/10/23 16:11
+     * @auther:chq
+     * @date: 2018/11/25 16:11
      */
     public String packDataResource(final String fileName ,final List<String> filePaths,String zipPath) {
 //        dbFlag.await();
