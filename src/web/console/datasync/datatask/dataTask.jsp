@@ -233,14 +233,16 @@
         if(row.status==0){//未上传
             if(row.dataTaskType=="file"){
                 return [
-                    '<button class="btn btn-default details btn-xs" value="'+row.dataTaskId+','+row.status+'" onclick="ftpUpload(value)"><a>上传</a></button>&nbsp;',
+                    '<button class="btn btn-default details btn-xs" id="'+row.dataTaskId+'Pause" style="display: none;" value="'+row.dataTaskId+'" onclick="pauseUpLoading(value,new Date().getTime())"><i class="glyphicon glyphicon-pause"></i>&nbsp;<a>暂停</a></button>&nbsp;',
+                    '<button class="btn btn-default details btn-xs" id="'+row.dataTaskId+'Load" value="'+row.dataTaskId+','+row.status+'" onclick="ftpUpload(value)"><a>上传</a></button>&nbsp;',
                     '<button class="btn btn-default details btn-xs" value="'+row.dataTaskId+'" onclick="viewDtails(value)"><a>查看</a></button>&nbsp;',
                     '<button class="btn btn-default delete btn-xs" onclick="deleteThis(this)" data-id="'+row.dataTaskId+'"><a>删除</a></button>&nbsp;',
                     '<button class="btn btn-default details btn-xs" value="'+row.dataTaskId+'" onclick="editFileTaskDtails(value)"><a>编辑</a></button>&nbsp;',
                 ].join('');
             }else{
                 return [
-                    '<button class="btn btn-default details btn-xs" value="'+row.dataTaskId+','+row.status+'" onclick="ftpUpload(value)"><a>上传</a></button>&nbsp;',
+                    '<button class="btn btn-default details btn-xs" id="'+row.dataTaskId+'Pause" style="display: none;" value="'+row.dataTaskId+'" onclick="pauseUpLoading(value,new Date().getTime())"><i class="glyphicon glyphicon-pause"></i>&nbsp;<a>暂停</a></button>&nbsp;',
+                    '<button class="btn btn-default details btn-xs" id="'+row.dataTaskId+'Load" value="'+row.dataTaskId+','+row.status+'" onclick="ftpUpload(value)"><a>上传</a></button>&nbsp;',
                     '<button class="btn btn-default details btn-xs" value="'+row.dataTaskId+'" onclick="viewDtails(value)"><a>查看</a></button>&nbsp;',
                     '<button class="btn btn-default delete btn-xs" onclick="deleteThis(this)" data-id="'+row.dataTaskId+'"><a>删除</a></button>&nbsp;',
                     '<button class="btn btn-default details btn-xs" value="'+row.dataTaskId+'" onclick="editDataTaskDtails(value)"><a>编辑</a></button>&nbsp;',
@@ -248,7 +250,8 @@
             }
         }else{
             return [
-                '<button class="btn btn-default details btn-xs" value="'+row.dataTaskId+','+row.status+'" onclick="ftpUpload(value)"><a>上传</a></button>&nbsp;',
+                '<button class="btn btn-default details btn-xs" id="'+row.dataTaskId+'Pause" style="display: none;" value="'+row.dataTaskId+'" onclick="pauseUpLoading(value,new Date().getTime())"><i class="glyphicon glyphicon-pause"></i>&nbsp;<a>暂停</a></button>&nbsp;',
+                '<button class="btn btn-default details btn-xs" id="'+row.dataTaskId+'Load" value="'+row.dataTaskId+','+row.status+'" onclick="ftpUpload(value)"><a>上传</a></button>&nbsp;',
                 '<button class="btn btn-default details btn-xs" value="'+row.dataTaskId+'" onclick="viewDtails(value)"><a>查看</a></button>&nbsp;',
                 '<button class="btn btn-default delete btn-xs" onclick="deleteThis(this)" data-id="'+row.dataTaskId+'"><a>删除</a></button>&nbsp;',
                 '<button class="btn btn-default delete btn-xs" onclick="" data-id="'+row.dataTaskId+'">'+
@@ -309,6 +312,8 @@
                 }else if(data==3){
                     stopSetOuts();
                     toastr["error"]("ftp端解压失败！");
+                }else if(data=4){
+                    searchDataBySql();
                 }else{
                     var dataIdArray=data.split(";");
                     toastr.options = {
@@ -411,6 +416,7 @@
         }
     };
     var setouts;
+    var blockListSize=0;
     //获取上传进度
     function getProcess(keyID,souceID) {
         var setout= setInterval(function () {
@@ -424,12 +430,25 @@
                 success:function (dataReult) {
                     var data=dataReult.replace(/[\r\n]/g,"");
                     var dataJson=JSON.parse(data);
+
+                    if(dataJson.blockList.length>=blockListSize){
+                        blockListSize=dataJson.blockList.length;
+                    }else if(dataJson.blockList.length<blockListSize){
+                        window.location.reload();
+                    }
+
                     if(dataJson.process[0]==0 && dataJson.process[0]!=99){
-                        $("#"+souceID+"Loading")[0].style.display="block";
+                        $("#"+souceID+"Loading")[0].style.display="block"
+                        $("#"+souceID+"Pause")[0].style.display="inline";
+                        $("#"+souceID+"Load")[0].style.display="none";
                     }else if(dataJson.process[0]==99){
                         $("#"+souceID+"Unziping")[0].style.display="block";
+                        $("#"+souceID+"Pause")[0].style.display="none";
+                        $("#"+souceID+"Load")[0].style.display="inline";
                     }else{
                         $("#"+souceID+"Loading")[0].style.display="none";
+                        $("#"+souceID+"Pause")[0].style.display="inline";
+                        $("#"+souceID+"Load")[0].style.display="none";
                         $("#"+souceID+"")[0].style.width=dataJson.process[0]+"%";
                         $("#"+souceID+"Text")[0].textContent=dataJson.process[0]+"%";
                     }
@@ -471,6 +490,26 @@
         });
         fatherBody.append("<div id='backdropId' class='modal-backdrop fade in'></div>");
     }
+
+   //暂停
+   function pauseUpLoading(taskId,time){
+        debugger
+       // $("."+taskId).text("已暂停");
+       $.ajax({
+           url:"/pauseUpLoading.do",
+           type:"post",
+           data:{
+               taskId:taskId,
+               time:time
+           },
+           success:function (data) {
+               //toastr["success"]("任务"+taskId+":  已暂停");
+           },
+           error:function () {
+               console.log("请求失败")
+           }
+       })
+   }
 
     // $(document).ready(function(){
     //     // console.log(taskIdStr[(taskIdStr.length+1)/3+1])

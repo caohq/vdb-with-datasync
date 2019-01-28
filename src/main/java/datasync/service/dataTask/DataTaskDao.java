@@ -347,7 +347,6 @@ public class DataTaskDao {
 
             pw.println("ftpDataTaskId"+dataTask.getDataTaskId()+"上传状态:" + result + "\n");
 
-            ftpUtil.disconnect();
             if(result.equals("Upload_New_File_Success")||result.equals("Upload_From_Break_Succes")){
                 System.out.println("开始调用解压！");
                 String dataTaskString = com.alibaba.fastjson.JSONObject.toJSONString(dataTask);
@@ -403,6 +402,7 @@ public class DataTaskDao {
                             pw.println(current1+":"+"解压成功"+ "\n");
                             pw.println(current1+":"+"=========================解压流程结束========================" + "\n");
                         }
+                        ftpUtil.deleteFile(ftpRootPath+subjectCode+"_"+dataTask.getDataTaskId()+".zip");
                         dataTask.setStatus("1");
                         updateDataTaskStatusById(taskId,"1");
                         ftpUtil.numberOfRequest.remove(taskId+"Block");
@@ -450,19 +450,32 @@ public class DataTaskDao {
                 return 0;
             }
         } catch (IOException e) {
-            ftpUtil.disconnect();
-            now = new java.util.Date();
-            dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");//可以方便地修改日期格式
-            current = dateFormat.format(now);
-            pw.println(current+":"+"连接FTP出错:"+e+ "\n");
-            out.println("连接FTP出错：" + e.getMessage()+";"+dataTask.getDataTaskId());
-            for(Iterator<Map.Entry<String, String>> it = ftpUtil.numberOfRequest.entrySet().iterator(); it.hasNext();){
-                Map.Entry<String, String> item = it.next();
-                it.remove();
+            if(ftpUtil.pauseTasks.get(taskId)!=null && ftpUtil.pauseTasks.get(taskId)!="") {//点击暂停时触发
+                ftpUtil.disconnect();
+                pw.println(current+":"+"暂停传输:"+e+ "\n");
+                System.out.println("暂停传输！" );
+                ftpUtil.numberOfRequest.remove(taskId+"Block");
+
+                ftpUtil.pauseTasks.remove(taskId);
+                updateDataTaskStatusById(taskId,"0");
+                out.println(4);
+                return 4;//暂停
+            }else{
+//                ftpUtil.disconnect();
+                now = new java.util.Date();
+                dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");//可以方便地修改日期格式
+                current = dateFormat.format(now);
+                pw.println(current+":"+"连接FTP出错:"+e+ "\n");
+                out.println("连接FTP出错：" + e.getMessage()+";"+dataTask.getDataTaskId());
+                for(Iterator<Map.Entry<String, String>> it = ftpUtil.numberOfRequest.entrySet().iterator(); it.hasNext();){
+                    Map.Entry<String, String> item = it.next();
+                    it.remove();
+                }
+                System.out.println("连接FTP出错：" + e.getMessage());
+                return 3;
             }
-            System.out.println("连接FTP出错：" + e.getMessage());
-            return 3;
         }finally {
+            ftpUtil.disconnect();
             now = new Date();
             dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");//可以方便地修改日期格式
             String current1 = dateFormat.format(now);

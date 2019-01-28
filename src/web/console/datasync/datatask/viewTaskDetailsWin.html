@@ -118,6 +118,11 @@
             url:"/searchTaskDetailById.do",
             cache: false,
             data: {taskId: taskId},
+            beforeSend:function(data){
+                index = layer.load(1, {
+                    shade: [0.5,'#fff'] //0.1透明度的白色背景
+                });
+            },
             success: function(data) {
                 if("file"==JSON.parse(data).dataTask.dataTaskType){
                    $("#file-createTime").html(new Date(JSON.parse(data).dataTask.createTime).toLocaleDateString().replace(/\//g, "-")+" "+new Date(JSON.parse(data).dataTask.createTime).toLocaleTimeString().replace(/\//g, "-"));
@@ -131,6 +136,8 @@
                     // var fo=new ActiveXObject(Scripting.FileSystem)
                     // debugger
                    $("#fileModal").modal("show");
+                    $("#layui-layer-shade"+index+"").remove();
+                    $("#layui-layer"+index+"").remove();
                 }else{
                     $("#pre-dataTaskName").html(JSON.parse(data).dataTask.dataTaskName);
                     $("#pre-dataSourceName").html(JSON.parse(data).dataTask.dataSrc.dataSourceName);
@@ -141,6 +148,8 @@
                     $("#pre-creator").html(JSON.parse(data).dataTask.creator);
                     $("#pre-status").html(JSON.parse(data).dataTask.status=="0"?"未上传":"上传成功");
                     $("#dataModal").modal("show");
+                    $("#layui-layer-shade"+index+"").remove();
+                    $("#layui-layer"+index+"").remove();
                 }
             },
             error: function() {

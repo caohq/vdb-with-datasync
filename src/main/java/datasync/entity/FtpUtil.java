@@ -24,8 +24,9 @@ public class FtpUtil {
 
 
     public static Map<String, Long> progressMap = new HashMap<String, Long>();
-
     public static Map<String, String> numberOfRequest = new HashMap<String,String>();
+    public static Map<String, OutputStream> ftpOutputStream = new HashMap<String,OutputStream>();
+    public static Map<String, Object> pauseTasks = new HashMap<String,Object>();
 
     public enum UploadStatus {
         Create_Directory_Fail,   //远程服务器相应目录创建失败
@@ -275,10 +276,11 @@ public class FtpUtil {
 
 
         OutputStream out = ftpClient.appendFileStream(new String(remoteFile.getBytes("GBK"), "iso-8859-1"));
+        ftpOutputStream.put(processId,out);
         if(out == null){
             System.out.println("=============null out");
         }
-        try{
+      //  try{
             //断点续传
             if (remoteSize > 0) {
                 /*ftpClient.setRestartOffset(remoteSize);
@@ -314,13 +316,13 @@ public class FtpUtil {
                     }
                 }
             }
-        }catch (IOException e){
-            System.out.println("ftp 连接失败！");
-        }finally {
+        //}catch (IOException e){
+         //   System.out.println("ftp 连接失败！");
+       // }finally {
             out.flush();
             raf.close();
             out.close();
-        }
+      //  }
         boolean result = ftpClient.completePendingCommand();
         if (remoteSize > 0) {
             status = result ? UploadStatus.Upload_From_Break_Success : UploadStatus.Upload_From_Break_Failed;

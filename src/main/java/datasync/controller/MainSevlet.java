@@ -111,6 +111,8 @@ public class MainSevlet extends HttpServlet{
             updateLocalTaskData(req, res);
         }else if("/getPackProcess.do".equals(path)){
             getPackProcess(req, res);
+        }else if ("/pauseUpLoading.do".equals(path)){
+            pauseUpLoading(req, res);
         }
         else{
             //错误路径
@@ -654,6 +656,18 @@ public class MainSevlet extends HttpServlet{
         }
         out.println("success");
 
+    }
+
+    public void pauseUpLoading(HttpServletRequest request, HttpServletResponse response){
+        String taskId=request.getParameter("taskId");
+        try {
+            ftpUtil.ftpOutputStream.get(taskId).flush();
+            ftpUtil.ftpOutputStream.get(taskId).close();
+            ftpUtil.pauseTasks.put(taskId,taskId);
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.out.println("暂停异常！");
+        }
     }
 
 
