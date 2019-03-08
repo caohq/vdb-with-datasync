@@ -121,6 +121,7 @@
     searchDataBySql();
     //查询任务列表
     function searchDataBySql(){
+        stopSetOuts();
         var SearchDataTaskName=$("#SearchDataTaskName").val();//任务标识
         var dataSourceList=$("#dataSourceList  option:selected")[0].value;//数据类型
         var dataStatusList=$("#dataStatusList").val();//任务状态
@@ -145,15 +146,17 @@
         })
     };
 
+
     //装载bootstracptable
     function loadDataTaskList(dataList){//加载任务列表
+        var pageindex= $('#dataTaskTableID').bootstrapTable('getOptions').pageNumber;
         $('#dataTaskTableID').bootstrapTable('destroy');
         $('#dataTaskTableID').bootstrapTable({
             striped: true,
             pagination: true,
             sortable: true,
             sortOrder: "asc",
-            pageNumber: 1,
+            pageNumber: pageindex || 1,
             pageSize: 10,                       //每页的记录行数（*）
            // pageList: [ 25, 50, 100],
             minimumCountColumns: 5,
@@ -164,6 +167,10 @@
             searchOnEnterKey:true,
             detailView: false,
             height:$(window).height() - 80,
+            onPageChange: function(number, size) {
+                //表格页面切换事件
+                searchDataBySql();
+            },
             columns:[ {
                 field: 'dataTaskId',
                 title: 'id'
@@ -214,11 +221,13 @@
         $('#dataTaskTableID').bootstrapTable('resetView');
         for(var taskId in taskProcessStr){//用javascript的for/in循环遍历对象的属性
             if(taskProcessStr[taskId]!=0 && taskProcessStr[taskId]!=100){
-                $("#"+taskId+"")[0].style.width=taskProcessStr[taskId]+"%";
-                $("#"+taskId+"Text")[0].textContent=taskProcessStr[taskId]+"%";
+                if($("#"+taskId+"")[0]!=null){
+                    $("#"+taskId+"")[0].style.width=taskProcessStr[taskId]+"%";
+                    $("#"+taskId+"Text")[0].textContent=taskProcessStr[taskId]+"%";
+                }
             }
         }
-
+        stopSetOuts();
         for(var request in requestStr){
             var souceID = request.substr(0,request.indexOf("Block"));
             var keyID = souceID + new Date().getTime();
@@ -305,12 +314,17 @@
                 if(data=="" || data==1){
                     toastr["success"]("上传成功！");
                     searchDataBySql();
+                    debugger
+                    // $('#dataTaskTableID').bootStrapTable('getOptions').pageNumber;
+                    // $("#dataTaskTableID").bootstrapTable('refresh'); //刷新
                     // parent.goToPage("datatask/dataTask.jsp");
                 }else if(data==0) {
                     stopSetOuts();
+                    searchDataBySql();
                     toastr["error"]("上传失败！");
                 }else if(data==3){
                     stopSetOuts();
+                    searchDataBySql();
                     toastr["error"]("ftp端解压失败！");
                 }else if(data=4){
                     searchDataBySql();
@@ -415,11 +429,11 @@
             return process;
         }
     };
-    var setouts;
+    var setout;
     var blockListSize=0;
     //获取上传进度
     function getProcess(keyID,souceID) {
-        var setout= setInterval(function () {
+        setout= setInterval(function () {
             $.ajax({
                 url:"/ftpUploadProcess.do",
                 type:"POST",
@@ -434,7 +448,8 @@
                     if(dataJson.blockList.length>=blockListSize){
                         blockListSize=dataJson.blockList.length;
                     }else if(dataJson.blockList.length<blockListSize){
-                        window.location.reload();
+                        // stopSetOuts();
+                        // searchDataBySql();
                     }
 
                     if(dataJson.process[0]==0 && dataJson.process[0]!=99){
@@ -461,12 +476,12 @@
                 }
             })
         },2000)
-        setouts=setout;
+        setout=setout;
     };
 
     function stopSetOuts(){
-        var start = (setouts - 100) > 0 ? setouts -100 : 0;
-        for(var i = start; i <= setouts; i++){
+        var start = (setout - 100) > 0 ? setout -100 : 0;
+        for(var i = start; i <= setout; i++){
             clearInterval(i);
         }
     }

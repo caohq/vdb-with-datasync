@@ -25,10 +25,7 @@ import org.springframework.jdbc.support.KeyHolder;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.nio.charset.Charset;
 import java.sql.*;
 import java.text.SimpleDateFormat;
@@ -120,7 +117,12 @@ public class DataTaskDao {
         String sql = "delete from t_datatask where  dataTaskId = '"+taskId+"'";
         SqlLiteDataConnection sqlLiteDataConnection=new SqlLiteDataConnection();
         JdbcTemplate jdbcTemplate=sqlLiteDataConnection.makeJdbcTemplate();
+        DataTask dataTask=getDataTaskInfById(taskId);
         int result = jdbcTemplate.update(sql);//query(sql, new Object[]{taskId}, new DataTaskMapper());
+        File file=new File(dataTask.getSqlFilePath().replace("%_%",File.separator));
+        if(file.exists()){
+            file.delete();//删除本地文件
+        }
         return result;
     }
     //根据id修改task导入状态

@@ -1,8 +1,11 @@
 package datasync.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import datasync.entity.DataTask;
+import datasync.entity.FileTreeNode;
 import datasync.entity.FtpUtil;
+import datasync.service.FileResourceDao;
 import datasync.service.FileResourceService;
 import datasync.service.dataNodeInf.AchieveFtpConfigInf;
 import datasync.service.dataTask.DataTaskDao;
@@ -113,6 +116,10 @@ public class MainSevlet extends HttpServlet{
             getPackProcess(req, res);
         }else if ("/pauseUpLoading.do".equals(path)){
             pauseUpLoading(req, res);
+        }else if("/asyncGetNodes.do".equals(path)){
+            asyncGetNodes(req,res);
+        }else if("/getEditTreeOfDirList.do".equals(path)){
+            getEditTreeOfDirList(req,res);
         }
         else{
             //错误路径
@@ -134,13 +141,13 @@ public class MainSevlet extends HttpServlet{
         RepositoriesService repositoriesService=new RepositoriesService();//getAllRepositories
         List<FileRepository> localFileRepositories = repositoriesService.getAllRepositories(localDataSource);
         String data="";
-        List<Object> list=new ArrayList<Object>();
+        List<FileTreeNode> list=new ArrayList<FileTreeNode>();
         if (1 != localFileRepositories.size())
         {
             for(int j = 0;j < localFileRepositories.size() - 1; j++)
             {
                 String localFilePath = ((LocalRepository)(localFileRepositories.get(j))).getPath();
-                list=getJobTree(localFilePath,list);
+                list.addAll(new FileResourceDao().asynLoadingTree("",localFilePath,"init"));
             }
         }
         jsonObject.put("list",list);
@@ -668,6 +675,85 @@ public class MainSevlet extends HttpServlet{
             e.printStackTrace();
             System.out.println("暂停异常！");
         }
+    }
+
+    public List<FileTreeNode> asyncGetNodes(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        PrintWriter out=response.getWriter();
+        List<FileTreeNode> nodeList = new ArrayList<FileTreeNode>();
+        String id=request.getParameter("id");
+        nodeList=new FileResourceDao().asynLoadingTree("",id,"false");
+        out.println(JSON.toJSONString(nodeList));
+        return nodeList;
+    }
+
+    public JSONObject getEditTreeOfDirList(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        PrintWriter out=response.getWriter();
+        String datataskId=request.getParameter("dataTaskId");
+        JSONObject jsonObject = new JSONObject();
+        List<FileTreeNode> nodeList=new ArrayList<FileTreeNode>();
+        DataTask dataTask = new DataTaskService().getDataTaskInfById(datataskId);
+        String jsonObjectStr=null;
+//        DataSrcService dataSrcService=new DataSrcService();
+        //    String filePath =new FileSourceController().fileSourceFileList(datataskId)；
+        String localDataSource = request.getParameter("localDataSource");
+        RepositoriesService repositoriesService=new RepositoriesService();//getAllRepositories
+        List<FileRepository> localFileRepositories = repositoriesService.getAllRepositories(localDataSource);
+
+
+
+
+
+
+
+        if("file".equals(dataTask.getDataTaskType())){
+            String [] checkedFilePath=dataTask.getFilePath().split(";");
+
+
+
+            for(int i=0;i<checkedFilePath.length;i++){
+                File dirFile = new File(checkedFilePath[i]);
+                if(dirFile.isDirectory()){
+                    if(i==0){
+                        nodeList.add(new FileTreeNode(checkedFilePath[i],"0",checkedFilePath[i],"true","true","false"));
+                    }
+                    nodeList=new FileResourceDao().loadingTree(checkedFilePath[i],nodeList);
+                }
+            }
+
+
+            if (1 != localFileRepositories.size())
+            {
+                for(int j = 0;j < localFileRepositories.size() - 1; j++)
+                {
+                    String localFilePath = ((LocalRepository)(localFileRepositories.get(j))).getPath();
+                    if(!localFilePath.equals(checkedFilePath[0])){
+                        nodeList.addAll(new FileResourceDao().asynLoadingTree("",localFilePath,"init"));
+                    }
+                }
+            }
+
+            for(int i=0;i<checkedFilePath.length;i++){
+                for(int j=0;j<nodeList.size();j++){
+                    if(checkedFilePath[i].equals(nodeList.get(j).getId())){
+                        nodeList.get(j).setChecked("true");
+                    }
+                }
+            }
+
+//            try {
+//                jsonObjectStr=fileResourceService.LoadingRemoteTree();
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+
+            jsonObject.put("datatask",dataTask);
+            jsonObject.put("nodeList",nodeList);
+            jsonObject.put("jsonObjectStr",jsonObjectStr);
+        }else {
+            jsonObject.put("datatask",dataTask);
+        }
+            out.println(jsonObject);
+        return jsonObject;
     }
 
 

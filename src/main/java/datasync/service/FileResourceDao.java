@@ -3,6 +3,7 @@ package datasync.service;
 
 import com.alibaba.fastjson.JSONObject;
 import datasync.entity.DataSrc;
+import datasync.entity.FileTreeNode;
 import datasync.mapper.DataSrcMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -212,6 +213,68 @@ public class FileResourceDao {
                 return o1.getString("text").compareTo(o2.getString("text"));
             }
         }
+    }
+
+    public List<FileTreeNode> asynLoadingTree(String data, String path, String result){
+        System.out.println("服务器系统:"+System.getProperties().getProperty("os.name"));
+        String systemName=System.getProperties().getProperty("os.name");
+        int isWindows=systemName.indexOf("Windows");
+        List<FileTreeNode> nodeList=new ArrayList<FileTreeNode>();
+        File dirFile = new File(path);//获取文件第一层
+        File[] fs = dirFile.listFiles();
+        if("init".equals(result)){
+            nodeList.add(new FileTreeNode(path,"0",path,"true","true","false"));
+        }
+        for (int i = 0; i < fs.length; i++) {
+            if(fs[i].isFile()){//当对象为文件时
+                String pidStr="";
+                if("-1".equals(isWindows+"")){//linux
+                    pidStr=fs[i].toString().substring(0,fs[i].toString().lastIndexOf(File.separator));
+                }else {
+                    pidStr=fs[i].toString().substring(0,fs[i].toString().lastIndexOf(File.separator));
+                }
+                nodeList.add(new FileTreeNode(fs[i].toString(),pidStr,fs[i].getName(),"false","false","false"));
+            }else if(fs[i].isDirectory()){//当对象为路径时
+                String pidStr="";
+                if("-1".equals(isWindows+"")){//linux
+                    pidStr=fs[i].toString().substring(0,fs[i].toString().lastIndexOf(File.separator));
+                }else {
+                    pidStr=fs[i].toString().substring(0,fs[i].toString().lastIndexOf(File.separator));
+                }
+                nodeList.add(new FileTreeNode(fs[i].toString(),pidStr,fs[i].getName(),"false","true","false"));
+                //  nodeList=loadingTree(fs[i].toString(),nodeList);
+            }
+        }
+        return nodeList;
+    }
+
+    public  List<FileTreeNode> loadingTree(String path,List<FileTreeNode> nodeList){
+        String systemName=System.getProperties().getProperty("os.name");
+        File dirFile = new File(path);//获取文件第一层
+        File[] fs = dirFile.listFiles();
+        int isWindows=systemName.indexOf("Windows");
+        for (int i = 0; i < fs.length; i++) {
+            if(fs[i].isFile()){//当对象为文件时
+                String pidStr="";
+                if("-1".equals(isWindows+"")){//linux
+                    pidStr=fs[i].toString().substring(0,fs[i].toString().lastIndexOf("/"));
+                }else {
+                    pidStr=fs[i].toString().substring(0,fs[i].toString().lastIndexOf("\\"));
+                }
+                nodeList.add(new FileTreeNode(fs[i].toString(),pidStr,fs[i].getName(),"false","false","false"));
+            }else if(fs[i].isDirectory()){//当对象为路径时
+                String pidStr="";
+                if("-1".equals(isWindows+"")){//linux
+                    pidStr=fs[i].toString().substring(0,fs[i].toString().lastIndexOf("/"));
+                }else {
+                    pidStr=fs[i].toString().substring(0,fs[i].toString().lastIndexOf("\\"));
+                }
+                nodeList.add(new FileTreeNode(fs[i].toString(),pidStr,fs[i].getName(),"false","true","false"));
+                // nodeList=loadingTree(fs[i].toString(),nodeList);
+            }
+        }
+
+        return nodeList;
     }
 
 }

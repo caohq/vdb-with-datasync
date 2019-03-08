@@ -49,9 +49,10 @@ public class FtpUtil {
         Download_New_Failed;    //全新下载文件失败
     }
 
-    public FTPClient ftpClient = new FTPClient();
+    public FTPClient ftpClient ;
 
     public boolean connect(String hostname, int port, String username, String password) throws IOException {
+        ftpClient= new FTPClient();
         if(!ftpClient.isConnected()){
             ftpClient.connect(hostname, port);
         }

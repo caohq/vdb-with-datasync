@@ -191,6 +191,8 @@
             success:function (data) {
                 if(data.trim()=="数据库连接异常！"){
                     toastr["error"](data);
+                    $("#layui-layer-shade"+index+"").remove();
+                    $("#layui-layer"+index+"").remove();
                     return;
                 }
                 $('#tablesDiv').empty();//清空div
@@ -263,8 +265,9 @@
                 $("#bdTableLabel").css("display", "block");//显示“选择资源”标签
                 $("#bdDirDiv").css("display", "block");//显示“选择资源”标签
                 $("#bdSubmitButton").css("display", "block"); //显示“提交”按钮
+                debugger
 
-                var coreData = eval("["+JSON.parse(data).list.toString().replace(/\\/g,"/")+"]");
+                var coreData = JSON.parse(data).list;
                 var zTreeObj = $.fn.zTree.getZTreeObj("LocalTreeDemo");
                 if(zTreeObj!=null){
                     zTreeObj.destroy();//用之前先销毁tree
@@ -529,16 +532,35 @@
         idDom.remove();
     }
 
-    var setting = {
-        check: {
-            enable: true
-        },
-        data: {
-            simpleData: {
-                enable: true
-            }
-        }
-    };
+   var setting = {
+       async: {
+           enable: true,
+           url:"/asyncGetNodes.do",
+           autoParam:["id", "pid", "name"],
+           dataFilter: filter
+       },
+       data: {
+           simpleData: {
+               enable: true,
+               idKey:'id',
+               pIdKey:'pid',
+               rootPId: 0
+           }
+       },
+       check: {
+           enable: true
+       },
+       callback : {
+           onAsyncSuccess: zTreeOnAsyncSuccess,//异步加载完成调用
+           aOnAsyncError : zTreeOnAsyncError,//加载错误的fun
+           onCheck : onCheck
+       }
+   };
+
+   function filter(treeId, parentNode, childNodes) {
+       childNodes=eval(childNodes);
+       return childNodes;
+   }
 
     //获取压缩进度
     function getProcess(keyID,souceID) {
@@ -585,6 +607,82 @@
             $("#Progress").show();
         }
     }
+
+
+
+
+   function onCheck(event, treeId, treeNode){
+       index = layer.load(1, {
+           shade: [0.5,'#fff'] //0.1透明度的白色背景
+       });
+       var zTree = $.fn.zTree.getZTreeObj("LocalTreeDemo");
+       if(treeNode.isParent){
+           if (!treeNode.open){
+               zTree.expandNode(treeNode, true, true, false);
+               onExpand(event, treeId, treeNode);
+               setTimeout(function(){
+                   var children=treeNode.children;
+                   for(var i=0;i<children.length;i++){
+                       if(children[i].isParent ){
+                           zTree.expandNode(children[i], false, false, false);
+                       }
+                   }
+                   //zTree.expandNode(treeNode, false, false, false);
+               },1000);//延时1秒
+           }else{
+               var children=treeNode.children;
+               for(var i=0;i<children.length;i++){
+                   if(children[i].isParent ){
+                       if (!children[i].open){
+                           zTree.expandNode(children[i], true, true, false);
+                           onExpand(event, treeId, children[i]);
+                       }
+                   }
+               }
+               setTimeout(function(){
+                   var children=treeNode.children;
+                   for(var i=0;i<children.length;i++){
+                       if(children[i].isParent ){
+                           zTree.expandNode(children[i], false, false, false);
+                       }
+                   }
+               },1000);//延时1.5秒
+           }
+       }
+       $("#layui-layer-shade"+index+"").remove();
+       $("#layui-layer"+index+"").remove();
+   };
+
+   function onExpand(event, treeId, treeNode) {
+       var zTree = $.fn.zTree.getZTreeObj("LocalTreeDemo");
+       var checked=treeNode.checked;
+       setTimeout(function(){
+           var children=treeNode.children;
+           if(children!=null){
+               for(var i=0;i<children.length;i++){
+                   zTree.checkNode(children[i],checked,checked);
+                   if(children[i].isParent){
+                       if (!children[i].open){
+                           zTree.expandNode(children[i], true, true, false);
+                           onExpand(event, treeId, children[i]);
+                           console.log(children[i]);
+                           zTree.expandNode(children[i], false, false, false);
+                       }
+                   }
+               }
+           }
+       },900);//延时1.2秒
+   };
+
+   //异步加载完成时运行
+   function zTreeOnAsyncSuccess(event, treeId, treeNode, msg)  {
+
+   }
+
+   //异步加载失败
+   function zTreeOnAsyncError(event, treeId, treeNode, XMLHttpRequest, textStatus, errorThrown)  {
+       alertMsg.error("异步加载节点失败!");
+   }
 
 </script>
 

@@ -174,6 +174,7 @@ public class DataConnDaoService {
         }
         columnsMap.put("columnsList",list2);
         list.add(columnsMap);
+        conn.close();
 
         return  list;
 

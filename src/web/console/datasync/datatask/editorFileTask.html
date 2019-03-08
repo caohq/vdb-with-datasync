@@ -150,7 +150,7 @@
                 $('#bdDirDiv').empty();
                 $("#bdTableLabel").css("display", "block");//显示“选择资源”标签
                 $("#bdSubmitButton").css("display", "block"); //显示“提交”按钮
-                var coreData = eval("["+JSON.parse(data).list.toString().replace(/\\/g,"/")+"]");
+                var coreData = JSON.parse(data).list;
                 var dataTaskFilePathArray=dataTaskFilePath.split(";");
                 for(var i=0;i<coreData.length;i++){
                     for(var j=0;j<dataTaskFilePathArray.length;j++){
@@ -182,14 +182,15 @@
 
     function loadFileTreesByDataSource(){
         console.log("进入到selectBdDirID的change事件处理函数中了");
-        var localDataSource = $("#selectBdDirID option:selected")[0].value;//获取数据库参数
+        var localDataSource = $("#selectBdDirID option:selected")[0].value;//获取数据數據源参数
 
         $.ajax({
             type:"POST",
-            url:"/getTreeOfDirList.do",
+            url:"/getEditTreeOfDirList.do",
             data:{
                 localDataSource: localDataSource,
-                dataTaskFilePath:dataTaskFilePath
+                dataTaskFilePath:dataTaskFilePath,
+                dataTaskId:dataTaskId
             },
             dataType: "text",
             beforeSend:function(data){
@@ -202,16 +203,16 @@
                 $("#bdTableLabel").css("display", "block");//显示“选择资源”标签
                 $("#bdTableLabel").css("display", "block");//显示“选择资源”标签
                 $("#bdSubmitButton").css("display", "block"); //显示“提交”按钮
-                var coreData = eval("["+JSON.parse(data).list.toString().replace(/\\/g,"/")+"]");
-                var dataTaskFilePathArray=dataTaskFilePath.split(";");
-                for(var i=0;i<coreData.length;i++){
-                    for(var j=0;j<dataTaskFilePathArray.length;j++){
-                        if(coreData[i].id==dataTaskFilePathArray[j]){
-                            coreData[i].checked=true;
-                            coreData[i].open=true;
-                        }
-                    }
-                }
+                var coreData = JSON.parse(data).nodeList;
+                // var dataTaskFilePathArray=dataTaskFilePath.split(";");
+                // for(var i=0;i<coreData.length;i++){
+                //     for(var j=0;j<dataTaskFilePathArray.length;j++){
+                //         if(coreData[i].id==dataTaskFilePathArray[j]){
+                //             coreData[i].checked=true;
+                //             coreData[i].open=true;
+                //         }
+                //     }
+                // }
                 $.getScript("/console/shared/zTree_v3/js/jquery.ztree.all.js",function(){
                     $.fn.zTree.init($("#treeDemo"), setting, coreData);
                 });
@@ -225,15 +226,34 @@
     }
 
     var setting = {
-        check: {
-            enable: true
+        async: {
+            enable: true,
+            url:"/asyncGetNodes.do",
+            autoParam:["id", "pid", "name"],
+            dataFilter: filter
         },
         data: {
             simpleData: {
-                enable: true
+                enable: true,
+                idKey:'id',
+                pIdKey:'pid',
+                rootPId: 0
             }
+        },
+        check: {
+            enable: true
+        },
+        callback : {
+            onAsyncSuccess: zTreeOnAsyncSuccess,//异步加载完成调用
+            aOnAsyncError : zTreeOnAsyncError,//加载错误的fun
+            onCheck : onCheck
         }
     };
+
+    function filter(treeId, parentNode, childNodes) {
+        childNodes=eval(childNodes);
+        return childNodes;
+    }
 
     var SubjectIndex;
     //本地文件任务提交
@@ -312,7 +332,7 @@
                         $("#Progress .circle-text").text(process+"%");
                         $("#Progress .circle-info").text(fileName);
                         clearInterval(setout);
-                        parent.goToPage("datatask/dataTask.jsp");
+                        //parent.goToPage("datatask/dataTask.jsp");
                         return;
                     }
                     $("#Progress .circle-text").text(process+"%");
@@ -335,6 +355,79 @@
              $("#Progress .circle-info").text(filename);
              $("#Progress").show();
          }
+    }
+
+    function onCheck(event, treeId, treeNode){
+        index = layer.load(1, {
+            shade: [0.5,'#fff'] //0.1透明度的白色背景
+        });
+        var zTree = $.fn.zTree.getZTreeObj("treeDemo");
+        if(treeNode.isParent){
+            if (!treeNode.open){
+                zTree.expandNode(treeNode, true, true, false);
+                onExpand(event, treeId, treeNode);
+                setTimeout(function(){
+                    var children=treeNode.children;
+                    for(var i=0;i<children.length;i++){
+                        if(children[i].isParent ){
+                            zTree.expandNode(children[i], false, false, false);
+                        }
+                    }
+                    //zTree.expandNode(treeNode, false, false, false);
+                },1000);//延时1秒
+            }else{
+                var children=treeNode.children;
+                for(var i=0;i<children.length;i++){
+                    if(children[i].isParent ){
+                        if (!children[i].open){
+                            zTree.expandNode(children[i], true, true, false);
+                            onExpand(event, treeId, children[i]);
+                        }
+                    }
+                }
+                setTimeout(function(){
+                    var children=treeNode.children;
+                    for(var i=0;i<children.length;i++){
+                        if(children[i].isParent ){
+                            zTree.expandNode(children[i], false, false, false);
+                        }
+                    }
+                },1000);//延时1.5秒
+            }
+        }
+        $("#layui-layer-shade"+index+"").remove();
+        $("#layui-layer"+index+"").remove();
+    };
+
+    function onExpand(event, treeId, treeNode) {
+        var zTree = $.fn.zTree.getZTreeObj("treeDemo");
+        var checked=treeNode.checked;
+        setTimeout(function(){
+            var children=treeNode.children;
+            if(children!=null){
+                for(var i=0;i<children.length;i++){
+                    zTree.checkNode(children[i],checked,checked);
+                    if(children[i].isParent){
+                        if (!children[i].open){
+                            zTree.expandNode(children[i], true, true, false);
+                            onExpand(event, treeId, children[i]);
+                            console.log(children[i]);
+                            zTree.expandNode(children[i], false, false, false);
+                        }
+                    }
+                }
+            }
+        },900);//延时1.2秒
+    };
+
+    //异步加载完成时运行
+    function zTreeOnAsyncSuccess(event, treeId, treeNode, msg)  {
+
+    }
+
+    //异步加载失败
+    function zTreeOnAsyncError(event, treeId, treeNode, XMLHttpRequest, textStatus, errorThrown)  {
+        alertMsg.error("异步加载节点失败!");
     }
 
 </script>
