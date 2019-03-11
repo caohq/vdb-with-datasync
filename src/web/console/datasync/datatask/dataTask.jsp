@@ -245,16 +245,16 @@
                     '<button class="btn btn-default details btn-xs" id="'+row.dataTaskId+'Pause" style="display: none;" value="'+row.dataTaskId+'" onclick="pauseUpLoading(value,new Date().getTime())"><i class="glyphicon glyphicon-pause"></i>&nbsp;<a>暂停</a></button>&nbsp;',
                     '<button class="btn btn-default details btn-xs" id="'+row.dataTaskId+'Load" value="'+row.dataTaskId+','+row.status+'" onclick="ftpUpload(value)"><a>上传</a></button>&nbsp;',
                     '<button class="btn btn-default details btn-xs" value="'+row.dataTaskId+'" onclick="viewDtails(value)"><a>查看</a></button>&nbsp;',
-                    '<button class="btn btn-default delete btn-xs" onclick="deleteThis(this)" data-id="'+row.dataTaskId+'"><a>删除</a></button>&nbsp;',
-                    '<button class="btn btn-default details btn-xs" value="'+row.dataTaskId+'" onclick="editFileTaskDtails(value)"><a>编辑</a></button>&nbsp;',
+                    '<button class="btn btn-default delete btn-xs"  id="'+row.dataTaskId+'Delete" onclick="deleteThis(this)" data-id="'+row.dataTaskId+'"><a>删除</a></button>&nbsp;',
+                    '<button class="btn btn-default details btn-xs" id="'+row.dataTaskId+'Edit" value="'+row.dataTaskId+'" onclick="editFileTaskDtails(value)"><a>编辑</a></button>&nbsp;',
                 ].join('');
             }else{
                 return [
                     '<button class="btn btn-default details btn-xs" id="'+row.dataTaskId+'Pause" style="display: none;" value="'+row.dataTaskId+'" onclick="pauseUpLoading(value,new Date().getTime())"><i class="glyphicon glyphicon-pause"></i>&nbsp;<a>暂停</a></button>&nbsp;',
                     '<button class="btn btn-default details btn-xs" id="'+row.dataTaskId+'Load" value="'+row.dataTaskId+','+row.status+'" onclick="ftpUpload(value)"><a>上传</a></button>&nbsp;',
                     '<button class="btn btn-default details btn-xs" value="'+row.dataTaskId+'" onclick="viewDtails(value)"><a>查看</a></button>&nbsp;',
-                    '<button class="btn btn-default delete btn-xs" onclick="deleteThis(this)" data-id="'+row.dataTaskId+'"><a>删除</a></button>&nbsp;',
-                    '<button class="btn btn-default details btn-xs" value="'+row.dataTaskId+'" onclick="editDataTaskDtails(value)"><a>编辑</a></button>&nbsp;',
+                    '<button class="btn btn-default delete btn-xs" id="'+row.dataTaskId+'Delete" onclick="deleteThis(this)" data-id="'+row.dataTaskId+'"><a>删除</a></button>&nbsp;',
+                    '<button class="btn btn-default details btn-xs" id="'+row.dataTaskId+'Edit" value="'+row.dataTaskId+'" onclick="editDataTaskDtails(value)"><a>编辑</a></button>&nbsp;',
                 ].join('');
             }
         }else{
@@ -452,18 +452,24 @@
                         // searchDataBySql();
                     }
 
-                    if(dataJson.process[0]==0 && dataJson.process[0]!=99){
+                    if(dataJson.process[0]==0 && dataJson.process[0]!=99){//上传中
                         $("#"+souceID+"Loading")[0].style.display="block"
                         $("#"+souceID+"Pause")[0].style.display="inline";
                         $("#"+souceID+"Load")[0].style.display="none";
+                        $("#"+souceID+"Delete")[0].style.display="none";
+                        $("#"+souceID+"Edit")[0].style.display="none";
                     }else if(dataJson.process[0]==99){
                         $("#"+souceID+"Unziping")[0].style.display="block";
                         $("#"+souceID+"Pause")[0].style.display="none";
                         $("#"+souceID+"Load")[0].style.display="inline";
+                        $("#"+souceID+"Delete")[0].style.display="none";
+                        $("#"+souceID+"Edit")[0].style.display="none";
                     }else{
                         $("#"+souceID+"Loading")[0].style.display="none";
                         $("#"+souceID+"Pause")[0].style.display="inline";
                         $("#"+souceID+"Load")[0].style.display="none";
+                        $("#"+souceID+"Delete")[0].style.display="none";
+                        $("#"+souceID+"Edit")[0].style.display="none";
                         $("#"+souceID+"")[0].style.width=dataJson.process[0]+"%";
                         $("#"+souceID+"Text")[0].textContent=dataJson.process[0]+"%";
                     }
@@ -508,7 +514,6 @@
 
    //暂停
    function pauseUpLoading(taskId,time){
-        debugger
        // $("."+taskId).text("已暂停");
        $.ajax({
            url:"/pauseUpLoading.do",
