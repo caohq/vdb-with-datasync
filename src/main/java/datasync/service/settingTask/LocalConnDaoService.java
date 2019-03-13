@@ -98,8 +98,9 @@ public class LocalConnDaoService {
         final String getCheckedFile=req.getParameter("getCheckedFile");//文件path
         final String dataTaskId=req.getParameter("dataTaskId");//taskid
         final String dataSourceId=req.getParameter("dataSourceId");//数据源id
+        final String getRemoteFile=req.getParameter("getRemoteFile");//上传路径
 
-        final String sql = "update  t_datatask set  filePath=?  where dataTaskId=?;";
+        final String sql = "update  t_datatask set  filePath=? , remoteuploadpath=? where dataTaskId=?;";
         SqlLiteDataConnection sqlLiteDataConnection=new SqlLiteDataConnection();
         JdbcTemplate jdbcTemplate=sqlLiteDataConnection.makeJdbcTemplate();
         KeyHolder keyHolder = new GeneratedKeyHolder();
@@ -108,7 +109,8 @@ public class LocalConnDaoService {
             public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
                 PreparedStatement ps = connection.prepareStatement(sql,Statement.RETURN_GENERATED_KEYS);
                 ps.setString(1,getCheckedFile);
-                ps.setString(2,dataTaskId);
+                ps.setString(2,getRemoteFile);
+                ps.setString(3,dataTaskId);
                 return ps;
             }
         },keyHolder);

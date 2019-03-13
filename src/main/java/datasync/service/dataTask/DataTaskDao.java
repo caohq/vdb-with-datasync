@@ -41,8 +41,8 @@ public class DataTaskDao {
     public int insertDatatask(final DataTask datatask,String connData,String dataSourceName){
         boolean flag = false;
         final String sql = "insert into t_datatask(dataSourceId,dataTaskName,dataTaskType," +
-                "tableName,sqlString,sqlTableNameEn,sqlFilePath,filePath,createTime,creator,status,datataskId,subjectCode) " +
-                "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)";
+                "tableName,sqlString,sqlTableNameEn,sqlFilePath,filePath,createTime,creator,status,datataskId,subjectCode,remoteuploadpath) " +
+                "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
         KeyHolder keyHolder = new GeneratedKeyHolder();
         SqlLiteDataConnection sqlLiteDataConnection=new SqlLiteDataConnection();
         JdbcTemplate jdbcTemplate=sqlLiteDataConnection.makeJdbcTemplate();
@@ -65,6 +65,7 @@ public class DataTaskDao {
                 ps.setString(11,datatask.getStatus());
                 ps.setString(12, datatask.getDataTaskId());
                 ps.setString(13,datatask.getSubjectCode());
+                ps.setString(14,datatask.getRemoteuploadpath());
                 return ps;
             }
         },keyHolder);

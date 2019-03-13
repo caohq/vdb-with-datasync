@@ -43,7 +43,7 @@ public class MainSevlet extends HttpServlet{
     public static BlockingQueue<Runnable> queue = new ArrayBlockingQueue<Runnable>(20);
     //创建线程池，池中保存的线程数为5，允许的最大线程数为20
     static ThreadPoolExecutor pool = new ThreadPoolExecutor(5,20,50,TimeUnit.MILLISECONDS, queue);
-
+    private FileResourceService fileResourceService=new FileResourceService();
 
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
@@ -150,7 +150,10 @@ public class MainSevlet extends HttpServlet{
                 list.addAll(new FileResourceDao().asynLoadingTree("",localFilePath,"init"));
             }
         }
+
+        String remoteFileStr=new FileResourceDao().LoadingRemoteTree();////获取远程上传目录
         jsonObject.put("list",list);
+        jsonObject.put("remoteFileStr",remoteFileStr);
         out.println(jsonObject);
 
         return data;
@@ -420,6 +423,7 @@ public class MainSevlet extends HttpServlet{
         HttpSession session=req.getSession();
         String  connDataName=req.getParameter("connDataName");//本地连接名称
         String connDataValue=req.getParameter("connDataValue");//数据源名称
+        String uploadRemoteFile=req.getParameter("getRemoteFile");//获取上传路径
 //        String  getCheckedFile=req.getParameter("getCheckedFile");//文件路径
         String checkedValue=req.getParameter("getCheckedFile");//获取选中文件或者路径
         String getLocalTaskName=req.getParameter("dataTaskName");//任務id
@@ -431,6 +435,7 @@ public class MainSevlet extends HttpServlet{
         datatask.setDataTaskType("file");
         datatask.setStatus("0");
         datatask.setDataTaskId(req.getParameter("dataTaskName"));
+        datatask.setRemoteuploadpath(uploadRemoteFile);
         datatask.setCreator(session.getAttribute("SPRING_SECURITY_LAST_USERNAME")==null?"": (String) session.getAttribute("SPRING_SECURITY_LAST_USERNAME"));
 
         List<String> filepaths =new LinkedList<String>();
@@ -699,16 +704,8 @@ public class MainSevlet extends HttpServlet{
         RepositoriesService repositoriesService=new RepositoriesService();//getAllRepositories
         List<FileRepository> localFileRepositories = repositoriesService.getAllRepositories(localDataSource);
 
-
-
-
-
-
-
         if("file".equals(dataTask.getDataTaskType())){
             String [] checkedFilePath=dataTask.getFilePath().split(";");
-
-
 
             for(int i=0;i<checkedFilePath.length;i++){
                 File dirFile = new File(checkedFilePath[i]);
@@ -719,7 +716,6 @@ public class MainSevlet extends HttpServlet{
                     nodeList=new FileResourceDao().loadingTree(checkedFilePath[i],nodeList);
                 }
             }
-
 
             if (1 != localFileRepositories.size())
             {
@@ -740,6 +736,8 @@ public class MainSevlet extends HttpServlet{
                 }
             }
 
+            String remoteFilePath=fileResourceService.LoadingRemoteTree();
+
 //            try {
 //                jsonObjectStr=fileResourceService.LoadingRemoteTree();
 //            } catch (IOException e) {
@@ -749,6 +747,7 @@ public class MainSevlet extends HttpServlet{
             jsonObject.put("datatask",dataTask);
             jsonObject.put("nodeList",nodeList);
             jsonObject.put("jsonObjectStr",jsonObjectStr);
+            jsonObject.put("remoteFilePath",remoteFilePath);
         }else {
             jsonObject.put("datatask",dataTask);
         }

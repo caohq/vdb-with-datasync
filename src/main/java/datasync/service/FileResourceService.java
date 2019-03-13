@@ -6,11 +6,20 @@ import com.google.common.io.Files;
 import datasync.entity.DataSrc;
 import datasync.entity.ZipUtils;
 import datasync.service.login.ConfigPropertyService;
+import datasync.service.login.GetInfoService;
+import datasync.utils.ConfigUtil;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import top.jfunc.json.impl.JSONArray;
 
 import javax.annotation.Resource;
 import java.io.File;
@@ -367,6 +376,43 @@ public class FileResourceService {
         }
         return progressMap.get(processId);
     }
+
+    public String LoadingRemoteTree(){
+        String configFilePath = GetInfoService.class.getClassLoader().getResource("../../WEB-INF/config.properties").getFile();
+        String portalUrl = ConfigUtil.getConfigItem(configFilePath, "PortalUrl");
+        String loginApiPath = "/service/treeNodeAsync";
+        String ftpUserName= ConfigUtil.getConfigItem(configFilePath, "FtpUser");
+
+        org.apache.http.client.HttpClient httpClient = null;
+        HttpPost postMethod = null;
+        HttpGet getMethod = null;
+        HttpResponse response = null;
+        httpClient = HttpClients.createDefault();
+        getMethod = new HttpGet("http://"+portalUrl+loginApiPath+"?" + "subName=" + ftpUserName + "&async=" + "2async");
+        getMethod.addHeader("Content-type", "application/json; charset=utf-8");
+        try {
+            response = httpClient.execute(getMethod);//获取响应
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        int statusCode = response.getStatusLine().getStatusCode();
+        System.out.println(statusCode);
+        HttpEntity entity = response.getEntity();
+        String reponseContent = null;
+        try {
+            reponseContent = EntityUtils.toString(entity);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        JSONArray jsonArray=new JSONArray("["+reponseContent+"]");
+        Object json= jsonArray.get(0);
+        String jsonStr=((JSONObject) json).get("data").toString();
+
+        return jsonStr;
+
+    }
+
+
 
 }
 

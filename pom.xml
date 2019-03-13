@@ -425,6 +425,13 @@
             <version>19.0</version>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/top.jfunc.common/converter -->
+        <dependency>
+            <groupId>top.jfunc.common</groupId>
+            <artifactId>converter</artifactId>
+            <version>1.8.0</version>
+        </dependency>
+
     </dependencies>
     <repositories>
         <repository>

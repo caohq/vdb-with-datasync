@@ -19,21 +19,32 @@ public class DataTask {
     private String status;
     private String LogPath;
     private DataSrc dataSrc;
+    private String remoteuploadpath;
 
-    public String getDataTaskId() {
-        return dataTaskId;
+    public String getRemoteuploadpath() {
+        return remoteuploadpath;
     }
 
-    public void setDataTaskId(String dataTaskId) {
-        this.dataTaskId = dataTaskId;
+    public void setRemoteuploadpath(String remoteuploadpath) {
+        this.remoteuploadpath = remoteuploadpath;
     }
 
-    public int getDataSourceId() {
-        return dataSourceId;
+
+
+    public String getSubjectCode() {
+        return subjectCode;
     }
 
-    public void setDataSourceId(int dataSourceId) {
-        this.dataSourceId = dataSourceId;
+    public void setSubjectCode(String subjectCode) {
+        this.subjectCode = subjectCode;
+    }
+
+    public DataSrc getDataSrc() {
+        return dataSrc;
+    }
+
+    public void setDataSrc(DataSrc dataSrc) {
+        this.dataSrc = dataSrc;
     }
 
     public String getDataTaskName() {
@@ -50,6 +61,22 @@ public class DataTask {
 
     public void setDataTaskType(String dataTaskType) {
         this.dataTaskType = dataTaskType;
+    }
+
+    public String getDataTaskId() {
+        return dataTaskId;
+    }
+
+    public void setDataTaskId(String dataTaskId) {
+        this.dataTaskId = dataTaskId;
+    }
+
+    public int getDataSourceId() {
+        return dataSourceId;
+    }
+
+    public void setDataSourceId(int dataSourceId) {
+        this.dataSourceId = dataSourceId;
     }
 
     public String getTableName() {
@@ -76,28 +103,12 @@ public class DataTask {
         this.sqlTableNameEn = sqlTableNameEn;
     }
 
-    public String getSqlFilePath() {
-        return sqlFilePath;
-    }
-
-    public void setSqlFilePath(String sqlFilePath) {
-        this.sqlFilePath = sqlFilePath;
-    }
-
     public String getFilePath() {
         return filePath;
     }
 
     public void setFilePath(String filePath) {
         this.filePath = filePath;
-    }
-
-    public String getSubjectCode() {
-        return subjectCode;
-    }
-
-    public void setSubjectCode(String subjectCode) {
-        this.subjectCode = subjectCode;
     }
 
     public Date getCreateTime() {
@@ -124,40 +135,19 @@ public class DataTask {
         this.status = status;
     }
 
+    public String getSqlFilePath() {
+        return sqlFilePath;
+    }
+
+    public void setSqlFilePath(String sqlFilePath) {
+        this.sqlFilePath = sqlFilePath;
+    }
+
     public String getLogPath() {
         return LogPath;
     }
 
     public void setLogPath(String logPath) {
         LogPath = logPath;
-    }
-
-    public DataSrc getDataSrc() {
-        return dataSrc;
-    }
-
-    public void setDataSrc(DataSrc dataSrc) {
-        this.dataSrc = dataSrc;
-    }
-
-    @Override
-    public String toString() {
-        return "DataTask{" +
-                "dataTaskId='" + dataTaskId + '\'' +
-                ", dataSourceId=" + dataSourceId +
-                ", dataTaskName='" + dataTaskName + '\'' +
-                ", dataTaskType='" + dataTaskType + '\'' +
-                ", tableName='" + tableName + '\'' +
-                ", sqlString='" + sqlString + '\'' +
-                ", sqlTableNameEn='" + sqlTableNameEn + '\'' +
-                ", sqlFilePath='" + sqlFilePath + '\'' +
-                ", filePath='" + filePath + '\'' +
-                ", subjectCode='" + subjectCode + '\'' +
-                ", createTime=" + createTime +
-                ", creator='" + creator + '\'' +
-                ", status='" + status + '\'' +
-                ", LogPath='" + LogPath + '\'' +
-                ", dataSrc=" + dataSrc +
-                '}';
     }
 }

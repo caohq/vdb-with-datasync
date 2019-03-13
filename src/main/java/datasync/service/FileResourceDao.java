@@ -277,5 +277,9 @@ public class FileResourceDao {
         return nodeList;
     }
 
+    public String LoadingRemoteTree(){
+        return  new FileResourceService().LoadingRemoteTree();
+    }
+
 }
 

@@ -28,6 +28,7 @@ public class DataTaskMapperDsName implements RowMapper {
         dataTask.setStatus(resultSet.getString("Status"));
         dataTask.setSubjectCode(resultSet.getString("SubjectCode"));
         dataTask.setLogPath(resultSet.getString("LogPath"));
+        dataTask.setRemoteuploadpath(resultSet.getString("RemoteUploadPath"));
         DataSrc dataSrc=new DataSrc();
         dataSrc.setDataSourceName(resultSet.getString("DataSourceName"));
         dataSrc.setDatabaseType(resultSet.getString("DataSourceType"));
