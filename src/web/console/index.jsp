@@ -119,7 +119,7 @@
 <div class="wrapper">
     <img src="/console/datasync/images/Log04_bg.jpg" alt="">
     <div class="login" >
-        <div style="width:289px;margin: 20px auto 0px">
+        <div style="width:292px;margin: 20px auto 0px">
             <%--<hr style="width: 27%;margin-left: 37%"/>--%>
             <label for="userName">用户名：</label>
             <input type="text" id="userName" class="form-control" name="userName" style="width: 200px;margin: 10px;"/>
@@ -130,7 +130,7 @@
                 <span id="checkedUserPassword" style="color: red;"></span>
             <br />
             <div style="padding:10px 10px 0 0;overflow: hidden">
-                <input type="submit" class="btn" onclick="start()" id="submit" value="登录"/>
+                <input type="submit" class="btn"  id="submit" value="登录"/>
             </div>
         </div>
     </div>
@@ -206,6 +206,10 @@
             }
         })
 
+    };
+
+    document.getElementById("submit").onclick=function(){
+        start();
     }
 
 

@@ -47,6 +47,9 @@
         .sr-only {
             position: relative !important;
         }
+        .fixed-table-container{
+            min-height: 400px;
+        }
 
     </style>
 </head>
@@ -93,8 +96,8 @@
 <script>
    // document.getElementsByClassName("fixed-table-container")[0].style.height=$(window).height()-280;
     $(window).resize(function () {          //当浏览器大小变化时
-    //    document.getElementsByClassName("fixed-table-container")[0].style.height=$(window).height()-320;
         searchDataBySql();
+        // document.getElementsByClassName("fixed-table-container")[0].style.height=$(window).height() - 80;
     });
     var taskProcessStr=null;
     var requestStr=null;//阻塞的线程串
@@ -126,16 +129,17 @@
         var dataSourceList=$("#dataSourceList  option:selected")[0].value;//数据类型
         var dataStatusList=$("#dataStatusList").val();//任务状态
         $.ajax({
-            type:"POST",
             url:"/searchDataTaskList.do",
+            type:"POST",
             cache: false,
+            dataType:"json",
             data:{
                 SearchDataTaskName:SearchDataTaskName,
                 dataSourceList:dataSourceList,
                 dataStatusList:dataStatusList
             },
             success:function (data) {
-                var DataList = JSON.parse(data);
+                var DataList = data;
                 taskProcessStr=DataList.taskProcessList[0];
                 requestStr=DataList.requestList[0];
                 loadDataTaskList(DataList.dataTasks);

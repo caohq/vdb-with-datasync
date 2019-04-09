@@ -406,6 +406,8 @@ public class MainSevlet extends HttpServlet{
         jsonObject.put("dataTasks",dataTasks);
         jsonObject.put("taskProcessList",taskProcessList);
         jsonObject.put("requestList",requestList);
+        res.setContentType("text/plain");
+        res.setContentType("application/json");
         out.println(jsonObject);
         return jsonObject;
     }
