@@ -61,7 +61,7 @@ $response.setDateHeader("Expires", 0)
 	<div  id="parentId" style="position: relative; top: 0px; left: 0px; width: 100%; auto:flow;"></div>
 	<div id="footTopDiv" class="foot_top"></div>
 	<div id="footDiv" class="foot_div">
-		2019-2025 &copy; 中国科学院计算机网络信息中心大数据部 版权所有
+		2019-2025 &copy; 中国科学院计算机网络信息中心 版权所有
 	</div>
 	
 	<!--左侧树的DIV-->
