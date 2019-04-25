@@ -335,8 +335,10 @@ public class DataTaskDao {
                 String remoteFilepath = ftpRootPath+subjectCode+"_"+dataTask.getDataTaskId()+"_sql/";
                 String[] localFileList = {dataTask.getSqlFilePath()};
                 result = ftpUtil.upload(localFileList, processId,remoteFilepath,dataTask,subjectCode+"_sql").toString();
-                if(result.equals("File_Exits")){
-                    ftpUtil.removeDirectory(ftpRootPath+subjectCode+"_"+dataTask.getDataTaskId()+"_sql");
+                if(result.equals("File_Exits") || result.equals("Remote_Bigger_Local")){
+//                    ftpUtil.removeDirectory(ftpRootPath+subjectCode+"_"+dataTask.getDataTaskId()+"_sql");
+                    ftpUtil.removeDirectory(subjectCode+"_"+dataTask.getDataTaskId()+"_sql");
+                    ftpUtil.deleteFile(dataTask.getDataTaskId()+".zip");
                     result = ftpUtil.upload(localFileList, processId,remoteFilepath,dataTask,subjectCode).toString();
                 }
                 if(localFileList.length == 0){
@@ -464,7 +466,7 @@ public class DataTaskDao {
                 out.println(4);
                 return 4;//暂停
             }else{
-//                ftpUtil.disconnect();
+                ftpUtil.disconnect();
                 now = new java.util.Date();
                 dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");//可以方便地修改日期格式
                 current = dateFormat.format(now);
@@ -478,6 +480,9 @@ public class DataTaskDao {
                 return 3;
             }
         }finally {
+            if( ftpUtil.numberOfRequest.get(taskId+"Block")!=null){
+                ftpUtil.numberOfRequest.remove(taskId+"Block");
+            }
             ftpUtil.disconnect();
             now = new Date();
             dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");//可以方便地修改日期格式

@@ -781,7 +781,7 @@
        } else if (curStatus == "async") {
            asyncNodes(treeNode.children);
        }
-e
+
        if (curAsyncCount <= 0) {
            if (curStatus != "init" && curStatus != "") {
                asyncForAll = true;

@@ -101,7 +101,7 @@
                     <div style="background-color: #438AEB;height: 30px;display: inline-block;
                     text-align: center ;margin-top: 2px; width: 80%;" >
                         <a onclick="goToPage('dataNode/dataNodeInf.jsp')" href="javascript:void(0)" style="font-size:20px;text-align:center;display:block;">
-                            专业库信息
+                            主题库信息
                         </a>
                     </div>
                     <div style="background-color: #438AEB;height: 30px;display: inline-block;

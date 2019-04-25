@@ -182,6 +182,7 @@ public class FtpUtil {
         System.out.println("开始调用上传程序！");
         ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
         ftpClient.setControlEncoding("GBK");
+        ftpClient.changeWorkingDirectory("/temp/");
         ftpClient.enterLocalPassiveMode();
         System.out.println(ftpClient.getStatus());
         UploadStatus result;
@@ -246,11 +247,12 @@ public class FtpUtil {
                 if (remoteFilepath.contains("/")) {
 //                remoteFileName = remoteFilepath.substring(remoteFilepath.lastIndexOf("/") + 1);
                     //创建服务器远程目录结构，创建失败直接返回
-                    ftpClient.changeWorkingDirectory(remoteFilepath);
+//                    ftpClient.changeWorkingDirectory(remoteFilepath);
                     if (CreateDirecroty(remoteFilepath, ftpClient) == UploadStatus.Create_Directory_Fail) {
                         return UploadStatus.Create_Directory_Fail;
                     }
                 }
+                ftpClient.changeWorkingDirectory("/temp/");
                 resultmap = uploadFile(fileTotalSize, finishedSize, processId, remoteFileName, new File(newlocalFilepath), ftpClient, 0);
                 result = (UploadStatus)(resultmap.get("status"));
                 finishedSize = (Long)(resultmap.get("finishedSize"));

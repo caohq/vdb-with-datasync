@@ -159,13 +159,41 @@
     };
 
     $("#fileModal").on("hide.bs.modal",function(){
-        $(window.top.document.body)[0].ownerDocument.getElementById("pages").remove();
-        $(window.top.document.body)[0].ownerDocument.getElementById("backdropId").remove();
+        if(isIE()||isIE11()){
+            $(window.top.document.body)[0].ownerDocument.getElementById("pages").removeNode(true);
+            $(window.top.document.body)[0].ownerDocument.getElementById("backdropId").removeNode(true);
+        }else{
+            $(window.top.document.body)[0].ownerDocument.getElementById("pages").remove();
+            $(window.top.document.body)[0].ownerDocument.getElementById("backdropId").remove();
+        }
+
     });
     $("#dataModal").on("hide.bs.modal",function(){
-        $(window.top.document.body)[0].ownerDocument.getElementById("pages").remove();
-        $(window.top.document.body)[0].ownerDocument.getElementById("backdropId").remove();
+        if(isIE()||isIE11()){
+            $(window.top.document.body)[0].ownerDocument.getElementById("pages").removeNode(true);
+            $(window.top.document.body)[0].ownerDocument.getElementById("backdropId").removeNode(true);
+        }else{
+            $(window.top.document.body)[0].ownerDocument.getElementById("pages").remove();
+            $(window.top.document.body)[0].ownerDocument.getElementById("backdropId").remove();
+        }
+
     });
+
+
+    function isIE(){
+        if(!!window.ActiveXObject || "ActiveXObject" in window){
+            return true;
+        }else{
+            return false;
+        }
+    }
+    function isIE11(){
+        if((/Trident\/7\./).test(navigator.userAgent)){
+            return true;
+        }else{
+            return false;
+        }
+    }
 
 </script>
 </body>

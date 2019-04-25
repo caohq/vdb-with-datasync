@@ -22,7 +22,7 @@
     </div>
 
     <div class="task-title">
-        <span>专业库信息</span>
+        <span>主题库信息</span>
     </div>
 
     <div class="messageCon" >
@@ -30,12 +30,12 @@
         <form class="form-horizontal">
 
             <div class="form-group">
-                <label  class="col-sm-3 control-label">专业库名称:</label>
+                <label  class="col-sm-3 control-label">主题库名称:</label>
                 <div class="col-sm-8" name="subjectName"></div>
             </div>
 
             <div class="form-group">
-                <label  class="col-sm-3 control-label">专业库代码:</label>
+                <label  class="col-sm-3 control-label">主题库代码:</label>
                 <div class="col-sm-8" name="subjectCode"></div>
             </div>
 
