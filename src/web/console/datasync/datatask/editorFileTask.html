@@ -222,8 +222,21 @@
 
     //关闭modal后隐藏锁定页面的div
     $("#dataModal").on("hide.bs.modal",function(){
-        $(window.top.document.body)[0].ownerDocument.getElementById("pages").remove();
-        $(window.top.document.body)[0].ownerDocument.getElementById("backdropId").remove();
+        if(isIE()||isIE11()){
+            $(window.top.document.body)[0].ownerDocument.getElementById("pages").removeNode(true);
+            $(window.top.document.body)[0].ownerDocument.getElementById("backdropId").removeNode(true);
+            // if(document.getElementsByClassName("modal-backdrop fade in")!=null){
+            //     document.getElementsByClassName("modal-backdrop fade in")[0].removeNode(true);
+            // }
+        }else{
+            $(window.top.document.body)[0].ownerDocument.getElementById("pages").remove();
+            $(window.top.document.body)[0].ownerDocument.getElementById("backdropId").remove();
+            // if(document.getElementsByClassName("modal-backdrop fade in")!=null){
+            //     document.getElementsByClassName("modal-backdrop fade in")[0].remove();
+            // }
+        }
+        // $(window.top.document.body)[0].ownerDocument.getElementById("pages").remove();
+        // $(window.top.document.body)[0].ownerDocument.getElementById("backdropId").remove();
     });
 
     function loadFileTreesByDataSource(){
@@ -650,6 +663,21 @@
             return false;
         }
         return true;
+    }
+
+    function isIE(){
+        if(!!window.ActiveXObject || "ActiveXObject" in window){
+            return true;
+        }else{
+            return false;
+        }
+    }
+    function isIE11(){
+        if((/Trident\/7\./).test(navigator.userAgent)){
+            return true;
+        }else{
+            return false;
+        }
     }
 
 

@@ -138,8 +138,15 @@
             data:{
                 connData:connData
             },
+            beforeSend:function(data){
+                index = layer.load(1, {
+                    shade: [0.5,'#fff'] //0.1透明度的白色背景
+                });
+            },
             success:function (data) {
                 if(data.trim()=="数据库连接异常！"){
+                    $("#layui-layer-shade"+index+"").remove();
+                    $("#layui-layer"+index+"").remove();
                     toastr["error"](data);
                     return;
                 }
@@ -172,6 +179,8 @@
                         $("#createNewTableName"+i+"")[0].value=newTablesArray[i];
                     }
                 }
+                $("#layui-layer-shade"+index+"").remove();
+                $("#layui-layer"+index+"").remove();
             },
             error:function () {
                 console.log("请求失败")
